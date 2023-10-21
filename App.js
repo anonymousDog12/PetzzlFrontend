@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SplashScreen from './screens/SplashScreen';
-import HomeScreen from './screens/HomeScreen';
+import Authentication from './screens/Authentication';
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -13,7 +13,7 @@ const App = () => {
     return () => clearTimeout(timer); // Clear the timer if the component is unmounted
   }, []);
 
-  return showSplash ? <SplashScreen /> : <HomeScreen />;
+  return showSplash ? <SplashScreen /> : <Authentication />;
 };
 
 export default App;
