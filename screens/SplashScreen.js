@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 const SplashScreen = () => {
   return (
     <View style={styles.container}>
-      <Text>Welcome to Petzzl!</Text>
+      <Text>PETZZL</Text>
     </View>
   );
 };
