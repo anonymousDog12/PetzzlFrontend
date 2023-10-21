@@ -1,25 +1,19 @@
-import React from 'react';
-import { View, Text, SafeAreaView, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import SplashScreen from './screens/SplashScreen';
+import HomeScreen from './screens/HomeScreen';
 
-function App() {
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.innerContainer}>
-        <Text>Welcome to Petzzl!</Text>
-      </View>
-    </SafeAreaView>
-  );
-}
+const App = () => {
+  const [showSplash, setShowSplash] = useState(true);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  innerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 500); // Show the splash screen for 3 seconds
+
+    return () => clearTimeout(timer); // Clear the timer if the component is unmounted
+  }, []);
+
+  return showSplash ? <SplashScreen /> : <HomeScreen />;
+};
 
 export default App;
