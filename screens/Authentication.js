@@ -1,51 +1,91 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 
-const Authentication = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = () => {
-    // Handle login logic here
-    // For now, we're just simulating a successful login
-    if (email && password) {
-      navigation.replace('HomeScreen');  // Navigate to your actual HomeScreen after successful login
-    }
-  };
-
+export default function Authentication() {
   return (
     <View style={styles.container}>
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        secureTextEntry
-      />
-      <Button title="Login" onPress={handleLogin} />
+
+      <Text style={styles.heading}>Join the Petzzl Family</Text>
+
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>Join now</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.appleButton}>
+        <Text style={styles.buttonText}>Continue with Apple</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.googleButton}>
+        <Text style={[styles.buttonText, styles.googleText]}>Continue with Google</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity>
+        <Text style={styles.signInText}>Sign in</Text>
+      </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
     justifyContent: 'center',
-    padding: 16
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
+  logo: {
+    width: 100,
+    height: 100,
+    marginBottom: 40,
+  },
+  heading: {
+    fontSize: 20,
+    marginBottom: 30,
+  },
+  button: {
+    backgroundColor: '#0077B5',  // LinkedIn Blue
+    padding: 10,
+    width: '80%',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  appleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // Added to center the text
+    backgroundColor: '#000',  // Black
+    padding: 10,
+    width: '80%',
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // Added to center the text
+    backgroundColor: '#fff',
+    padding: 10,
+    width: '80%',
     borderWidth: 1,
-    padding: 8,
-    marginBottom: 16
-  }
+    borderColor: '#000',
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  googleText: {
+    color: '#000', // Google Text color
+  },
+  icon: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
+  },
+  signInText: {
+    color: '#0077B5',  // LinkedIn Blue
+    fontSize: 16,
+  },
 });
-
-export default Authentication;
