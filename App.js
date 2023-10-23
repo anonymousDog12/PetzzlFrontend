@@ -1,19 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import SplashScreen from './screens/SplashScreen';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { enableScreens } from 'react-native-screens';
 import SignUpScreen from './screens/Authentication/SignUpScreen';
+import LoginScreen from './screens/Authentication/LoginScreen';
+
+enableScreens();
+
+const Stack = createStackNavigator();
 
 const App = () => {
-  const [showSplash, setShowSplash] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 1000); // Show the splash screen for 3 seconds
-
-    return () => clearTimeout(timer); // Clear the timer if the component is unmounted
-  }, []);
-
-  return showSplash ? <SplashScreen /> : <SignUpScreen />;
-};
+  return (
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="SignUp">
+          <Stack.Screen name="SignUp" component={SignUpScreen} options={{ title: 'Sign Up' }} />
+          <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Log In' }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
+}
 
 export default App;
