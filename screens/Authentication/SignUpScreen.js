@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import {connect, useDispatch} from 'react-redux';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { signup } from "../../redux/actions/auth";
 
 export default function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = useState('');
@@ -7,9 +9,21 @@ export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSignUp = () => {
-    // Implement sign-up logic here
+
+  const dispatch = useDispatch();
+
+  const handleSignUp = async () => {
+    console.log('+++++++++')
+    console.log("handling signup");
+    let errorResponse = await dispatch(signup(firstName, lastName, email, password, password));
+    if (errorResponse) {
+      console.log("************");
+      console.log(errorResponse);
+    } else {
+      console.log('sign up success!!!!!')
+    }
   };
+
 
   return (
     <View style={styles.container}>
