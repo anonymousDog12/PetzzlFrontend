@@ -1,5 +1,5 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import SecureStorage from 'react-native-secure-storage';
 
 
 import {
@@ -26,8 +26,8 @@ import {
 
 export const loadTokens = () => async dispatch => {
   try {
-    const access = await AsyncStorage.getItem('access');
-    const refresh = await AsyncStorage.getItem('refresh');
+    const access = await SecureStorage.getItem('access');
+    const refresh = await SecureStorage.getItem('refresh');
     dispatch({ type: LOAD_TOKENS, payload: { access, refresh } });
   } catch (error) {
     console.error('Failed retrieving data', error);

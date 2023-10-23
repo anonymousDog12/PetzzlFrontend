@@ -19,7 +19,8 @@ import {
   USER_LOADED_FAIL,
   USER_LOADED_SUCCESS
 } from '../types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import SecureStorage from 'react-native-secure-storage';
+
 
 const initialState = {
   access: null,
@@ -30,13 +31,6 @@ const initialState = {
   resendActivationFail: false,
 };
 
-async function getAsyncItem(key) {
-  try {
-    return await AsyncStorage.getItem(key);
-  } catch (error) {
-    console.error('Failed retrieving data', error);
-  }
-}
 
 function authReducer(state = initialState, action) {
   const {type, payload} = action;
@@ -56,8 +50,8 @@ function authReducer(state = initialState, action) {
       }
 
     case LOGIN_SUCCESS:
-      AsyncStorage.setItem('access', payload.access);
-      AsyncStorage.setItem('refresh', payload.refresh);
+      SecureStorage.setItem('access', payload.access);
+      SecureStorage.setItem('refresh', payload.refresh);
       return {
         ...state,
         isAuthenticated: true,
@@ -92,8 +86,8 @@ function authReducer(state = initialState, action) {
     case LOGIN_FAIL:
     case SIGNUP_FAIL:
     case LOGOUT:
-      AsyncStorage.removeItem('access');
-      AsyncStorage.removeItem('refresh');
+      SecureStorage.removeItem('access');
+      SecureStorage.removeItem('refresh');
       return {
         ...state,
         access: null,
@@ -131,7 +125,7 @@ function authReducer(state = initialState, action) {
         resendActivationSuccess: false,
         resendActivationFail: false,
       };
-      
+
     default:
       return state
   }
