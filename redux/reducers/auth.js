@@ -6,6 +6,7 @@ import {
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   LOGOUT,
+  LOAD_TOKENS,
   PASSWORD_RESET_CONFIRM_FAIL,
   PASSWORD_RESET_CONFIRM_SUCCESS,
   PASSWORD_RESET_FAIL,
@@ -37,18 +38,23 @@ async function getAsyncItem(key) {
   }
 }
 
-initialState.access = getAsyncItem('access');
-initialState.refresh = getAsyncItem('refresh');
-
 function authReducer(state = initialState, action) {
   const {type, payload} = action;
 
   switch (type) {
+    case LOAD_TOKENS:
+      return {
+        ...state,
+        access: payload.access,
+        refresh: payload.refresh,
+      };
+
     case AUTHENTICATED_SUCCESS:
       return {
         ...state,
         isAuthenticated: true
       }
+
     case LOGIN_SUCCESS:
       AsyncStorage.setItem('access', payload.access);
       AsyncStorage.setItem('refresh', payload.refresh);
@@ -58,26 +64,31 @@ function authReducer(state = initialState, action) {
         access: payload.access,
         refresh: payload.refresh
       }
+
     case SIGNUP_SUCCESS:
       return {
         ...state,
         isAuthenticated: false
       }
+
     case USER_LOADED_SUCCESS:
       return {
         ...state,
         user: payload
       }
+
     case AUTHENTICATED_FAIL:
       return {
         ...state,
         isAuthenticated: false
       }
+
     case USER_LOADED_FAIL:
       return {
         ...state,
         user: null
       }
+
     case LOGIN_FAIL:
     case SIGNUP_FAIL:
     case LOGOUT:
@@ -99,6 +110,7 @@ function authReducer(state = initialState, action) {
       return {
         ...state
       }
+
     case RESEND_ACTIVATION_LINK_SUCCESS:
       return {
         ...state,
@@ -112,12 +124,14 @@ function authReducer(state = initialState, action) {
         resendActivationSuccess: false,
         resendActivationFail: true,
       };
+
     case RESEND_ACTIVATION_LINK_RESET:
       return {
         ...state,
         resendActivationSuccess: false,
         resendActivationFail: false,
       };
+      
     default:
       return state
   }

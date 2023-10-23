@@ -1,4 +1,5 @@
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 import {
@@ -9,6 +10,7 @@ import {
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   LOGOUT,
+  LOAD_TOKENS,
   PASSWORD_RESET_CONFIRM_FAIL,
   PASSWORD_RESET_CONFIRM_SUCCESS,
   PASSWORD_RESET_FAIL,
@@ -22,10 +24,20 @@ import {
   USER_LOADED_SUCCESS,
 } from '../types';
 
+export const loadTokens = () => async dispatch => {
+  try {
+    const access = await AsyncStorage.getItem('access');
+    const refresh = await AsyncStorage.getItem('refresh');
+    dispatch({ type: LOAD_TOKENS, payload: { access, refresh } });
+  } catch (error) {
+    console.error('Failed retrieving data', error);
+  }
+};
+
 export const signup = (first_name, last_name, email, password, re_password) => async dispatch => {
   try {
     const config = { headers: {'Content-Type': 'application/json'} };
-    const body = JSON.stringify({first_name, last_name, email, password, re_password});
+    const body = JSON.stringify({ first_name, last_name, email, password, re_password });
     const res = await axios.post(`http://localhost:8000/auth/users/`, body, config);
     dispatch({ type: SIGNUP_SUCCESS, payload: res.data });
     return null;
