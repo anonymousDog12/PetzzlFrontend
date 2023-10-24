@@ -1,4 +1,5 @@
 import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 import SecureStorage from 'react-native-secure-storage';
 
 
@@ -48,6 +49,7 @@ export const signup = (first_name, last_name, email, password, re_password) => a
 };
 
 export const login = (email, password) => async dispatch => {
+  console.log('+=+=+=+=')
   try {
     const config = { headers: {'Content-Type': 'application/json'} };
     const body = JSON.stringify({email, password});
@@ -58,5 +60,37 @@ export const login = (email, password) => async dispatch => {
   } catch (err) {
     dispatch({ type: LOGIN_FAIL });
     return err.response.data;
+  }
+};
+
+export const load_user = () => async dispatch => {
+  const access = await SecureStorage.getItem('access');
+  if (access) {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `JWT ${access}`,
+        'Accept': 'application/json'
+      }
+    };
+
+    try {
+      const res = await axios.get(`http://localhost:8000/auth/users/me/`, config);
+      const decodedToken = jwt_decode(access);
+      const userId = decodedToken.user_id;
+      await SecureStorage.setItem('user_id', userId.toString());
+      dispatch({
+        type: USER_LOADED_SUCCESS,
+        payload: res.data
+      });
+    } catch (err) {
+      dispatch({
+        type: USER_LOADED_FAIL
+      });
+    }
+  } else {
+    dispatch({
+      type: USER_LOADED_FAIL
+    });
   }
 };

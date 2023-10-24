@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/actions/auth";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const dispatch = useDispatch();
+
+  const handleLogin = async () => {
     console.log('handling log in');
+    let errorResponse = await dispatch(login(email, password));
+    if (errorResponse) {
+      console.log(errorResponse);
+    } else {
+      console.log('login success!')
+    }
   };
 
   return (
