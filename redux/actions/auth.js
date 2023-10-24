@@ -46,3 +46,17 @@ export const signup = (first_name, last_name, email, password, re_password) => a
     return err.response.data;
   }
 };
+
+export const login = (email, password) => async dispatch => {
+  try {
+    const config = { headers: {'Content-Type': 'application/json'} };
+    const body = JSON.stringify({email, password});
+    const res = await axios.post(`http://localhost:8000/auth/jwt/create/`, body, config);
+    dispatch({ type: LOGIN_SUCCESS, payload: res.data });
+    await dispatch(load_user());
+    return null;
+  } catch (err) {
+    dispatch({ type: LOGIN_FAIL });
+    return err.response.data;
+  }
+};

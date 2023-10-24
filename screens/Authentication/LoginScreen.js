@@ -6,7 +6,7 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Implement login logic here
+    console.log('handling log in');
   };
 
   return (
