@@ -6,11 +6,31 @@ import { enableScreens } from 'react-native-screens';
 import SignUpScreen from './screens/Authentication/SignUpScreen';
 import LoginScreen from './screens/Authentication/LoginScreen';
 import SplashScreen from './screens/SplashScreen';
-import { Provider } from 'react-redux';
+import HomeScreen from "./screens/HomeScreen";
+import { Provider, useSelector } from "react-redux";
 import store from './redux/store';
 
 enableScreens();
 const Stack = createStackNavigator();
+
+const MainApp = () => {
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+
+  return (
+    <SafeAreaProvider>
+      <NavigationContainer>
+        {isAuthenticated ? (
+          <HomeScreen />
+        ) : (
+          <Stack.Navigator initialRouteName="SignUp">
+            <Stack.Screen name="SignUp" component={SignUpScreen} options={{ title: 'Sign Up' }} />
+            <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Log In' }} />
+          </Stack.Navigator>
+        )}
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
+};
 
 const App = () => {
   const [isSplash, setIsSplash] = useState(true);
@@ -29,14 +49,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName="SignUp">
-            <Stack.Screen name="SignUp" component={SignUpScreen} options={{ title: 'Sign Up' }} />
-            <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Log In' }} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
+      <MainApp />
     </Provider>
   );
 }
