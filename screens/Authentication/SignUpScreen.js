@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch} from 'react-redux';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { signup } from "../../redux/actions/auth";
+import { login, signup } from "../../redux/actions/auth";
 
 export default function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = useState('');
@@ -20,7 +20,14 @@ export default function SignUpScreen({ navigation }) {
       console.log("************");
       console.log(errorResponse);
     } else {
-      console.log('sign up success!!!!!')
+      console.log('sign up success!!!!! logging in...')
+      let loginResponse = await dispatch(login(email, password));
+      if (loginResponse) {
+        console.log(loginResponse);
+      } else {
+        console.log('login in successful')
+      }
+
     }
   };
 
