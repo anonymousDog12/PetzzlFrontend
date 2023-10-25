@@ -20,12 +20,6 @@ export default function ResetPasswordScreen({ navigation }) {
       <TouchableOpacity onPress={handleResetPassword} style={styles.button}>
         <Text style={styles.buttonText}>Reset Password</Text>
       </TouchableOpacity>
-      <Text style={styles.footer}>
-        Remember your password? &nbsp;
-        <Text style={styles.footerLink} onPress={() => navigation.navigate('Login')}>
-          Login
-        </Text>
-      </Text>
     </View>
   );
 }

@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
 import SignUpScreen from './screens/Authentication/SignUpScreen';
 import LoginScreen from './screens/Authentication/LoginScreen';
+import ResetPasswordScreen from "./screens/Authentication/ResetPasswordScreen";
 import SplashScreen from './screens/SplashScreen';
 import HomeScreen from "./screens/HomeScreen";
 import { Provider, useSelector } from "react-redux";
@@ -25,6 +26,7 @@ const MainApp = () => {
           <Stack.Navigator initialRouteName="SignUp">
             <Stack.Screen name="SignUp" component={SignUpScreen} options={{ title: 'Sign Up' }} />
             <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Log In' }} />
+            <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} options={{ title: 'Reset Password' }} />
           </Stack.Navigator>
         )}
       </NavigationContainer>
