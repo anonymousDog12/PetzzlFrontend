@@ -43,6 +43,12 @@ export default function LoginScreen({ navigation }) {
           Sign Up
         </Text>
       </Text>
+      <Text style={styles.footer}>
+        Forgot Password? &nbsp;
+        <Text style={styles.footerLink}>
+          Reset
+        </Text>
+      </Text>
     </View>
   );
 }
