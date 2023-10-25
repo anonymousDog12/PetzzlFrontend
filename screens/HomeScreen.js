@@ -8,7 +8,6 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Use the username from user data */}
       <Text>Hello {user ? user.first_name : 'World'}!</Text>
     </View>
   );
