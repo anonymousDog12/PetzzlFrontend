@@ -1,10 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';  // Import useSelector
 
 const HomeScreen = () => {
+  // Get the user data from Redux state
+  const user = useSelector(state => state.auth.user);
+
   return (
     <View style={styles.container}>
-      <Text>Hello World</Text>
+      {/* Use the username from user data */}
+      <Text>Hello {user ? user.first_name : 'World'}!</Text>
     </View>
   );
 }
