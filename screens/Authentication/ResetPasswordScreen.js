@@ -11,7 +11,6 @@ export default function ResetPasswordScreen({ navigation }) {
   const dispatch = useDispatch();
 
   const handleResetPassword = async () => {
-    // Placeholder logic for resetting password
     const emailExists = await checkEmailExists(email);
     if (emailExists === true) {
       console.log('Email exists, resetting password....')
