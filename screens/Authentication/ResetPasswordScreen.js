@@ -7,8 +7,13 @@ import { useDispatch } from 'react-redux';
 export default function ResetPasswordScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const dispatch = useDispatch();
+
+  const handleDismissError = () => {
+    setErrorMessage(null);
+  };
 
   const handleResetPassword = async () => {
     const emailExists = await checkEmailExists(email);
@@ -17,19 +22,24 @@ export default function ResetPasswordScreen({ navigation }) {
       await dispatch(reset_password(email));
       setSuccessMessage("Please check your email for a link to reset your password");
     } else if (emailExists === false) {
-      console.log('Oops, we couldn\'t find an account associated with this email. Please check and try again.');
+      setErrorMessage('Oops, we couldn\'t find an account associated with this email. Please check and try again.');
     } else if (emailExists === "error") {
-      console.log('Something went wrong, please contact admin@petzzl.app');
+      setErrorMessage('Something went wrong, please contact admin@petzzl.app');
     }
   };
 
   return (
     <View style={styles.container}>
       {successMessage && <Text style={styles.successMessage}>{successMessage}</Text>}
+      {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
       <TextInput
         placeholder="Email"
         value={email}
-        onChangeText={setEmail}
+        onChangeText={(text) => {
+          setEmail(text);
+          handleDismissError();
+        }}
+        onFocus={handleDismissError}
         style={styles.input}
       />
       <TouchableOpacity onPress={handleResetPassword} style={styles.button}>
@@ -63,5 +73,10 @@ const styles = StyleSheet.create({
     color: 'green',
     textAlign: 'center',
     marginBottom: 10,
+  },
+  error: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 10,
   },
 });
