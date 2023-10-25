@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { reset_password } from "../../redux/actions/auth";
 import { checkEmailExists } from "../../utils/auth";
+import { useDispatch } from 'react-redux';
+
 
 export default function ResetPasswordScreen({ navigation }) {
   const [email, setEmail] = useState('');
+
+  const dispatch = useDispatch();
 
   const handleResetPassword = async () => {
     // Placeholder logic for resetting password
     const emailExists = await checkEmailExists(email);
     if (emailExists === true) {
       console.log('Email exists, resetting password....')
+      await dispatch(reset_password(email));
     } else if (emailExists === false) {
 
       console.log('Oops, we couldn\'t find an account associated with this email. Please check and try again.');

@@ -93,3 +93,27 @@ export const load_user = () => async dispatch => {
     });
   }
 };
+
+
+export const reset_password = (email) => async dispatch => {
+  console.log('++++++++++++++');
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  const body = JSON.stringify({email});
+
+  try {
+    await axios.post(`http://localhost:8000/auth/users/reset_password/`, body, config);
+
+    dispatch({
+      type: PASSWORD_RESET_SUCCESS
+    });
+  } catch (err) {
+    dispatch({
+      type: PASSWORD_RESET_FAIL
+    });
+  }
+};
