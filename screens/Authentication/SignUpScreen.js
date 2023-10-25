@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch} from 'react-redux';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { login, signup } from "../../redux/actions/auth";
+import { extractErrorMessages } from "../../utils/auth";
 
 export default function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = useState('');
@@ -24,7 +25,7 @@ export default function SignUpScreen({ navigation }) {
     if (errorResponse) {
       console.log("************");
       console.log(errorResponse);
-      setErrorMessage("Your error message here"); // <-- Set the error message based on your response
+      setErrorMessage('Sign-up failed: ' + extractErrorMessages(errorResponse));
     }
     else {
       console.log('sign up success!!!!! logging in...')

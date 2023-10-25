@@ -9,3 +9,15 @@ export const checkEmailExists = async (email) => {
     return "error";
   }
 };
+
+export const extractErrorMessages = (response) => {
+  const keys = Object.keys(response);
+  return keys.map((key) => {
+    let msg = response[key];
+    if (key === 'email' && msg.includes("user account with this email already exists.")) {
+      return `${msg} Please try logging in or use a different email address.`;
+    } else {
+      return msg;
+    }
+  });
+};
