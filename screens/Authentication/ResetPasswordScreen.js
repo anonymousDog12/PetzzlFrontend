@@ -7,6 +7,7 @@ export default function ResetPasswordScreen({ navigation }) {
   const handleResetPassword = async () => {
     // Placeholder logic for resetting password
     console.log('Handle reset password logic here');
+    console.log(`Resetting password for email: ${email}`);
   };
 
   return (
