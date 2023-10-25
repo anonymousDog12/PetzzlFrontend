@@ -8,6 +8,8 @@ export default function SignUpScreen({ navigation }) {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState(null);
+
 
 
   const dispatch = useDispatch();
@@ -19,7 +21,9 @@ export default function SignUpScreen({ navigation }) {
     if (errorResponse) {
       console.log("************");
       console.log(errorResponse);
-    } else {
+      setErrorMessage("Your error message here"); // <-- Set the error message based on your response
+    }
+    else {
       console.log('sign up success!!!!! logging in...')
       let loginResponse = await dispatch(login(email, password));
       if (loginResponse) {
@@ -34,6 +38,7 @@ export default function SignUpScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
       <TextInput
         placeholder="First Name"
         value={firstName}
@@ -98,5 +103,10 @@ const styles = StyleSheet.create({
   },
   footerLink: {
     color: '#007BFF',
+  },
+  error: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 10,
   },
 });
