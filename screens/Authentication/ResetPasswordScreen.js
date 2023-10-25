@@ -4,9 +4,9 @@ import { reset_password } from "../../redux/actions/auth";
 import { checkEmailExists } from "../../utils/auth";
 import { useDispatch } from 'react-redux';
 
-
 export default function ResetPasswordScreen({ navigation }) {
   const [email, setEmail] = useState('');
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -15,17 +15,17 @@ export default function ResetPasswordScreen({ navigation }) {
     if (emailExists === true) {
       console.log('Email exists, resetting password....')
       await dispatch(reset_password(email));
+      setSuccessMessage("Please check your email for a link to reset your password");
     } else if (emailExists === false) {
-
       console.log('Oops, we couldn\'t find an account associated with this email. Please check and try again.');
     } else if (emailExists === "error") {
-
       console.log('Something went wrong, please contact admin@petzzl.app');
     }
   };
 
   return (
     <View style={styles.container}>
+      {successMessage && <Text style={styles.successMessage}>{successMessage}</Text>}
       <TextInput
         placeholder="Email"
         value={email}
@@ -59,11 +59,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
-  footer: {
-    marginTop: 20,
+  successMessage: {
+    color: 'green',
     textAlign: 'center',
-  },
-  footerLink: {
-    color: '#007BFF',
+    marginBottom: 10,
   },
 });
