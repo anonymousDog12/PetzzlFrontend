@@ -11,6 +11,10 @@ export default function LoginScreen({ navigation }) {
 
   const dispatch = useDispatch();
 
+  const handleDismissError = () => {
+    setErrorMessage(null);
+  };
+
   const handleLogin = async () => {
     let errorResponse = await dispatch(login(email, password));
     if (errorResponse) {
@@ -37,13 +41,21 @@ export default function LoginScreen({ navigation }) {
       <TextInput
         placeholder="Email"
         value={email}
-        onChangeText={setEmail}
+        onChangeText={(text) => {
+          setEmail(text);
+          handleDismissError();
+        }}
+        onFocus={handleDismissError}
         style={styles.input}
       />
       <TextInput
         placeholder="Password"
         value={password}
-        onChangeText={setPassword}
+        onChangeText={(text) => {
+          setPassword(text);
+          handleDismissError();
+        }}
+        onFocus={handleDismissError}
         secureTextEntry
         style={styles.input}
       />
