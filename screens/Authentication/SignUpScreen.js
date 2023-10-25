@@ -63,7 +63,7 @@ export default function SignUpScreen({ navigation }) {
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
       <Text style={styles.footer}>
-        Already have an account?
+        Already have an account? &nbsp;
         <Text style={styles.footerLink} onPress={() => navigation.navigate('Login')}>
           Login
         </Text>
