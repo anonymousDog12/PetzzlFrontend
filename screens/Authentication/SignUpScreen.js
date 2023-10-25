@@ -11,8 +11,11 @@ export default function SignUpScreen({ navigation }) {
   const [errorMessage, setErrorMessage] = useState(null);
 
 
-
   const dispatch = useDispatch();
+
+  const handleDismissError = () => {
+    setErrorMessage(null);
+  };
 
   const handleSignUp = async () => {
     console.log('+++++++++')
@@ -42,28 +45,45 @@ export default function SignUpScreen({ navigation }) {
       <TextInput
         placeholder="First Name"
         value={firstName}
-        onChangeText={setFirstName}
+        onChangeText={(text) => {
+          setFirstName(text);
+          handleDismissError();
+        }}
+        onFocus={handleDismissError}
         style={styles.input}
       />
       <TextInput
         placeholder="Last Name"
         value={lastName}
-        onChangeText={setLastName}
+        onChangeText={(text) => {
+          setLastName(text);
+          handleDismissError();
+        }}
+        onFocus={handleDismissError}
         style={styles.input}
       />
       <TextInput
         placeholder="Email"
         value={email}
-        onChangeText={setEmail}
+        onChangeText={(text) => {
+          setEmail(text);
+          handleDismissError();
+        }}
+        onFocus={handleDismissError}
         style={styles.input}
       />
       <TextInput
         placeholder="Password"
         value={password}
-        onChangeText={setPassword}
+        onChangeText={(text) => {
+          setPassword(text);
+          handleDismissError();
+        }}
         secureTextEntry
+        onFocus={handleDismissError}
         style={styles.input}
       />
+
       <TouchableOpacity onPress={handleSignUp} style={styles.button}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
