@@ -2,18 +2,30 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/actions/auth";
+import { checkEmailExists } from "../../utils/auth";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const dispatch = useDispatch();
 
   const handleLogin = async () => {
-    console.log('handling log in');
     let errorResponse = await dispatch(login(email, password));
     if (errorResponse) {
       console.log(errorResponse);
+      const emailExists = await checkEmailExists(email);
+      let customErrorMsg;
+      if (emailExists === "error") {
+        customErrorMsg = "Something went wrong, please contact soulechoio@outlook.com";
+      } else if (emailExists) {
+        customErrorMsg = "Incorrect password. Please try again.";
+      } else {
+        customErrorMsg = "No active account found with the given email. Please sign up.";
+      }
+      setErrorMessage(customErrorMsg);
+
     } else {
       console.log('login success!')
     }
@@ -21,6 +33,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
       <TextInput
         placeholder="Email"
         value={email}
@@ -79,5 +92,10 @@ const styles = StyleSheet.create({
   },
   footerLink: {
     color: '#007BFF',
+  },
+  error: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 10,
   },
 });

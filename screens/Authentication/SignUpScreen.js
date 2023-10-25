@@ -19,18 +19,18 @@ export default function SignUpScreen({ navigation }) {
   };
 
   const handleSignUp = async () => {
-    console.log('+++++++++')
-    console.log("handling signup");
+
     let errorResponse = await dispatch(signup(firstName, lastName, email, password, password));
     if (errorResponse) {
-      console.log("************");
       console.log(errorResponse);
       setErrorMessage('Sign-up failed: ' + extractErrorMessages(errorResponse));
     }
     else {
-      console.log('sign up success!!!!! logging in...')
+      console.log('sign up success! logging in...')
       let loginResponse = await dispatch(login(email, password));
       if (loginResponse) {
+        let customErrorMsg = "Error proceeding; please contact admin@petzzl.app"
+        setErrorMessage(customErrorMsg);
         console.log(loginResponse);
       } else {
         console.log('login in successful')
