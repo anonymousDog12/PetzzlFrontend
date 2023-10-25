@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { checkEmailExists } from "../../utils/auth";
 
 export default function ResetPasswordScreen({ navigation }) {
   const [email, setEmail] = useState('');
 
   const handleResetPassword = async () => {
     // Placeholder logic for resetting password
-    console.log('Handle reset password logic here');
-    console.log(`Resetting password for email: ${email}`);
+    const emailExists = await checkEmailExists(email);
+    if (emailExists === true) {
+      console.log('Email exists, resetting password....')
+    } else if (emailExists === false) {
+
+      console.log('Oops, we couldn\'t find an account associated with this email. Please check and try again.');
+    } else if (emailExists === "error") {
+
+      console.log('Something went wrong, please contact admin@petzzl.app');
+    }
   };
 
   return (
