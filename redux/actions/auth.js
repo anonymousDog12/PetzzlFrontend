@@ -75,9 +75,6 @@ export const load_user = () => async dispatch => {
 
     try {
       const res = await axios.get(`http://localhost:8000/auth/users/me/`, config);
-      const decodedToken = jwt_decode(access);
-      const userId = decodedToken.user_id;
-      await SecureStorage.setItem('user_id', userId.toString());
       dispatch({
         type: USER_LOADED_SUCCESS,
         payload: res.data
@@ -96,7 +93,6 @@ export const load_user = () => async dispatch => {
 
 
 export const reset_password = (email) => async dispatch => {
-  console.log('++++++++++++++');
   const config = {
     headers: {
       'Content-Type': 'application/json'
