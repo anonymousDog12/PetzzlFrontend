@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Button, TextInput, StyleSheet } from "react-native";
+import { CONFIG } from "../../config";
 import { PET_PAGE_CREATION_FIELD_NAMES, PET_TYPES } from "../../data/FieldNames";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 
@@ -14,7 +15,7 @@ const Step2 = ({ navigation }) => {
   };
 
   const checkUniqueId = async () => {
-    const response = await fetch(`http://localhost:8000/api/petprofiles/check_pet_id_uniqueness/${petId}/`, {
+    const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/check_pet_id_uniqueness/${petId}/`, {
       method: 'GET',
     });
 

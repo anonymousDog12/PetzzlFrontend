@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
+import { CONFIG } from "./config";
 import SignUpScreen from './screens/Authentication/SignUpScreen';
 import LoginScreen from './screens/Authentication/LoginScreen';
 import ResetPasswordScreen from "./screens/Authentication/ResetPasswordScreen";
@@ -32,7 +33,7 @@ const MainApp = () => {
       console.log(`User is authenticated with ID: ${user.id}`);
 
       // Fetch user's pets from the API
-      axios.get(`http://localhost:8000/api/petprofiles/pet_profiles/user/${user.id}/`)
+      axios.get(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${user.id}/`)
         .then(response => {
           // Here you might want to check the response more carefully
           if (response.data && Array.isArray(response.data) && response.data.length > 0) {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Button } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SecureStorage from "react-native-secure-storage";
+import { CONFIG } from "../../config";
 import { PET_PAGE_CREATION_FIELD_NAMES, PET_TYPES } from "../../data/FieldNames";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 
@@ -25,7 +26,7 @@ const Step3 = ({ navigation }) => {
 
     try {
       // Send POST request to save the pet profile
-      const response = await fetch('http://localhost:8000/api/petprofiles/pet_profiles/', {
+      const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

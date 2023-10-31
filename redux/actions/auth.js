@@ -1,6 +1,7 @@
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import SecureStorage from 'react-native-secure-storage';
+import { CONFIG } from "../../config";
 
 
 import {
@@ -39,7 +40,7 @@ export const signup = (first_name, last_name, email, password, re_password) => a
   try {
     const config = { headers: {'Content-Type': 'application/json'} };
     const body = JSON.stringify({ first_name, last_name, email, password, re_password });
-    const res = await axios.post(`http://localhost:8000/auth/users/`, body, config);
+    const res = await axios.post(`${CONFIG.BACKEND_URL}/auth/users/`, body, config);
     dispatch({ type: SIGNUP_SUCCESS, payload: res.data });
     return null;
   } catch (err) {
@@ -52,7 +53,7 @@ export const login = (email, password) => async dispatch => {
   try {
     const config = { headers: {'Content-Type': 'application/json'} };
     const body = JSON.stringify({email, password});
-    const res = await axios.post(`http://localhost:8000/auth/jwt/create/`, body, config);
+    const res = await axios.post(`${CONFIG.BACKEND_URL}/auth/jwt/create/`, body, config);
     dispatch({ type: LOGIN_SUCCESS, payload: res.data });
     await dispatch(load_user());
     return null;
@@ -74,7 +75,7 @@ export const load_user = () => async dispatch => {
     };
 
     try {
-      const res = await axios.get(`http://localhost:8000/auth/users/me/`, config);
+      const res = await axios.get(`${CONFIG.BACKEND_URL}/auth/users/me/`, config);
       dispatch({
         type: USER_LOADED_SUCCESS,
         payload: res.data
@@ -102,7 +103,7 @@ export const reset_password = (email) => async dispatch => {
   const body = JSON.stringify({email});
 
   try {
-    await axios.post(`http://localhost:8000/auth/users/reset_password/`, body, config);
+    await axios.post(`${CONFIG.BACKEND_URL}/auth/users/reset_password/`, body, config);
 
     dispatch({
       type: PASSWORD_RESET_SUCCESS

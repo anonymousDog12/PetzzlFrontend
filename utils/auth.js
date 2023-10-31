@@ -1,8 +1,9 @@
 import axios from "axios";
+import { CONFIG } from "../config";
 
 export const checkEmailExists = async (email) => {
   try {
-    const response = await axios.post(`http://localhost:8000/api/accounts/check-email/`, {email});
+    const response = await axios.post(`${CONFIG.BACKEND_URL}/api/accounts/check-email/`, {email});
     return !response.data.isNewUser;
   } catch (error) {
     console.error("Error checking email:", error);
