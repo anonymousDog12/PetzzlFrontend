@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { useDispatch} from 'react-redux';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
+import { useDispatch } from "react-redux";
 import { login, signup } from "../../redux/actions/auth";
 import { extractErrorMessages } from "../../utils/auth";
 
+
 export default function SignUpScreen({ navigation }) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
 
 
@@ -23,17 +24,16 @@ export default function SignUpScreen({ navigation }) {
     let errorResponse = await dispatch(signup(firstName, lastName, email, password, password));
     if (errorResponse) {
       console.log(errorResponse);
-      setErrorMessage('Sign-up failed: ' + extractErrorMessages(errorResponse));
-    }
-    else {
-      console.log('sign up success! logging in...')
+      setErrorMessage("Sign-up failed: " + extractErrorMessages(errorResponse));
+    } else {
+      console.log("sign up success! logging in...");
       let loginResponse = await dispatch(login(email, password));
       if (loginResponse) {
-        let customErrorMsg = "Error proceeding; please contact admin@petzzl.app"
+        let customErrorMsg = "Error proceeding; please contact admin@petzzl.app";
         setErrorMessage(customErrorMsg);
         console.log(loginResponse);
       } else {
-        console.log('login in successful')
+        console.log("login in successful");
       }
 
     }
@@ -41,7 +41,11 @@ export default function SignUpScreen({ navigation }) {
 
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+    >
       {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
       <TextInput
         placeholder="First Name"
@@ -90,18 +94,18 @@ export default function SignUpScreen({ navigation }) {
       </TouchableOpacity>
       <Text style={styles.footer}>
         Already have an account? &nbsp;
-        <Text style={styles.footerLink} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.footerLink} onPress={() => navigation.navigate("Login")}>
           Login
         </Text>
       </Text>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 20,
   },
   input: {
@@ -110,24 +114,24 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   button: {
-    backgroundColor: '#007BFF',
+    backgroundColor: "#007BFF",
     padding: 10,
     borderRadius: 5,
   },
   buttonText: {
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
   },
   footer: {
     marginTop: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   footerLink: {
-    color: '#007BFF',
+    color: "#007BFF",
   },
   error: {
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     marginTop: 10,
   },
 });

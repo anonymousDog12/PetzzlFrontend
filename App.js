@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { enableScreens } from 'react-native-screens';
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { enableScreens } from "react-native-screens";
+import { Provider, useSelector } from "react-redux";
 import { CONFIG } from "./config";
-import SignUpScreen from './screens/Authentication/SignUpScreen';
-import LoginScreen from './screens/Authentication/LoginScreen';
+import { PetProfileProvider } from "./contexts/PetProfileContext";
+import store from "./redux/store";
+import LoginScreen from "./screens/Authentication/LoginScreen";
 import ResetPasswordScreen from "./screens/Authentication/ResetPasswordScreen";
+import SignUpScreen from "./screens/Authentication/SignUpScreen";
+import HomeScreen from "./screens/HomeScreen";
 import Step0 from "./screens/PetProfileCreation/Step0";
 import Step1 from "./screens/PetProfileCreation/Step1";
 import Step2 from "./screens/PetProfileCreation/Step2";
 import Step3 from "./screens/PetProfileCreation/Step3";
 import Step4 from "./screens/PetProfileCreation/Step4";
-import SplashScreen from './screens/SplashScreen';
-import HomeScreen from "./screens/HomeScreen";
-import { Provider, useSelector } from "react-redux";
-import { PetProfileProvider } from "./contexts/PetProfileContext";
-import store from './redux/store';
-import axios from 'axios';
+import SplashScreen from "./screens/SplashScreen";
+
 
 enableScreens();
 const Stack = createStackNavigator();
@@ -38,14 +39,14 @@ const MainApp = () => {
           // Here you might want to check the response more carefully
           if (response.data && Array.isArray(response.data) && response.data.length > 0) {
             setHasPets(true);
-            console.log('User has pets');
+            console.log("User has pets");
           } else {
             setHasPets(false);
-            console.log('User has no pets');
+            console.log("User has no pets");
           }
         })
         .catch(error => {
-          console.error('An error occurred:', error);
+          console.error("An error occurred:", error);
         });
 
     } else {
@@ -62,17 +63,19 @@ const MainApp = () => {
           ) : (
             <Stack.Navigator>
               {/* TODO: Enhance the step titles */}
-              <Stack.Screen name="PetProfileCreationStep0" component={Step0} options={{ title: 'Pet Profile Creation' }} />
-              <Stack.Screen name="PetProfileCreationStep1" component={Step1} options={{ title: 'Step 1: Pet Name' }} />
-              <Stack.Screen name="PetProfileCreationStep2" component={Step2} options={{ title: 'Step 2: Unique Pet Username' }} />
-              <Stack.Screen name="PetProfileCreationStep3" component={Step3} options={{ title: 'Step 3: Pet Type' }} />
+              <Stack.Screen name="PetProfileCreationStep0" component={Step0}
+                            options={{ title: "Pet Profile Creation" }} />
+              <Stack.Screen name="PetProfileCreationStep1" component={Step1} options={{ title: "Step 1: Pet Name" }} />
+              <Stack.Screen name="PetProfileCreationStep2" component={Step2}
+                            options={{ title: "Step 2: Unique Pet Username" }} />
+              <Stack.Screen name="PetProfileCreationStep3" component={Step3} options={{ title: "Step 3: Pet Type" }} />
               <Stack.Screen
                 name="PetProfileCreationStep4"
                 component={Step4}
                 options={{
-                  title: 'Welcome',
+                  title: "Welcome",
                   headerLeft: null,
-                  gestureEnabled: false
+                  gestureEnabled: false,
                 }}
               />
 
@@ -81,9 +84,9 @@ const MainApp = () => {
           )
         ) : (
           <Stack.Navigator initialRouteName="SignUp">
-            <Stack.Screen name="SignUp" component={SignUpScreen} options={{ title: 'Sign Up' }} />
-            <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Log In' }} />
-            <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} options={{ title: 'Reset Password' }} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} options={{ title: "Sign Up" }} />
+            <Stack.Screen name="Login" component={LoginScreen} options={{ title: "Log In" }} />
+            <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} options={{ title: "Reset Password" }} />
           </Stack.Navigator>
         )}
       </NavigationContainer>
@@ -114,6 +117,6 @@ const App = () => {
       </PetProfileProvider>
     </Provider>
   );
-}
+};
 
 export default App;

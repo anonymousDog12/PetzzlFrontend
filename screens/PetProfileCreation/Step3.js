@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, Button } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import React, { useState } from "react";
+import { Button, Text, View } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../config";
-import { PET_PAGE_CREATION_FIELD_NAMES, PET_TYPES } from "../../data/FieldNames";
 import { usePetProfile } from "../../contexts/PetProfileContext";
+import { PET_PAGE_CREATION_FIELD_NAMES, PET_TYPES } from "../../data/FieldNames";
+
 
 const Step3 = ({ navigation }) => {
   const { petProfile, updateProfile } = usePetProfile();
@@ -15,22 +16,22 @@ const Step3 = ({ navigation }) => {
   const handleContinue = async () => {
     const updatedProfile = {
       ...petProfile,
-      [PET_PAGE_CREATION_FIELD_NAMES.PET_TYPE]: petType
+      [PET_PAGE_CREATION_FIELD_NAMES.PET_TYPE]: petType,
     };
 
-    console.log('posting to database....');
+    console.log("posting to database....");
     console.log("Pet Profile:", updatedProfile);
 
     // Retrieve JWT token from secure storage
-    const token = await SecureStorage.getItem('access');
+    const token = await SecureStorage.getItem("access");
 
     try {
       // Send POST request to save the pet profile
       const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `JWT ${token}`
+          "Content-Type": "application/json",
+          "Authorization": `JWT ${token}`,
         },
         body: JSON.stringify(updatedProfile),
       });
@@ -38,32 +39,32 @@ const Step3 = ({ navigation }) => {
       // Navigate to Step 4 if POST request is successful
       if (response.ok) {
         updateProfile(updatedProfile);
-        navigation.navigate('PetProfileCreationStep4');
+        navigation.navigate("PetProfileCreationStep4");
       } else {
         // Handle server-side error
-        console.log('Server returned an error:', await response.text());
+        console.log("Server returned an error:", await response.text());
       }
     } catch (error) {
       // Handle network error
-      console.log('Network error:', error);
+      console.log("Network error:", error);
     }
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>What kind of pet is {petProfile[PET_PAGE_CREATION_FIELD_NAMES.PET_NAME]}?</Text>
       <DropDownPicker
-        items={Object.values(PET_TYPES).map(type => ({label: type, value: type}))}
+        items={Object.values(PET_TYPES).map(type => ({ label: type, value: type }))}
         open={open}
         setOpen={setOpen}
         value={petType}
         setValue={setPetType}
-        containerStyle={{height: 40, width: 150}}
-        style={{backgroundColor: '#fafafa'}}
+        containerStyle={{ height: 40, width: 150 }}
+        style={{ backgroundColor: "#fafafa" }}
         itemStyle={{
-          justifyContent: 'flex-start'
+          justifyContent: "flex-start",
         }}
-        dropDownStyle={{backgroundColor: '#fafafa'}}
+        dropDownStyle={{ backgroundColor: "#fafafa" }}
       />
       <Button
         title="Continue"

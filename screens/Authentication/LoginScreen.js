@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/actions/auth";
 import { checkEmailExists } from "../../utils/auth";
 
+
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
 
   const dispatch = useDispatch();
@@ -31,12 +32,16 @@ export default function LoginScreen({ navigation }) {
       setErrorMessage(customErrorMsg);
 
     } else {
-      console.log('login success!')
+      console.log("login success!");
     }
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+    >
       {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
       <TextInput
         placeholder="Email"
@@ -64,24 +69,24 @@ export default function LoginScreen({ navigation }) {
       </TouchableOpacity>
       <Text style={styles.footer}>
         Don't have an account yet? &nbsp;
-        <Text style={styles.footerLink} onPress={() => navigation.navigate('SignUp')}>
+        <Text style={styles.footerLink} onPress={() => navigation.navigate("SignUp")}>
           Sign Up
         </Text>
       </Text>
       <Text style={styles.footer}>
         Forgot Password? &nbsp;
-        <Text style={styles.footerLink} onPress={() => navigation.navigate('ResetPassword')}>
+        <Text style={styles.footerLink} onPress={() => navigation.navigate("ResetPassword")}>
           Reset
         </Text>
       </Text>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 20,
   },
   input: {
@@ -90,24 +95,24 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   button: {
-    backgroundColor: '#007BFF',
+    backgroundColor: "#007BFF",
     padding: 10,
     borderRadius: 5,
   },
   buttonText: {
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
   },
   footer: {
     marginTop: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   footerLink: {
-    color: '#007BFF',
+    color: "#007BFF",
   },
   error: {
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     marginTop: 10,
   },
 });

@@ -1,12 +1,13 @@
+import SecureStorage from "react-native-secure-storage";
 import {
   ACTIVATION_FAIL,
   ACTIVATION_SUCCESS,
   AUTHENTICATED_FAIL,
   AUTHENTICATED_SUCCESS,
+  LOAD_TOKENS,
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   LOGOUT,
-  LOAD_TOKENS,
   PASSWORD_RESET_CONFIRM_FAIL,
   PASSWORD_RESET_CONFIRM_SUCCESS,
   PASSWORD_RESET_FAIL,
@@ -17,9 +18,8 @@ import {
   SIGNUP_FAIL,
   SIGNUP_SUCCESS,
   USER_LOADED_FAIL,
-  USER_LOADED_SUCCESS
-} from '../types';
-import SecureStorage from 'react-native-secure-storage';
+  USER_LOADED_SUCCESS,
+} from "../types";
 
 
 const initialState = {
@@ -33,7 +33,7 @@ const initialState = {
 
 
 function authReducer(state = initialState, action) {
-  const {type, payload} = action;
+  const { type, payload } = action;
 
   switch (type) {
     case LOAD_TOKENS:
@@ -46,55 +46,55 @@ function authReducer(state = initialState, action) {
     case AUTHENTICATED_SUCCESS:
       return {
         ...state,
-        isAuthenticated: true
-      }
+        isAuthenticated: true,
+      };
 
     case LOGIN_SUCCESS:
-      SecureStorage.setItem('access', payload.access);
-      SecureStorage.setItem('refresh', payload.refresh);
+      SecureStorage.setItem("access", payload.access);
+      SecureStorage.setItem("refresh", payload.refresh);
       return {
         ...state,
         isAuthenticated: true,
         access: payload.access,
-        refresh: payload.refresh
-      }
+        refresh: payload.refresh,
+      };
 
     case SIGNUP_SUCCESS:
       return {
         ...state,
-        isAuthenticated: false
-      }
+        isAuthenticated: false,
+      };
 
     case USER_LOADED_SUCCESS:
       return {
         ...state,
-        user: payload
-      }
+        user: payload,
+      };
 
     case AUTHENTICATED_FAIL:
       return {
         ...state,
-        isAuthenticated: false
-      }
+        isAuthenticated: false,
+      };
 
     case USER_LOADED_FAIL:
       return {
         ...state,
-        user: null
-      }
+        user: null,
+      };
 
     case LOGIN_FAIL:
     case SIGNUP_FAIL:
     case LOGOUT:
-      SecureStorage.removeItem('access');
-      SecureStorage.removeItem('refresh');
+      SecureStorage.removeItem("access");
+      SecureStorage.removeItem("refresh");
       return {
         ...state,
         access: null,
         refresh: null,
         isAuthenticated: false,
-        user: null
-      }
+        user: null,
+      };
     case PASSWORD_RESET_SUCCESS:
     case PASSWORD_RESET_FAIL:
     case PASSWORD_RESET_CONFIRM_SUCCESS:
@@ -102,8 +102,8 @@ function authReducer(state = initialState, action) {
     case ACTIVATION_SUCCESS:
     case ACTIVATION_FAIL:
       return {
-        ...state
-      }
+        ...state,
+      };
 
     case RESEND_ACTIVATION_LINK_SUCCESS:
       return {
@@ -127,7 +127,7 @@ function authReducer(state = initialState, action) {
       };
 
     default:
-      return state
+      return state;
   }
 }
 
