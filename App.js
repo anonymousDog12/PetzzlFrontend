@@ -7,11 +7,11 @@ import { enableScreens } from "react-native-screens";
 import { Provider, useSelector } from "react-redux";
 import { CONFIG } from "./config";
 import { PetProfileProvider } from "./contexts/PetProfileContext";
+import BottomNavBar from "./navigation/BottomNavBar";
 import store from "./redux/store";
 import LoginScreen from "./screens/Authentication/LoginScreen";
 import ResetPasswordScreen from "./screens/Authentication/ResetPasswordScreen";
 import SignUpScreen from "./screens/Authentication/SignUpScreen";
-import HomeScreen from "./screens/HomeScreen";
 import Step0 from "./screens/PetProfileCreation/Step0";
 import Step1 from "./screens/PetProfileCreation/Step1";
 import Step2 from "./screens/PetProfileCreation/Step2";
@@ -25,41 +25,16 @@ const Stack = createStackNavigator();
 
 const MainApp = () => {
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-  const user = useSelector(state => state.auth.user);
-
-  const [hasPets, setHasPets] = useState(false); // State to track if user has pets
-
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      console.log(`User is authenticated with ID: ${user.id}`);
-
-      // Fetch user's pets from the API
-      axios.get(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${user.id}/`)
-        .then(response => {
-          // Here you might want to check the response more carefully
-          if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-            setHasPets(true);
-            console.log("User has pets");
-          } else {
-            setHasPets(false);
-            console.log("User has no pets");
-          }
-        })
-        .catch(error => {
-          console.error("An error occurred:", error);
-        });
-
-    } else {
-      console.log("User isn't authenticated");
-    }
-  }, [isAuthenticated, user]);
+  const hasPets = useSelector(state => state.petProfile.hasPets);
+  const isNewPetProfile = useSelector(state => state.petProfile.isNewPetProfile); // Use the new flag
+  const initialRouteName = isAuthenticated ? (hasPets && !isNewPetProfile ? "Feed" : "Dashboard") : "SignUp";
 
   return (
     <SafeAreaProvider>
       <NavigationContainer>
         {isAuthenticated ? (
           hasPets ? (
-            <HomeScreen />
+            <BottomNavBar initialRouteName={initialRouteName} />
           ) : (
             <Stack.Navigator>
               {/* TODO: Enhance the step titles */}
@@ -78,7 +53,6 @@ const MainApp = () => {
                   gestureEnabled: false,
                 }}
               />
-
 
             </Stack.Navigator>
           )

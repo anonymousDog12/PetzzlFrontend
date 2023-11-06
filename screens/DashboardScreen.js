@@ -2,13 +2,14 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useSelector } from "react-redux"; // Import useSelector
 
-const HomeScreen = () => {
+const DashboardScreen = () => {
   // Get the user data from Redux state
   const user = useSelector(state => state.auth.user);
 
   return (
     <View style={styles.container}>
       <Text>Hello {user ? user.first_name : "World"}!</Text>
+      <Text>This is the Dashboard screen</Text>
     </View>
   );
 };
@@ -21,4 +22,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default DashboardScreen;

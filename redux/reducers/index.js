@@ -1,7 +1,9 @@
 import { combineReducers } from "redux";
-import auth from "./auth";
+import authReducer from "./auth";
+import petProfileReducer from "./petProfile";
 
 
 export default combineReducers({
-  auth,
+  auth: authReducer,
+  petProfile: petProfileReducer,
 });
