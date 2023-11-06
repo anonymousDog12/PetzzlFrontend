@@ -1,7 +1,7 @@
 import axios from "axios";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../config";
-
+import { setHasPets } from './petProfile';
 
 import {
   LOAD_TOKENS,
@@ -70,7 +70,13 @@ export const load_user = () => async dispatch => {
         type: USER_LOADED_SUCCESS,
         payload: res.data,
       });
-    } catch (err) {
+
+      // Now check if the user has pets
+      const petRes = await axios.get(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${res.data.id}/`);
+      const userHasPets = petRes.data && Array.isArray(petRes.data) && petRes.data.length > 0;
+      dispatch(setHasPets(userHasPets));
+    }
+    catch (err) {
       dispatch({
         type: USER_LOADED_FAIL,
       });
