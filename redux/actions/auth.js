@@ -4,6 +4,8 @@ import { CONFIG } from "../../config";
 import { setHasPets } from './petProfile';
 
 import {
+  AUTHENTICATED_FAIL,
+  AUTHENTICATED_SUCCESS,
   LOAD_TOKENS,
   LOGIN_FAIL,
   LOGIN_SUCCESS,
@@ -20,11 +22,21 @@ export const loadTokens = () => async dispatch => {
   try {
     const access = await SecureStorage.getItem("access");
     const refresh = await SecureStorage.getItem("refresh");
+
+    if (access && refresh) {
+      dispatch({ type: AUTHENTICATED_SUCCESS });
+      dispatch(load_user()); // Add this line to load the user and check for pets
+    } else {
+      dispatch({ type: AUTHENTICATED_FAIL });
+    }
+
     dispatch({ type: LOAD_TOKENS, payload: { access, refresh } });
   } catch (error) {
     console.error("Failed retrieving data", error);
+    dispatch({ type: AUTHENTICATED_FAIL });
   }
 };
+
 
 export const signup = (first_name, last_name, email, password, re_password) => async dispatch => {
   try {
