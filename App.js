@@ -4,10 +4,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { enableScreens } from "react-native-screens";
-import { Provider, useSelector } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "./config";
 import { PetProfileProvider } from "./contexts/PetProfileContext";
 import BottomNavBar from "./navigation/BottomNavBar";
+import { loadTokens } from "./redux/actions/auth";
 import store from "./redux/store";
 import LoginScreen from "./screens/Authentication/LoginScreen";
 import ResetPasswordScreen from "./screens/Authentication/ResetPasswordScreen";
@@ -18,16 +19,30 @@ import Step2 from "./screens/PetProfileCreation/Step2";
 import Step3 from "./screens/PetProfileCreation/Step3";
 import Step4 from "./screens/PetProfileCreation/Step4";
 import SplashScreen from "./screens/SplashScreen";
+import SecureStorage from "react-native-secure-storage";
 
 
 enableScreens();
 const Stack = createStackNavigator();
 
 const MainApp = () => {
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
   const hasPets = useSelector(state => state.petProfile.hasPets);
   const isNewPetProfile = useSelector(state => state.petProfile.isNewPetProfile); // Use the new flag
-  const initialRouteName = isAuthenticated ? (hasPets && !isNewPetProfile ? "Feed" : "Dashboard") : "SignUp";
+
+  useEffect(() => {
+    dispatch(loadTokens()); // Now this dispatch is correctly used within a component wrapped by Provider
+  }, [dispatch]);
+
+  let initialRouteName = "SignUp";
+  if (isAuthenticated) {
+    if (hasPets && !isNewPetProfile) {
+      initialRouteName = "Feed";
+    } else if (!hasPets || isNewPetProfile) {
+      initialRouteName = "PetProfileCreationStep0";
+    }
+  }
 
   return (
     <SafeAreaProvider>
@@ -71,16 +86,29 @@ const MainApp = () => {
 
 const App = () => {
   const [isSplash, setIsSplash] = useState(true);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
 
   useEffect(() => {
+    // Load tokens and check authentication state
+    store.dispatch(loadTokens())
+      .then(() => {
+        console.log("Authentication check complete"); // Debugging log
+        setIsAuthChecked(true); // Set state to true once auth check is complete
+      })
+      .catch((error) => {
+        console.error("Error during authentication check:", error); // Error handling
+      });
+
+    // Set a timer for the splash screen
     const timer = setTimeout(() => {
+      console.log("Splash screen timer complete"); // Debugging log
       setIsSplash(false);
     }, 2000); // 2 seconds delay
 
     return () => clearTimeout(timer);
   }, []);
 
-  if (isSplash) {
+  if (isSplash || !isAuthChecked) {
     return <SplashScreen />;
   }
 
