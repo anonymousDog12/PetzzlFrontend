@@ -9,6 +9,7 @@ import {
   LOAD_TOKENS,
   LOGIN_FAIL,
   LOGIN_SUCCESS,
+  LOGOUT,
   PASSWORD_RESET_FAIL,
   PASSWORD_RESET_SUCCESS,
   SIGNUP_FAIL,
@@ -124,4 +125,13 @@ export const reset_password = (email) => async dispatch => {
       type: PASSWORD_RESET_FAIL,
     });
   }
+};
+
+export const logout = () => async dispatch => {
+  // Remove the tokens from SecureStorage
+  await SecureStorage.removeItem("access");
+  await SecureStorage.removeItem("refresh");
+
+  // Dispatch the LOGOUT action to update the Redux state
+  dispatch({ type: LOGOUT });
 };
