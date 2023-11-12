@@ -14,12 +14,13 @@ const DashboardScreen = () => {
         <Icon
           name="settings-outline"
           size={30}
-          onPress={() => console.log('settings clicked')} // Added onPress handler
-          style={{ marginRight: 10 }} // Added some margin to the right
+          onPress={() => navigation.navigate('Settings')}
+          style={{ marginRight: 10 }}
         />
       ),
     });
   }, [navigation]);
+
 
   return (
     <View style={styles.container}>
