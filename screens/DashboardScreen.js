@@ -11,7 +11,7 @@ const DashboardScreen = () => {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Icon name="pizza-outline" size={30} color="#900" solid />
+        <Icon name="settings-outline" size={30} />
       ),
     });
   }, [navigation]);
