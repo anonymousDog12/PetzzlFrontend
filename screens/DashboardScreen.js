@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const DashboardScreen = () => {
-  const user = useSelector(state => state.auth.user);
   const navigation = useNavigation();
 
   React.useLayoutEffect(() => {
@@ -24,13 +23,11 @@ const DashboardScreen = () => {
   return (
     <View style={styles.container}>
       {/* Profile picture placeholder */}
+      {/* TODO: make profile photo editable and fetch the existing photo*/}
       <Image
         source={{ uri: 'https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg?crop=0.752xw:1.00xh;0.175xw,0&resize=1200:*' }} // Use an object with a uri property for remote images
         style={styles.profilePic}
       />
-      {/* Greeting text */}
-      <Text style={styles.greeting}>Hello {user ? user.first_name : "World"}!</Text>
-      <Text>This is the Dashboard screen</Text>
     </View>
   );
 };
@@ -47,9 +44,6 @@ const styles = StyleSheet.create({
     position: 'absolute', // Position it absolutely
     top: 10, // Distance from the top
     left: 10, // Distance from the left
-  },
-  greeting: {
-    marginTop: 100, // Add top margin to account for the absolute positioned profile picture
   },
 });
 
