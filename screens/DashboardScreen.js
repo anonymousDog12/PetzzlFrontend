@@ -11,7 +11,12 @@ const DashboardScreen = () => {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Icon name="settings-outline" size={30} />
+        <Icon
+          name="settings-outline"
+          size={30}
+          onPress={() => console.log('settings clicked')} // Added onPress handler
+          style={{ marginRight: 10 }} // Added some margin to the right
+        />
       ),
     });
   }, [navigation]);
