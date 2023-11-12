@@ -54,7 +54,7 @@ const Step2 = ({ navigation }) => {
           setErrorMessage(null);
         }}
         value={petId}
-        placeholder="Enter your pet's name"
+        placeholder="Enter your identifier"
       />
 
       {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}

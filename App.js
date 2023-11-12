@@ -18,6 +18,7 @@ import Step1 from "./screens/PetProfileCreation/Step1";
 import Step2 from "./screens/PetProfileCreation/Step2";
 import Step3 from "./screens/PetProfileCreation/Step3";
 import Step4 from "./screens/PetProfileCreation/Step4";
+import SettingsScreen from "./screens/SettingsScreen";
 import SplashScreen from "./screens/SplashScreen";
 import SecureStorage from "react-native-secure-storage";
 
@@ -49,7 +50,10 @@ const MainApp = () => {
       <NavigationContainer>
         {isAuthenticated ? (
           hasPets ? (
-            <BottomNavBar initialRouteName={initialRouteName} />
+            <Stack.Navigator>
+              <Stack.Screen name="BottomNavBar" component={BottomNavBar} options={{ headerShown: false }} />
+              <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: "Settings" }} />
+            </Stack.Navigator>
           ) : (
             <Stack.Navigator>
               {/* TODO: Enhance the step titles */}
