@@ -83,22 +83,25 @@ export const load_user = () => async dispatch => {
         payload: res.data,
       });
 
-      // Now check if the user has pets
+      // Check if the user has pets
       const petRes = await axios.get(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${res.data.id}/`);
       const userHasPets = petRes.data && Array.isArray(petRes.data) && petRes.data.length > 0;
       dispatch(setHasPets(userHasPets));
-    }
-    catch (err) {
-      dispatch({
-        type: USER_LOADED_FAIL,
-      });
+    } catch (err) {
+      // If the token is invalid or expired, update the authentication state
+      dispatch({ type: USER_LOADED_FAIL });
+      dispatch({ type: AUTHENTICATED_FAIL });
+      // Consider removing the tokens if you confirm they are invalid
+      SecureStorage.removeItem("access");
+      SecureStorage.removeItem("refresh");
     }
   } else {
-    dispatch({
-      type: USER_LOADED_FAIL,
-    });
+    // If no access token is found
+    dispatch({ type: USER_LOADED_FAIL });
+    dispatch({ type: AUTHENTICATED_FAIL });
   }
 };
+
 
 
 export const reset_password = (email) => async dispatch => {
