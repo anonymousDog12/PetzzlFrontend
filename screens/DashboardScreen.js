@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native'; // Import FlatList for rendering the list
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { CONFIG } from '../config'; // Adjust the path to your CONFIG file
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Modal } from 'react-native'; // Import Modal and TouchableOpacity
 
 const DashboardScreen = () => {
   const user = useSelector(state => state.auth.user);
   const navigation = useNavigation();
   const [petProfiles, setPetProfiles] = useState([]);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   useEffect(() => {
     // Function to fetch pet profiles
@@ -27,8 +28,14 @@ const DashboardScreen = () => {
     }
   }, [user]);
 
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)}>
+          <Text style={styles.dropdownButton}>Menu</Text>
+        </TouchableOpacity>
+      ),
       headerRight: () => (
         <Icon
           name="settings-outline"
@@ -38,10 +45,42 @@ const DashboardScreen = () => {
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation, dropdownVisible]);
 
   return (
     <View style={styles.container}>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={dropdownVisible}
+        onRequestClose={() => {
+          setDropdownVisible(!dropdownVisible);
+        }}
+      >
+        <View style={styles.dropdownContainer}>
+          <TouchableOpacity
+            style={styles.dropdownItem}
+            onPress={() => {
+              // Handle selection...
+              setDropdownVisible(false);
+            }}
+          >
+            <Text>Option 1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.dropdownItem}
+            onPress={() => {
+              // Handle selection...
+              setDropdownVisible(false);
+            }}
+          >
+            <Text>Option 2</Text>
+          </TouchableOpacity>
+          {/* Add more dropdown items as needed */}
+        </View>
+      </Modal>
+
       <FlatList
         data={petProfiles}
         keyExtractor={item => item.pet_id.toString()}
@@ -67,6 +106,30 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     backgroundColor: 'lightgrey',
     borderRadius: 5,
+  },
+  dropdownButton: {
+    marginLeft: 10,
+    fontSize: 18,
+    color: 'blue',
+  },
+  dropdownContainer: {
+    position: 'absolute',
+    top: 50, // Adjust this value as needed
+    left: 10,
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  dropdownItem: {
+    padding: 10,
   },
 });
 
