@@ -19,6 +19,12 @@ const DashboardScreen = () => {
         const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${user.id}/`);
         const data = await response.json();
         setPetProfiles(data);
+        // Set the default selected pet name to the first pet's name, if available
+        if (data.length > 0) {
+          setSelectedPetName(data[0].pet_name);
+        } else {
+          setSelectedPetName('Select Pet'); // Default text when no pets are available
+        }
       } catch (error) {
         console.error('Failed to fetch pet profiles', error);
       }
@@ -28,6 +34,7 @@ const DashboardScreen = () => {
       fetchPetProfiles();
     }
   }, [user]);
+
 
 
   React.useLayoutEffect(() => {
