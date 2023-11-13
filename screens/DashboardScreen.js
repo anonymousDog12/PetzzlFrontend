@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { CONFIG } from '../config'; // Adjust the path to your CONFIG file
+import { CONFIG } from '../config';
+import { Image } from 'react-native';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Modal } from 'react-native'; // Import Modal and TouchableOpacity
 
 const DashboardScreen = () => {
@@ -13,6 +14,11 @@ const DashboardScreen = () => {
   const [selectedPetName, setSelectedPetName] = useState('Switch Profile');
   const [selectedPetId, setSelectedPetId] = useState(null);
   const [currentPetProfile, setCurrentPetProfile] = useState(null);
+
+  const getProfilePicUrl = (profilePicUrl) => {
+    return profilePicUrl || 'https://i.ibb.co/wC3k7tk/pets-3389727-1280.jpg'; // Replace with actual default image URL
+  };
+
 
   const fetchPetProfile = async (petId) => {
     try {
@@ -107,6 +113,10 @@ const DashboardScreen = () => {
           keyExtractor={item => item.pet_id.toString()}
           renderItem={({ item }) => (
             <View style={styles.petProfile}>
+              <Image
+                source={{ uri: getProfilePicUrl(item.profile_pic_thumbnail_small) }}
+                style={styles.profilePic}
+              />
               <Text>Pet Name: {item.pet_name}</Text>
               <Text>Pet Type: {item.pet_type}</Text>
               {/* Add more details as needed */}
@@ -152,6 +162,12 @@ const styles = StyleSheet.create({
   },
   dropdownItem: {
     padding: 10,
+  },
+  profilePic: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginRight: 10,
   },
 });
 
