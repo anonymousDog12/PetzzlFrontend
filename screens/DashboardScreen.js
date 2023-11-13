@@ -59,25 +59,19 @@ const DashboardScreen = () => {
         }}
       >
         <View style={styles.dropdownContainer}>
-          <TouchableOpacity
-            style={styles.dropdownItem}
-            onPress={() => {
-              // Handle selection...
-              setDropdownVisible(false);
-            }}
-          >
-            <Text>Option 1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.dropdownItem}
-            onPress={() => {
-              // Handle selection...
-              setDropdownVisible(false);
-            }}
-          >
-            <Text>Option 2</Text>
-          </TouchableOpacity>
-          {/* Add more dropdown items as needed */}
+          {petProfiles.map((pet, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.dropdownItem}
+              onPress={() => {
+                // Handle selection...
+                setDropdownVisible(false);
+                // You can also perform any action needed when a pet is selected
+              }}
+            >
+              <Text>{pet.pet_name}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </Modal>
 
