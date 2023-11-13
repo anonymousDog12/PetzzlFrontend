@@ -12,8 +12,26 @@ const Step4 = ({ navigation, route }) => {
   const { petProfile } = usePetProfile();
 
   const navigateToDashboard = () => {
+    // First, update the Redux state to indicate that the user has pets and
+    // a new pet profile has been created
     dispatch(setHasPets(true));
-    dispatch(setNewPetProfile(true))
+    dispatch(setNewPetProfile(false));
+
+    // Use a timeout to allow the state update to propagate
+    setTimeout(() => {
+      // Now perform the navigation
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'BottomNavBar',
+            params: {
+              screen: 'Dashboard', // Specify the screen within the BottomNavBar
+            },
+          },
+        ],
+      });
+    }, 0); // Timeout with 0 to push the action to the end of the event queue
   };
 
 
