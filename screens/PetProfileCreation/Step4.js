@@ -1,20 +1,27 @@
 import React from "react";
 import { Button, Text, View } from "react-native";
-import { CommonActions } from '@react-navigation/native';
 import { useDispatch } from "react-redux";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
-import { setHasPets, setNewPetProfile } from "../../redux/actions/petProfile";
+import { setHasPetsAndNavigate } from "../../redux/actions/petProfile";
 
-const Step4 = ({ navigation, route }) => {
+const Step4 = ({ navigation }) => {
   const dispatch = useDispatch();
-
   const { petProfile } = usePetProfile();
 
-  const navigateToDashboard = () => {
-    dispatch(setHasPets(true));
-    dispatch(setNewPetProfile(true))
+  const continueToDashboard = () => {
+    dispatch(setHasPetsAndNavigate(true, navigation))
+      .then(() => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'BottomNavBar', params: { screen: 'Dashboard' } }],
+        });
+      })
+      .catch(error => {
+        console.error('Navigation error:', error);
+      });
   };
+
 
 
   return (
@@ -22,7 +29,7 @@ const Step4 = ({ navigation, route }) => {
       <Text>Welcome, {petProfile[PET_PAGE_CREATION_FIELD_NAMES.PET_NAME]}!</Text>
       <Button
         title="Continue"
-        onPress={navigateToDashboard}
+        onPress={continueToDashboard}
       />
     </View>
   );

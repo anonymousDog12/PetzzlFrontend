@@ -1,4 +1,5 @@
 import { USER_HAS_PETS, SET_NEW_PET_PROFILE } from "../types";
+import { CommonActions } from '@react-navigation/native';
 
 // Existing setHasPets action creator
 export const setHasPets = (hasPets) => {
@@ -14,4 +15,13 @@ export const setNewPetProfile = (isNewPetProfile) => {
     type: SET_NEW_PET_PROFILE,
     payload: isNewPetProfile,
   };
+};
+
+
+
+export const setHasPetsAndNavigate = (hasPets, navigation) => (dispatch) => {
+  dispatch(setHasPets(hasPets));
+  dispatch(setNewPetProfile(false));
+  // If you have asynchronous actions, make sure they are completed before resolving.
+  return Promise.resolve();
 };
