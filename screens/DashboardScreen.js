@@ -10,6 +10,7 @@ const DashboardScreen = () => {
   const navigation = useNavigation();
   const [petProfiles, setPetProfiles] = useState([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [selectedPetName, setSelectedPetName] = useState('Menu');
 
   useEffect(() => {
     // Function to fetch pet profiles
@@ -33,7 +34,7 @@ const DashboardScreen = () => {
     navigation.setOptions({
       headerLeft: () => (
         <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)}>
-          <Text style={styles.dropdownButton}>Menu</Text>
+          <Text style={styles.dropdownButton}>{selectedPetName}</Text>
         </TouchableOpacity>
       ),
       headerRight: () => (
@@ -45,7 +46,7 @@ const DashboardScreen = () => {
         />
       ),
     });
-  }, [navigation, dropdownVisible]);
+  }, [navigation, dropdownVisible, selectedPetName]);
 
   return (
     <View style={styles.container}>
@@ -64,9 +65,8 @@ const DashboardScreen = () => {
               key={index}
               style={styles.dropdownItem}
               onPress={() => {
-                // Handle selection...
+                setSelectedPetName(pet.pet_name); // Update the selected pet's name
                 setDropdownVisible(false);
-                // You can also perform any action needed when a pet is selected
               }}
             >
               <Text>{pet.pet_name}</Text>
