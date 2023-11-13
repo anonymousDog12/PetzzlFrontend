@@ -16,7 +16,7 @@ const DashboardScreen = () => {
   const [currentPetProfile, setCurrentPetProfile] = useState(null);
 
   const getProfilePicUrl = (profilePicUrl) => {
-    return profilePicUrl || 'https://i.ibb.co/wC3k7tk/pets-3389727-1280.jpg'; // Replace with actual default image URL
+    return profilePicUrl || 'https://petzzl.sfo3.cdn.digitaloceanspaces.com/default-profile-pics/dog.png'; // Replace with actual default image URL
   };
 
 
