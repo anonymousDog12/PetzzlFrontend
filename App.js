@@ -1,11 +1,9 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { enableScreens } from "react-native-screens";
 import { Provider, useDispatch, useSelector } from "react-redux";
-import { CONFIG } from "./config";
 import { PetProfileProvider } from "./contexts/PetProfileContext";
 import BottomNavBar from "./navigation/BottomNavBar";
 import { loadTokens } from "./redux/actions/auth";
@@ -20,7 +18,6 @@ import Step3 from "./screens/PetProfileCreation/Step3";
 import Step4 from "./screens/PetProfileCreation/Step4";
 import SettingsScreen from "./screens/SettingsScreen";
 import SplashScreen from "./screens/SplashScreen";
-import SecureStorage from "react-native-secure-storage";
 
 
 enableScreens();
@@ -30,20 +27,10 @@ const MainApp = () => {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
   const hasPets = useSelector(state => state.petProfile.hasPets);
-  const isNewPetProfile = useSelector(state => state.petProfile.isNewPetProfile); // Use the new flag
 
   useEffect(() => {
     dispatch(loadTokens()); // Now this dispatch is correctly used within a component wrapped by Provider
   }, [dispatch]);
-
-  let initialRouteName = "SignUp";
-  if (isAuthenticated) {
-    if (hasPets && !isNewPetProfile) {
-      initialRouteName = "Feed";
-    } else if (!hasPets || isNewPetProfile) {
-      initialRouteName = "PetProfileCreationStep0";
-    }
-  }
 
   return (
     <SafeAreaProvider>
