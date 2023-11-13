@@ -12,6 +12,17 @@ const DashboardScreen = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedPetName, setSelectedPetName] = useState('Switch Profile');
   const [selectedPetId, setSelectedPetId] = useState(null);
+  const [currentPetProfile, setCurrentPetProfile] = useState(null);
+
+  const fetchPetProfile = async (petId) => {
+    try {
+      const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/${petId}/`);
+      const data = await response.json();
+      setCurrentPetProfile(data);
+    } catch (error) {
+      console.error('Failed to fetch individual pet profile', error);
+    }
+  };
 
   useEffect(() => {
     // Function to fetch pet profiles
@@ -76,6 +87,7 @@ const DashboardScreen = () => {
               onPress={() => {
                 setSelectedPetName(pet.pet_name);
                 setSelectedPetId(pet.pet_id);
+                fetchPetProfile(pet.pet_id); // Fetch the individual pet profile
                 console.log(`Selected pet ID: ${pet.pet_id}`);
                 setDropdownVisible(false);
               }}
@@ -86,17 +98,19 @@ const DashboardScreen = () => {
         </View>
       </Modal>
 
-      <FlatList
-        data={petProfiles}
-        keyExtractor={item => item.pet_id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.petProfile}>
-            <Text>Pet Name: {item.pet_name}</Text>
-            <Text>Pet Type: {item.pet_type}</Text>
-            {/* Add more details as needed */}
-          </View>
-        )}
-      />
+      {currentPetProfile && (
+        <FlatList
+          data={[currentPetProfile]} // Display the current pet profile
+          keyExtractor={item => item.pet_id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.petProfile}>
+              <Text>Pet Name: {item.pet_name}</Text>
+              <Text>Pet Type: {item.pet_type}</Text>
+              {/* Add more details as needed */}
+            </View>
+          )}
+        />
+      )}
     </View>
   );
 };
