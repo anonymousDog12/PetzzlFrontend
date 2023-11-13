@@ -10,7 +10,8 @@ const DashboardScreen = () => {
   const navigation = useNavigation();
   const [petProfiles, setPetProfiles] = useState([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [selectedPetName, setSelectedPetName] = useState('Menu');
+  const [selectedPetName, setSelectedPetName] = useState('Switch Profile');
+  const [selectedPetId, setSelectedPetId] = useState(null);
 
   useEffect(() => {
     // Function to fetch pet profiles
@@ -19,11 +20,12 @@ const DashboardScreen = () => {
         const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${user.id}/`);
         const data = await response.json();
         setPetProfiles(data);
-        // Set the default selected pet name to the first pet's name, if available
         if (data.length > 0) {
           setSelectedPetName(data[0].pet_name);
+          setSelectedPetId(data[0].pet_id); // Set the default selected pet's id
         } else {
-          setSelectedPetName('Select Pet'); // Default text when no pets are available
+          setSelectedPetName('Select Pet');
+          setSelectedPetId(null);
         }
       } catch (error) {
         console.error('Failed to fetch pet profiles', error);
@@ -72,7 +74,9 @@ const DashboardScreen = () => {
               key={index}
               style={styles.dropdownItem}
               onPress={() => {
-                setSelectedPetName(pet.pet_name); // Update the selected pet's name
+                setSelectedPetName(pet.pet_name);
+                setSelectedPetId(pet.pet_id);
+                console.log(`Selected pet ID: ${pet.pet_id}`);
                 setDropdownVisible(false);
               }}
             >
