@@ -4,7 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { CONFIG } from '../config';
 import { Image } from 'react-native';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Modal } from 'react-native'; // Import Modal and TouchableOpacity
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Modal } from 'react-native';
+import { DEFAULT_PROFILE_PICS, PET_TYPES } from "../data/FieldNames"; // Import Modal and TouchableOpacity
 
 const DashboardScreen = () => {
   const user = useSelector(state => state.auth.user);
@@ -15,9 +16,11 @@ const DashboardScreen = () => {
   const [selectedPetId, setSelectedPetId] = useState(null);
   const [currentPetProfile, setCurrentPetProfile] = useState(null);
 
-  const getProfilePicUrl = (profilePicUrl) => {
-    return profilePicUrl || 'https://petzzl.sfo3.cdn.digitaloceanspaces.com/default-profile-pics/dog.png'; // Replace with actual default image URL
+  const getProfilePicUrl = (profilePicUrl, petType) => {
+    console.log(petType)
+    return profilePicUrl || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS[PET_TYPES.OTHER];
   };
+
 
 
   const fetchPetProfile = async (petId) => {
@@ -114,7 +117,7 @@ const DashboardScreen = () => {
           renderItem={({ item }) => (
             <View style={styles.petProfile}>
               <Image
-                source={{ uri: getProfilePicUrl(item.profile_pic_thumbnail_small) }}
+                source={{ uri: getProfilePicUrl(item.profile_pic_thumbnail_small, item.pet_type) }} // Pass in pet_type to the function
                 style={styles.profilePic}
               />
               <Text>Pet Name: {item.pet_name}</Text>
