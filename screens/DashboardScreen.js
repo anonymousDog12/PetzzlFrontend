@@ -25,18 +25,20 @@ const DashboardScreen = () => {
   };
 
   useEffect(() => {
-    // Function to fetch pet profiles
     const fetchPetProfiles = async () => {
       try {
         const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${user.id}/`);
         const data = await response.json();
         setPetProfiles(data);
         if (data.length > 0) {
+          const defaultPetId = data[0].pet_id;
           setSelectedPetName(data[0].pet_name);
-          setSelectedPetId(data[0].pet_id); // Set the default selected pet's id
+          setSelectedPetId(defaultPetId); // Set the default selected pet's id
+          fetchPetProfile(defaultPetId); // Fetch the default pet's profile
         } else {
           setSelectedPetName('Select Pet');
           setSelectedPetId(null);
+          setCurrentPetProfile(null);
         }
       } catch (error) {
         console.error('Failed to fetch pet profiles', error);
@@ -47,6 +49,7 @@ const DashboardScreen = () => {
       fetchPetProfiles();
     }
   }, [user]);
+
 
 
 
