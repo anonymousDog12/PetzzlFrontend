@@ -1,27 +1,55 @@
-import SecureStorage from "@react-native-async-storage/async-storage/src/AsyncStorage";
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { CONFIG } from '../config';
-import { Image } from 'react-native';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Modal } from 'react-native';
-import { DEFAULT_PROFILE_PICS, PET_TYPES } from "../data/FieldNames"; // Import Modal and TouchableOpacity
-import { launchImageLibrary } from 'react-native-image-picker';
+import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { FlatList, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
+import { useSelector } from "react-redux";
+import { CONFIG } from "../config";
 import ImageCropper from "../imageHandling/ImageCropper";
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+
 
 const DashboardScreen = () => {
   const user = useSelector(state => state.auth.user);
   const navigation = useNavigation();
   const [petProfiles, setPetProfiles] = useState([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [selectedPetName, setSelectedPetName] = useState('Switch Profile');
+  const [selectedPetName, setSelectedPetName] = useState("Switch Profile");
   const [selectedPetId, setSelectedPetId] = useState(null);
   const [currentPetProfile, setCurrentPetProfile] = useState(null);
   const [showActionSheet, setShowActionSheet] = useState(false);
 
-  const getProfilePicUrl = (profilePicUrl) => {
-    return profilePicUrl ? { uri: profilePicUrl } : null;
+  const takePhoto = () => {
+    setShowActionSheet(false); // Close the action sheet before opening the camera
+
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
+      includeBase64: false,
+    };
+
+    // Wait for the modal to close before launching the camera
+    requestAnimationFrame(() => {
+      launchCamera(options, response => {
+        if (response.didCancel) {
+          console.log('User cancelled camera');
+        } else if (response.error) {
+          console.log('Camera Error: ', response.error);
+        } else if (!response.assets || response.assets.length === 0) {
+          console.log('No photo returned');
+        } else {
+          const file = response.assets[0];
+          console.log('Captured file: ', file);
+
+          if (file && file.uri) {
+            ImageCropper.openCropper(file.uri, selectedPetId, () => {
+              fetchPetProfile(selectedPetId); // Re-fetch the profile data after successful upload
+            });
+          } else {
+            console.log('Error: Captured file URI is undefined');
+          }
+        }
+      });
+    });
   };
 
 
@@ -31,28 +59,34 @@ const DashboardScreen = () => {
 
 
   const chooseFromLibrary = () => {
+    setShowActionSheet(false); // Close the action sheet before opening the library
+
     const options = {
-      mediaType: 'photo',
+      mediaType: "photo",
       quality: 1,
     };
 
-    launchImageLibrary(options, async response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        const file = response.assets && response.assets[0];
-        console.log('Selected file: ', file);
+    // Wait for the modal to close before launching the image library
+    requestAnimationFrame(() => {
+      launchImageLibrary(options, response => {
+        if (response.didCancel) {
+          console.log("User cancelled image picker");
+        } else if (response.error) {
+          console.log("ImagePicker Error: ", response.error);
+        } else if (response.customButton) {
+          console.log("User tapped custom button: ", response.customButton);
+        } else {
+          const file = response.assets && response.assets[0];
+          console.log("Selected file: ", file);
 
-        ImageCropper.openCropper(file.uri, selectedPetId, () => {
-          fetchPetProfile(selectedPetId); // Re-fetch the profile data after successful upload
-        });
-      }
+          ImageCropper.openCropper(file.uri, selectedPetId, () => {
+            fetchPetProfile(selectedPetId); // Re-fetch the profile data after successful upload
+          });
+        }
+      });
     });
   };
+
 
   const fetchPetProfile = async (petId) => {
     try {
@@ -62,10 +96,10 @@ const DashboardScreen = () => {
       const profilePicUrl = data.profile_pic_thumbnail_small ? `${data.profile_pic_thumbnail_small}?${new Date().getTime()}` : null;
       setCurrentPetProfile({
         ...data,
-        profile_pic_thumbnail_small: profilePicUrl
+        profile_pic_thumbnail_small: profilePicUrl,
       });
     } catch (error) {
-      console.error('Failed to fetch individual pet profile', error);
+      console.error("Failed to fetch individual pet profile", error);
     }
   };
 
@@ -82,12 +116,12 @@ const DashboardScreen = () => {
           setSelectedPetId(defaultPetId);
           fetchPetProfile(defaultPetId);
         } else {
-          setSelectedPetName('Select Pet');
+          setSelectedPetName("Select Pet");
           setSelectedPetId(null);
           setCurrentPetProfile(null);
         }
       } catch (error) {
-        console.error('Failed to fetch pet profiles', error);
+        console.error("Failed to fetch pet profiles", error);
       }
     };
 
@@ -95,8 +129,6 @@ const DashboardScreen = () => {
       fetchPetProfiles();
     }
   }, [user]);
-
-
 
 
   React.useLayoutEffect(() => {
@@ -110,7 +142,7 @@ const DashboardScreen = () => {
         <Icon
           name="settings-outline"
           size={30}
-          onPress={() => navigation.navigate('Settings')}
+          onPress={() => navigation.navigate("Settings")}
           style={{ marginRight: 10 }}
         />
       ),
@@ -184,7 +216,13 @@ const DashboardScreen = () => {
         >
           <View style={styles.actionSheet}>
             {/* Action sheet options here */}
-            <TouchableOpacity style={styles.actionSheetButton}>
+            <TouchableOpacity
+              style={styles.actionSheetButton}
+              onPress={() => {
+                setShowActionSheet(false);
+                takePhoto();
+              }}
+            >
               <Text style={styles.actionSheetText}>Take Photo...</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -218,22 +256,22 @@ const styles = StyleSheet.create({
   petProfile: {
     padding: 10,
     marginVertical: 8,
-    backgroundColor: 'lightgrey',
+    backgroundColor: "lightgrey",
     borderRadius: 5,
   },
   dropdownButton: {
     marginLeft: 10,
     fontSize: 18,
-    color: 'blue',
+    color: "blue",
   },
   dropdownContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 50, // Adjust this value as needed
     left: 10,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -255,28 +293,28 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#A9A9A9', // Dark grey background
-    alignItems: 'center', // Center the icon horizontally
-    justifyContent: 'center', // Center the icon vertically
+    backgroundColor: "#A9A9A9", // Dark grey background
+    alignItems: "center", // Center the icon horizontally
+    justifyContent: "center", // Center the icon vertically
     marginRight: 10,
   },
   actionSheetBackground: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   actionSheet: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 16,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
   actionSheetButton: {
     padding: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
   actionSheetText: {
     fontSize: 18,
-    color: 'blue',
+    color: "blue",
   },
 });
 
