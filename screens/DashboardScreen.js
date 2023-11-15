@@ -1,3 +1,4 @@
+import SecureStorage from "@react-native-async-storage/async-storage/src/AsyncStorage";
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
@@ -6,6 +7,8 @@ import { CONFIG } from '../config';
 import { Image } from 'react-native';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Modal } from 'react-native';
 import { DEFAULT_PROFILE_PICS, PET_TYPES } from "../data/FieldNames"; // Import Modal and TouchableOpacity
+import { launchImageLibrary } from 'react-native-image-picker';
+import ImageCropper from "../imageHandling/ImageCropper";
 
 const DashboardScreen = () => {
   const user = useSelector(state => state.auth.user);
@@ -15,23 +18,57 @@ const DashboardScreen = () => {
   const [selectedPetName, setSelectedPetName] = useState('Switch Profile');
   const [selectedPetId, setSelectedPetId] = useState(null);
   const [currentPetProfile, setCurrentPetProfile] = useState(null);
+  const [showActionSheet, setShowActionSheet] = useState(false);
 
-  const getProfilePicUrl = (profilePicUrl, petType) => {
-    console.log(petType)
-    return profilePicUrl || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS[PET_TYPES.OTHER];
+  const getProfilePicUrl = (profilePicUrl) => {
+    return profilePicUrl ? { uri: profilePicUrl } : null;
   };
 
 
+  const handleProfilePicUpdate = () => {
+    setShowActionSheet(true);
+  };
+
+
+  const chooseFromLibrary = () => {
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
+    };
+
+    launchImageLibrary(options, async response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const file = response.assets && response.assets[0];
+        console.log('Selected file: ', file);
+
+        ImageCropper.openCropper(file.uri, selectedPetId, () => {
+          fetchPetProfile(selectedPetId); // Re-fetch the profile data after successful upload
+        });
+      }
+    });
+  };
 
   const fetchPetProfile = async (petId) => {
     try {
       const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/${petId}/`);
       const data = await response.json();
-      setCurrentPetProfile(data);
+      // Only append the cache busting query if the URL is not null
+      const profilePicUrl = data.profile_pic_thumbnail_small ? `${data.profile_pic_thumbnail_small}?${new Date().getTime()}` : null;
+      setCurrentPetProfile({
+        ...data,
+        profile_pic_thumbnail_small: profilePicUrl
+      });
     } catch (error) {
       console.error('Failed to fetch individual pet profile', error);
     }
   };
+
 
   useEffect(() => {
     const fetchPetProfiles = async () => {
@@ -42,8 +79,8 @@ const DashboardScreen = () => {
         if (data.length > 0) {
           const defaultPetId = data[0].pet_id;
           setSelectedPetName(data[0].pet_name);
-          setSelectedPetId(defaultPetId); // Set the default selected pet's id
-          fetchPetProfile(defaultPetId); // Fetch the default pet's profile
+          setSelectedPetId(defaultPetId);
+          fetchPetProfile(defaultPetId);
         } else {
           setSelectedPetName('Select Pet');
           setSelectedPetId(null);
@@ -112,21 +149,63 @@ const DashboardScreen = () => {
 
       {currentPetProfile && (
         <FlatList
-          data={[currentPetProfile]} // Display the current pet profile
+          data={[currentPetProfile]}
           keyExtractor={item => item.pet_id.toString()}
           renderItem={({ item }) => (
             <View style={styles.petProfile}>
-              <Image
-                source={{ uri: getProfilePicUrl(item.profile_pic_thumbnail_small, item.pet_type) }} // Pass in pet_type to the function
-                style={styles.profilePic}
-              />
+              <TouchableOpacity onPress={handleProfilePicUpdate}>
+                {item.profile_pic_thumbnail_small ? (
+                  <Image
+                    source={{ uri: item.profile_pic_thumbnail_small }}
+                    style={styles.profilePic}
+                  />
+                ) : (
+                  <View style={styles.cameraIconContainer}>
+                    <Icon name="camera" size={50} color="#000" />
+                  </View>
+                )}
+              </TouchableOpacity>
               <Text>Pet Name: {item.pet_name}</Text>
               <Text>Pet Type: {item.pet_type}</Text>
-              {/* Add more details as needed */}
             </View>
           )}
         />
       )}
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showActionSheet}
+        onRequestClose={() => setShowActionSheet(false)}
+      >
+        <TouchableOpacity
+          style={styles.actionSheetBackground}
+          onPress={() => setShowActionSheet(false)}
+        >
+          <View style={styles.actionSheet}>
+            {/* Action sheet options here */}
+            <TouchableOpacity style={styles.actionSheetButton}>
+              <Text style={styles.actionSheetText}>Take Photo...</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionSheetButton}
+              onPress={() => {
+                setShowActionSheet(false);
+                chooseFromLibrary();
+              }}
+            >
+              <Text style={styles.actionSheetText}>Choose from Library...</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionSheetButton}
+              onPress={() => setShowActionSheet(false)}
+            >
+              <Text style={styles.actionSheetText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
     </View>
   );
 };
@@ -171,6 +250,33 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginRight: 10,
+  },
+  cameraIconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#A9A9A9', // Dark grey background
+    alignItems: 'center', // Center the icon horizontally
+    justifyContent: 'center', // Center the icon vertically
+    marginRight: 10,
+  },
+  actionSheetBackground: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  actionSheet: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  actionSheetButton: {
+    padding: 16,
+    alignItems: 'center',
+  },
+  actionSheetText: {
+    fontSize: 18,
+    color: 'blue',
   },
 });
 
