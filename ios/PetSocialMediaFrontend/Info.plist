@@ -62,5 +62,9 @@
 
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>We need permission to save photos to your photo library.</string>
+
+    <key>NSCameraUsageDescription</key>
+    <string>We need access to your camera for you to be able to take profile pictures.</string>
+
 </dict>
 </plist>
