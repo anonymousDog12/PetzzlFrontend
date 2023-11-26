@@ -11,7 +11,7 @@ const AddCaptionScreen = ({ route }) => {
   const { selectedPhotos } = route.params;
   const currentPetId = useSelector(state => state.petProfile.currentPetId);
   const navigation = useNavigation();
-  
+
   const handlePost = () => {
     navigation.navigate('Feed', {
       postDetails: {
