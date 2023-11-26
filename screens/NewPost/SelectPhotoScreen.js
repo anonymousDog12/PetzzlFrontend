@@ -1,16 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
-import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import { CameraRoll } from "@react-native-camera-roll/camera-roll";
+import React, { useEffect, useState } from "react";
+import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const { width, height } = Dimensions.get('window');
+
+const { width, height } = Dimensions.get("window");
 
 const SelectPhotoScreen = ({ navigation }) => {
   const [photos, setPhotos] = useState([]);
@@ -21,11 +14,11 @@ const SelectPhotoScreen = ({ navigation }) => {
       try {
         const result = await CameraRoll.getPhotos({
           first: 20,
-          assetType: 'Photos',
+          assetType: "Photos",
         });
         setPhotos(result.edges);
       } catch (error) {
-        console.error('Error fetching photos', error);
+        console.error("Error fetching photos", error);
       }
     };
 
@@ -73,7 +66,7 @@ const SelectPhotoScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.nextButton}
           onPress={() => {
-            navigation.navigate('AddCaption', { selectedPhotos });
+            navigation.navigate("AddCaption", { selectedPhotos });
           }}>
           <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>
@@ -90,13 +83,12 @@ const SelectPhotoScreen = ({ navigation }) => {
         data={photos}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
-        numColumns={3}
+        numColumns={4}
         style={styles.photoList}
       />
     </View>
   );
 };
-
 
 
 const styles = StyleSheet.create({
@@ -105,10 +97,10 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 50, // Set the height for the header
-    width: '100%',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    flexDirection: 'row',
+    width: "100%",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    flexDirection: "row",
     paddingRight: 10, // Add padding to the right
   },
   nextButton: {
@@ -117,64 +109,64 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     // Style for the text inside your "Next" button
-    color: '#007bff', // iOS blue color
-    fontWeight: 'bold',
+    color: "#007bff", // iOS blue color
+    fontWeight: "bold",
   },
   previewContainer: {
     height: height / 2, // Half the screen height for the preview
-    width: '100%', // Full width
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%", // Full width
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 10, // Add some margin if needed
   },
   previewPhoto: {
     width: width, // Full width
-    height: '100%', // Full height of the preview container
-    resizeMode: 'contain', // Contain the aspect ratio within the preview container
+    height: "100%", // Full height of the preview container
+    resizeMode: "contain", // Contain the aspect ratio within the preview container
   },
   photoList: {
     flex: 1,
   },
   imageContainer: {
-    position: 'relative',
-    width: width / 3,
-    height: width / 3,
+    position: "relative",
+    width: width / 4,
+    height: width / 4,
     borderWidth: 0.5,
-    borderColor: 'gray', // Optional, to distinguish individual photos
+    borderColor: "gray",
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   circle: {
-    position: 'absolute',
+    position: "absolute",
     top: 5,
     right: 5,
     width: 25,
     height: 25,
     borderRadius: 12.5,
     borderWidth: 2,
-    borderColor: '#c4c4c4', // Changed to a neutral color for unselected photos
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent', // Ensure the background is transparent for unselected photos
+    borderColor: "#c4c4c4", // Changed to a neutral color for unselected photos
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "transparent", // Ensure the background is transparent for unselected photos
   },
   circleSelected: {
-    position: 'absolute',
+    position: "absolute",
     top: 5,
     right: 5,
     width: 25,
     height: 25,
     borderRadius: 12.5,
     borderWidth: 2,
-    borderColor: 'blue',
-    backgroundColor: 'blue',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderColor: "blue",
+    backgroundColor: "blue",
+    justifyContent: "center",
+    alignItems: "center",
   },
   circleText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 12,
   },
 });
