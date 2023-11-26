@@ -2,6 +2,7 @@ import axios from "axios";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../config";
 import { setHasPets } from './petProfile';
+import { setCurrentPetId } from './petProfile';
 
 import {
   AUTHENTICATED_FAIL,
@@ -84,20 +85,24 @@ export const load_user = () => async dispatch => {
         payload: res.data,
       });
 
-      // Check if the user has pets
-      const petRes = await axios.get(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${res.data.id}/`);
+      // Check if the user has pets and set the current pet ID
+      const petRes = await axios.get(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${res.data.id}/`, config);
       const userHasPets = petRes.data && Array.isArray(petRes.data) && petRes.data.length > 0;
       dispatch(setHasPets(userHasPets));
+
+      if (userHasPets) {
+        // Set the first pet's ID as the current pet ID
+        dispatch(setCurrentPetId(petRes.data[0].pet_id));
+      }
     } catch (err) {
-      // If the token is invalid or expired, update the authentication state
+      // Handle errors
       dispatch({ type: USER_LOADED_FAIL });
       dispatch({ type: AUTHENTICATED_FAIL });
-      // Consider removing the tokens if you confirm they are invalid
       SecureStorage.removeItem("access");
       SecureStorage.removeItem("refresh");
     }
   } else {
-    // If no access token is found
+    // Handle no access token found
     dispatch({ type: USER_LOADED_FAIL });
     dispatch({ type: AUTHENTICATED_FAIL });
   }

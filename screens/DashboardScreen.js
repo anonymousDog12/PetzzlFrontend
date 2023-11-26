@@ -1,28 +1,48 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { FlatList, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../config";
 import ImageCropper from "../imageHandling/ImageCropper";
-import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+import { setCurrentPetId } from "../redux/actions/petProfile";
+import { fetchPosts, addPost } from "../redux/actions/dashboard";
 
 
 const DashboardScreen = () => {
   const user = useSelector(state => state.auth.user);
+  const currentPetId = useSelector(state => state.petProfile.currentPetId);
   const navigation = useNavigation();
   const [petProfiles, setPetProfiles] = useState([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedPetName, setSelectedPetName] = useState("Switch Profile");
-  const [selectedPetId, setSelectedPetId] = useState(null);
   const [currentPetProfile, setCurrentPetProfile] = useState(null);
   const [showActionSheet, setShowActionSheet] = useState(false);
+
+  const posts = useSelector(state => state.dashboard.posts);
+  const dispatch = useDispatch();
+
+
+  useEffect(() => {
+    if (currentPetId) {
+      dispatch(fetchPosts(currentPetId));
+    }
+  }, [currentPetId, dispatch]);
+
+  // Function to handle pet profile selection
+  const handleSelectPetProfile = (petId, petName) => {
+    dispatch(setCurrentPetId(petId));
+    setSelectedPetName(petName);
+    fetchPetProfile(petId);
+    setDropdownVisible(false);
+  };
 
   const takePhoto = () => {
     setShowActionSheet(false); // Close the action sheet before opening the camera
 
     const options = {
-      mediaType: 'photo',
+      mediaType: "photo",
       quality: 1,
       includeBase64: false,
     };
@@ -31,21 +51,21 @@ const DashboardScreen = () => {
     requestAnimationFrame(() => {
       launchCamera(options, response => {
         if (response.didCancel) {
-          console.log('User cancelled camera');
+          console.log("User cancelled camera");
         } else if (response.error) {
-          console.log('Camera Error: ', response.error);
+          console.log("Camera Error: ", response.error);
         } else if (!response.assets || response.assets.length === 0) {
-          console.log('No photo returned');
+          console.log("No photo returned");
         } else {
           const file = response.assets[0];
-          console.log('Captured file: ', file);
+          console.log("Captured file: ", file);
 
           if (file && file.uri) {
-            ImageCropper.openCropper(file.uri, selectedPetId, () => {
-              fetchPetProfile(selectedPetId); // Re-fetch the profile data after successful upload
+            ImageCropper.openCropper(file.uri, currentPetId, () => {
+              fetchPetProfile(currentPetId); // Re-fetch the profile data after successful upload
             });
           } else {
-            console.log('Error: Captured file URI is undefined');
+            console.log("Error: Captured file URI is undefined");
           }
         }
       });
@@ -59,14 +79,8 @@ const DashboardScreen = () => {
 
 
   const chooseFromLibrary = () => {
-    setShowActionSheet(false); // Close the action sheet before opening the library
-
-    const options = {
-      mediaType: "photo",
-      quality: 1,
-    };
-
-    // Wait for the modal to close before launching the image library
+    setShowActionSheet(false);
+    const options = { mediaType: "photo", quality: 1 };
     requestAnimationFrame(() => {
       launchImageLibrary(options, response => {
         if (response.didCancel) {
@@ -78,57 +92,56 @@ const DashboardScreen = () => {
         } else {
           const file = response.assets && response.assets[0];
           console.log("Selected file: ", file);
-
-          ImageCropper.openCropper(file.uri, selectedPetId, () => {
-            fetchPetProfile(selectedPetId); // Re-fetch the profile data after successful upload
-          });
+          ImageCropper.openCropper(file.uri, currentPetId, () => fetchPetProfile(currentPetId));
         }
       });
     });
   };
 
 
-  const fetchPetProfile = async (petId) => {
+  const fetchPetProfile = async () => {
+    if (!currentPetId) return;
     try {
-      const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/${petId}/`);
+      const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/${currentPetId}/`);
       const data = await response.json();
-      // Only append the cache busting query if the URL is not null
-      const profilePicUrl = data.profile_pic_thumbnail_small ? `${data.profile_pic_thumbnail_small}?${new Date().getTime()}` : null;
+      const cacheBustedImageUrl = data.profile_pic_thumbnail_small
+        ? `${data.profile_pic_thumbnail_small}?cb=${new Date().getTime()}`
+        : null;
       setCurrentPetProfile({
         ...data,
-        profile_pic_thumbnail_small: profilePicUrl,
+        profile_pic_thumbnail_small: cacheBustedImageUrl,
       });
+      setSelectedPetName(data.pet_name);
     } catch (error) {
       console.error("Failed to fetch individual pet profile", error);
     }
   };
 
 
+
+  useEffect(() => {
+    fetchPetProfile();
+  }, [currentPetId]);
+
+
+
   useEffect(() => {
     const fetchPetProfiles = async () => {
-      try {
-        const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${user.id}/`);
-        const data = await response.json();
-        setPetProfiles(data);
-        if (data.length > 0) {
-          const defaultPetId = data[0].pet_id;
-          setSelectedPetName(data[0].pet_name);
-          setSelectedPetId(defaultPetId);
-          fetchPetProfile(defaultPetId);
-        } else {
-          setSelectedPetName("Select Pet");
-          setSelectedPetId(null);
-          setCurrentPetProfile(null);
+      if (user) {
+        try {
+          const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${user.id}/`);
+          const data = await response.json();
+          setPetProfiles(data);
+          if (data.length > 0 && !currentPetId) {
+            dispatch(setCurrentPetId(data[0].pet_id));
+          }
+        } catch (error) {
+          console.error("Failed to fetch pet profiles", error);
         }
-      } catch (error) {
-        console.error("Failed to fetch pet profiles", error);
       }
     };
-
-    if (user) {
-      fetchPetProfiles();
-    }
-  }, [user]);
+    fetchPetProfiles();
+  }, [user, dispatch]);
 
 
   React.useLayoutEffect(() => {
@@ -156,22 +169,14 @@ const DashboardScreen = () => {
         animationType="slide"
         transparent={true}
         visible={dropdownVisible}
-        onRequestClose={() => {
-          setDropdownVisible(!dropdownVisible);
-        }}
+        onRequestClose={() => setDropdownVisible(!dropdownVisible)}
       >
         <View style={styles.dropdownContainer}>
           {petProfiles.map((pet, index) => (
             <TouchableOpacity
               key={index}
               style={styles.dropdownItem}
-              onPress={() => {
-                setSelectedPetName(pet.pet_name);
-                setSelectedPetId(pet.pet_id);
-                fetchPetProfile(pet.pet_id); // Fetch the individual pet profile
-                console.log(`Selected pet ID: ${pet.pet_id}`);
-                setDropdownVisible(false);
-              }}
+              onPress={() => handleSelectPetProfile(pet.pet_id, pet.pet_name)}
             >
               <Text>{pet.pet_name}</Text>
             </TouchableOpacity>
@@ -243,7 +248,20 @@ const DashboardScreen = () => {
           </View>
         </TouchableOpacity>
       </Modal>
-
+      {/* Posts rendering */}
+      <FlatList
+        data={posts}
+        numColumns={3} // Set the number of columns
+        keyExtractor={item => item.post_id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.postItem}>
+            <Image
+              source={{ uri: item.thumbnail_url || item.thumbnail_small_url }}
+              style={styles.postThumbnail}
+            />
+          </View>
+        )}
+      />
     </View>
   );
 };
@@ -315,6 +333,16 @@ const styles = StyleSheet.create({
   actionSheetText: {
     fontSize: 18,
     color: "blue",
+  },
+  postItem: {
+    flex: 1 / 3, // Each item will take up 1/3 of the container's width
+    aspectRatio: 1, // Keep the aspect ratio of each item to 1:1
+    padding: 2, // Adjust padding as necessary
+  },
+  postThumbnail: {
+    width: '100%', // Take up all available width
+    height: '100%', // Take up all available height
+    borderRadius: 5, // Adjust as necessary
   },
 });
 
