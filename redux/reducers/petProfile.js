@@ -1,8 +1,9 @@
-import { USER_HAS_PETS, SET_NEW_PET_PROFILE } from "../types";
+import { USER_HAS_PETS, SET_NEW_PET_PROFILE, CURRENT_PET_ID } from "../types";
 
 const initialState = {
   hasPets: false,
   isNewPetProfile: false,
+  currentPetId: null,
 };
 
 const petProfileReducer = (state = initialState, action) => {
@@ -16,6 +17,11 @@ const petProfileReducer = (state = initialState, action) => {
       return {
         ...state,
         isNewPetProfile: action.payload,
+      };
+    case CURRENT_PET_ID:
+      return {
+        ...state,
+        currentPetId: action.payload,
       };
     default:
       return state;

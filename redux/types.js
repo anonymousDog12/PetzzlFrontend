@@ -23,3 +23,10 @@ export const RESEND_ACTIVATION_LINK_RESET = 'RESEND_ACTIVATION_LINK_RESET';
 
 export const USER_HAS_PETS = 'USER_HAS_PETS';
 export const SET_NEW_PET_PROFILE = 'SET_NEW_PET_PROFILE';
+export const CURRENT_PET_ID = 'CURRENT_PET_ID';
+
+
+export const FETCH_FEED = 'FETCH_FEED';
+export const ADD_POST = 'ADD_POST';
+export const SET_FEED_LOADING = 'SET_FEED_LOADING';
+export const FETCH_POSTS = 'FETCH_POSTS';
