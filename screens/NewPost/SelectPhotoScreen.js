@@ -1,8 +1,9 @@
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import React, { useEffect, useState } from "react";
 import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useDispatch, useSelector } from 'react-redux';
-import { RESET_POST_STATE, UPDATE_SELECTED_PHOTOS } from '../../redux/types';
+import { useDispatch, useSelector } from "react-redux";
+import { RESET_POST_STATE, UPDATE_SELECTED_PHOTOS } from "../../redux/types";
+
 
 const { width, height } = Dimensions.get("window");
 

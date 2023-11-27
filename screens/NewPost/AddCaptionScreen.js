@@ -1,9 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React from "react";
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import SecureStorage from "react-native-secure-storage"; // Import SecureStorage
-import { CONFIG } from "../../config"; // Import your config file
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import { RESET_POST_STATE, UPDATE_CAPTION } from "../../redux/types";
 
 
@@ -17,12 +15,12 @@ const AddCaptionScreen = ({ route }) => {
   const handlePost = () => {
     dispatch({ type: RESET_POST_STATE });
 
-    navigation.navigate('Feed', {
+    navigation.navigate("Feed", {
       postDetails: {
         selectedPhotos,
         caption,
         petId: currentPetId,
-      }
+      },
     });
 
   };
