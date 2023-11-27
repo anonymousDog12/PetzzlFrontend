@@ -1,18 +1,22 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useSelector } from "react-redux";
 import SecureStorage from "react-native-secure-storage"; // Import SecureStorage
 import { CONFIG } from "../../config"; // Import your config file
+import { useDispatch, useSelector } from 'react-redux';
+import { RESET_POST_STATE, UPDATE_CAPTION } from "../../redux/types";
 
 
 const AddCaptionScreen = ({ route }) => {
-  const [caption, setCaption] = useState("");
   const { selectedPhotos } = route.params;
   const currentPetId = useSelector(state => state.petProfile.currentPetId);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const caption = useSelector(state => state.feed.caption);
 
   const handlePost = () => {
+    dispatch({ type: RESET_POST_STATE });
+
     navigation.navigate('Feed', {
       postDetails: {
         selectedPhotos,
@@ -20,6 +24,11 @@ const AddCaptionScreen = ({ route }) => {
         petId: currentPetId,
       }
     });
+
+  };
+
+  const handleCaptionChange = (text) => {
+    dispatch({ type: UPDATE_CAPTION, payload: text }); // Dispatch action to update caption
   };
 
   return (
@@ -32,13 +41,13 @@ const AddCaptionScreen = ({ route }) => {
       </View>
       <TextInput
         style={styles.input}
-        onChangeText={setCaption}
+        onChangeText={handleCaptionChange}
         value={caption}
         placeholder="Add a description..."
         placeholderTextColor="#888"
       />
       <View style={styles.photosContainer}>
-        {selectedPhotos.map((photo, index) => (
+        {route.params.selectedPhotos.map((photo, index) => (
           <Image key={index} source={{ uri: photo.uri }} style={styles.image} />
         ))}
       </View>
