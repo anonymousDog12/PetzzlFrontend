@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import FeedScreen from "../screens/FeedScreen";
 import DashboardScreen from "../screens/DashboardScreen";
-import NewPostNavigator from './NewPostNavigator'; // Imported NewPostNavigator
-import { useNavigation, CommonActions } from '@react-navigation/native';
+import FeedScreen from "../screens/FeedScreen";
+import NewPostNavigator from "./NewPostNavigator"; // Imported NewPostNavigator
 
 const Tab = createBottomTabNavigator();
 
@@ -12,8 +12,8 @@ const BottomNavBar = ({ initialRouteName }) => {
   const navigation = useNavigation();
 
   const resetNewPostStack = () => {
-    navigation.navigate('NewPost', {
-      screen: 'SelectPhoto',
+    navigation.navigate("NewPost", {
+      screen: "SelectPhoto",
     });
   };
 
@@ -24,7 +24,7 @@ const BottomNavBar = ({ initialRouteName }) => {
       screenOptions={({ route }) => ({
         tabBarOnPress: (e) => {
           // Intercept tab press for NewPost
-          if (route.name === 'NewPost') {
+          if (route.name === "NewPost") {
             e.preventDefault();
             resetNewPostStack();
           } else {
