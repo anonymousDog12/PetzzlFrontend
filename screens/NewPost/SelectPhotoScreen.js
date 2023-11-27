@@ -10,6 +10,7 @@ const { width, height } = Dimensions.get("window");
 const SelectPhotoScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [photos, setPhotos] = useState([]);
+  const [lastDeselectedPhoto, setLastDeselectedPhoto] = useState(null);
   const selectedPhotos = useSelector(state => state.feed.selectedPhotos);
 
 
@@ -21,6 +22,13 @@ const SelectPhotoScreen = ({ navigation }) => {
           assetType: "Photos",
         });
         setPhotos(result.edges);
+        if (result.edges.length > 0) {
+          // Automatically select the last photo in the album
+          dispatch({
+            type: UPDATE_SELECTED_PHOTOS,
+            payload: [{ uri: result.edges[0].node.image.uri, order: 1 }],
+          });
+        }
       } catch (error) {
         console.error("Error fetching photos", error);
       }
@@ -29,25 +37,40 @@ const SelectPhotoScreen = ({ navigation }) => {
     fetchPhotos();
 
     return () => {
-      // Reset the post state when the component is unmounted
       dispatch({ type: RESET_POST_STATE });
     };
   }, [dispatch]);
+
 
   const toggleSelectPhoto = (uri) => {
     if (selectedPhotos.length >= 9 && !selectedPhotos.some(p => p.uri === uri)) {
       return;
     }
 
+    let newSelectedPhotos;
     const selectedIndex = selectedPhotos.findIndex(p => p.uri === uri);
+
     if (selectedIndex !== -1) {
-      const newSelectedPhotos = selectedPhotos.filter(p => p.uri !== uri);
-      dispatch({ type: UPDATE_SELECTED_PHOTOS, payload: newSelectedPhotos });
+      // Deselecting a photo
+      newSelectedPhotos = selectedPhotos.filter(p => p.uri !== uri);
+      if (newSelectedPhotos.length === 0) {
+        // If all photos are deselected, set the last touched photo as the preview
+        setLastDeselectedPhoto(uri);
+      }
     } else {
-      const newSelectedPhotos = [...selectedPhotos, { uri, order: selectedPhotos.length + 1 }];
-      dispatch({ type: UPDATE_SELECTED_PHOTOS, payload: newSelectedPhotos });
+      // Selecting a new photo
+      if (selectedPhotos.length === 0 && lastDeselectedPhoto === uri) {
+        // If reselecting the last deselected photo, reset the order
+        newSelectedPhotos = [{ uri, order: 1 }];
+      } else {
+        // Otherwise, continue adding to the selection
+        newSelectedPhotos = [...selectedPhotos, { uri, order: selectedPhotos.length + 1 }];
+      }
     }
+
+    dispatch({ type: UPDATE_SELECTED_PHOTOS, payload: newSelectedPhotos });
   };
+
 
   const getSelectionOrder = (uri) => {
     const selectedPhoto = selectedPhotos.find(p => p.uri === uri);
@@ -99,11 +122,18 @@ const SelectPhotoScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.previewContainer}>
-          {selectedPhotos.length > 0 && (
+          {selectedPhotos.length === 0 && lastDeselectedPhoto ? (
             <Image
-              source={{ uri: selectedPhotos[selectedPhotos.length - 1].uri }}
+              source={{ uri: lastDeselectedPhoto }}
               style={styles.previewPhoto}
             />
+          ) : (
+            selectedPhotos.length > 0 && (
+              <Image
+                source={{ uri: selectedPhotos[selectedPhotos.length - 1].uri }}
+                style={styles.previewPhoto}
+              />
+            )
           )}
         </View>
         <FlatList
@@ -122,7 +152,7 @@ const SelectPhotoScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff', // or any background color you prefer
+    backgroundColor: "#fff",
   },
   container: {
     flex: 1,
