@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Dimensions, FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RESET_POST_STATE, UPDATE_SELECTED_PHOTOS } from "../../redux/types";
+import Icon from "react-native-vector-icons/Ionicons";
 
 
 const { width, height } = Dimensions.get("window");
@@ -114,6 +115,11 @@ const SelectPhotoScreen = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => navigation.goBack()}>
+            <Icon name="close" size={30} color="#000" />
+          </TouchableOpacity>
+          <TouchableOpacity
             style={styles.nextButton}
             onPress={() => {
               navigation.navigate("AddCaption", { selectedPhotos });
@@ -165,6 +171,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingRight: 10, // Add padding to the right
   },
+  closeButton: {
+    position: 'absolute',
+    left: 10,
+    top: 10,
+    padding: 10, // Adjust as needed for touchable area
+  },
   nextButton: {
     // Style for your "Next" button
     padding: 10,
@@ -173,6 +185,7 @@ const styles = StyleSheet.create({
     // Style for the text inside your "Next" button
     color: "#007bff", // iOS blue color
     fontWeight: "bold",
+    fontSize: 20,
   },
   previewContainer: {
     height: height / 2, // Half the screen height for the preview

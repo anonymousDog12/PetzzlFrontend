@@ -3,6 +3,8 @@ import React from "react";
 import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RESET_POST_STATE, UPDATE_CAPTION } from "../../redux/types";
+import Icon from "react-native-vector-icons/Ionicons";
+
 
 
 const AddCaptionScreen = ({ route }) => {
@@ -33,6 +35,12 @@ const AddCaptionScreen = ({ route }) => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back" size={30} color="#000" />
+          </TouchableOpacity>
+
           <Text style={styles.headerText}>Add Caption</Text>
           <TouchableOpacity style={styles.postButton} onPress={handlePost}>
             <Text style={styles.postButtonText}>Post</Text>
@@ -84,6 +92,7 @@ const styles = StyleSheet.create({
   postButtonText: {
     color: "#fff",
     fontWeight: "bold",
+    fontSize: 20,
   },
   input: {
     borderColor: "#ddd",
