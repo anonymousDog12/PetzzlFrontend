@@ -35,6 +35,10 @@ const SelectPhotoScreen = ({ navigation }) => {
   }, [dispatch]);
 
   const toggleSelectPhoto = (uri) => {
+    if (selectedPhotos.length >= 9 && !selectedPhotos.some(p => p.uri === uri)) {
+      return;
+    }
+
     const selectedIndex = selectedPhotos.findIndex(p => p.uri === uri);
     if (selectedIndex !== -1) {
       const newSelectedPhotos = selectedPhotos.filter(p => p.uri !== uri);
@@ -52,24 +56,35 @@ const SelectPhotoScreen = ({ navigation }) => {
 
   const renderItem = ({ item }) => {
     const selectionOrder = getSelectionOrder(item.node.image.uri);
+    const isSelectable = selectedPhotos.length < 9 || selectionOrder !== null;
+
     return (
-      <TouchableOpacity onPress={() => toggleSelectPhoto(item.node.image.uri)}>
+      <TouchableOpacity
+        onPress={() => toggleSelectPhoto(item.node.image.uri)}
+        disabled={!isSelectable}
+      >
         <View style={styles.imageContainer}>
-          <Image style={styles.image} source={{ uri: item.node.image.uri }} />
-          <View
-            style={[
-              styles.circle,
-              selectionOrder !== null ? styles.circleSelected : {},
-            ]}
-          >
-            {selectionOrder !== null && (
-              <Text style={styles.circleText}>{selectionOrder}</Text>
-            )}
-          </View>
+          <Image
+            style={[styles.image, !isSelectable && styles.imageNotSelectable]}
+            source={{ uri: item.node.image.uri }}
+          />
+          {isSelectable && (
+            <View
+              style={[
+                styles.circle,
+                selectionOrder !== null ? styles.circleSelected : {},
+              ]}
+            >
+              {selectionOrder !== null && (
+                <Text style={styles.circleText}>{selectionOrder}</Text>
+              )}
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     );
   };
+
 
   return (
     <View style={styles.container}>
@@ -180,6 +195,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 12,
   },
+  imageNotSelectable: {
+    opacity: 0.5, 
+  },
+
 });
 
 export default SelectPhotoScreen;
