@@ -54,6 +54,8 @@ const SelectPhotoScreen = ({ navigation }) => {
     if (selectedIndex !== -1) {
       // Deselecting a photo
       newSelectedPhotos = selectedPhotos.filter(p => p.uri !== uri);
+      // Reassign order numbers
+      newSelectedPhotos = newSelectedPhotos.map((photo, index) => ({ ...photo, order: index + 1 }));
       if (newSelectedPhotos.length === 0) {
         // If all photos are deselected, set the last touched photo as the preview
         setLastDeselectedPhoto(uri);
@@ -71,6 +73,7 @@ const SelectPhotoScreen = ({ navigation }) => {
 
     dispatch({ type: UPDATE_SELECTED_PHOTOS, payload: newSelectedPhotos });
   };
+
 
 
   const getSelectionOrder = (uri) => {
