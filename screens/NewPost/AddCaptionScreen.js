@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RESET_POST_STATE, UPDATE_CAPTION } from "../../redux/types";
 
@@ -30,30 +30,36 @@ const AddCaptionScreen = ({ route }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Add Caption</Text>
-        <TouchableOpacity style={styles.postButton} onPress={handlePost}>
-          <Text style={styles.postButtonText}>Post</Text>
-        </TouchableOpacity>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Add Caption</Text>
+          <TouchableOpacity style={styles.postButton} onPress={handlePost}>
+            <Text style={styles.postButtonText}>Post</Text>
+          </TouchableOpacity>
+        </View>
+        <TextInput
+          style={styles.input}
+          onChangeText={handleCaptionChange}
+          value={caption}
+          placeholder="Add a description..."
+          placeholderTextColor="#888"
+        />
+        <View style={styles.photosContainer}>
+          {route.params.selectedPhotos.map((photo, index) => (
+            <Image key={index} source={{ uri: photo.uri }} style={styles.image} />
+          ))}
+        </View>
       </View>
-      <TextInput
-        style={styles.input}
-        onChangeText={handleCaptionChange}
-        value={caption}
-        placeholder="Add a description..."
-        placeholderTextColor="#888"
-      />
-      <View style={styles.photosContainer}>
-        {route.params.selectedPhotos.map((photo, index) => (
-          <Image key={index} source={{ uri: photo.uri }} style={styles.image} />
-        ))}
-      </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff', // or any background color you prefer
+  },
   container: {
     flex: 1,
     alignItems: "center",
