@@ -1,4 +1,11 @@
-import { FETCH_FEED, ADD_POST, SET_FEED_LOADING } from '../types';
+import {
+  FETCH_FEED,
+  ADD_POST,
+  SET_FEED_LOADING,
+  RESET_POST_STATE,
+  UPDATE_CAPTION,
+  UPDATE_SELECTED_PHOTOS,
+} from "../types";
 import SecureStorage from 'react-native-secure-storage';
 import { CONFIG } from '../../config';
 
@@ -34,4 +41,19 @@ export const fetchFeed = () => async dispatch => {
 export const addPost = post => ({
   type: ADD_POST,
   payload: post,
+});
+
+export const resetPostState = () => ({
+  type: RESET_POST_STATE,
+});
+
+
+export const updateSelectedPhotos = (photos) => ({
+  type: UPDATE_SELECTED_PHOTOS,
+  payload: photos,
+});
+
+export const updateCaption = (caption) => ({
+  type: UPDATE_CAPTION,
+  payload: caption,
 });

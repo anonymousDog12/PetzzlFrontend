@@ -1,13 +1,16 @@
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import React, { useEffect, useState } from "react";
 import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
+import { useDispatch, useSelector } from 'react-redux';
+import { RESET_POST_STATE, UPDATE_SELECTED_PHOTOS } from '../../redux/types';
 
 const { width, height } = Dimensions.get("window");
 
 const SelectPhotoScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [photos, setPhotos] = useState([]);
-  const [selectedPhotos, setSelectedPhotos] = useState([]);
+  const selectedPhotos = useSelector(state => state.feed.selectedPhotos);
+
 
   useEffect(() => {
     const fetchPhotos = async () => {
@@ -23,14 +26,21 @@ const SelectPhotoScreen = ({ navigation }) => {
     };
 
     fetchPhotos();
-  }, []);
+
+    return () => {
+      // Reset the post state when the component is unmounted
+      dispatch({ type: RESET_POST_STATE });
+    };
+  }, [dispatch]);
 
   const toggleSelectPhoto = (uri) => {
     const selectedIndex = selectedPhotos.findIndex(p => p.uri === uri);
     if (selectedIndex !== -1) {
-      setSelectedPhotos(selectedPhotos.filter(p => p.uri !== uri));
+      const newSelectedPhotos = selectedPhotos.filter(p => p.uri !== uri);
+      dispatch({ type: UPDATE_SELECTED_PHOTOS, payload: newSelectedPhotos });
     } else {
-      setSelectedPhotos([...selectedPhotos, { uri, order: selectedPhotos.length + 1 }]);
+      const newSelectedPhotos = [...selectedPhotos, { uri, order: selectedPhotos.length + 1 }];
+      dispatch({ type: UPDATE_SELECTED_PHOTOS, payload: newSelectedPhotos });
     }
   };
 
