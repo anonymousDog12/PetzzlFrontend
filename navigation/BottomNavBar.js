@@ -3,38 +3,34 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import DashboardScreen from "../screens/DashboardScreen";
 import FeedScreen from "../screens/FeedScreen";
-import NewPostNavigator from "./NewPostNavigator"; // Imported NewPostNavigator
 
 const Tab = createBottomTabNavigator();
 
+const EmptyScreen = () => null;
 
 const BottomNavBar = ({ initialRouteName }) => {
   const navigation = useNavigation();
-
-  const resetNewPostStack = () => {
-    navigation.navigate("NewPost", {
-      screen: "SelectPhoto",
-    });
-  };
 
 
   return (
     <Tab.Navigator
       initialRouteName={initialRouteName}
       screenOptions={({ route }) => ({
-        tabBarOnPress: (e) => {
-          // Intercept tab press for NewPost
-          if (route.name === "NewPost") {
-            e.preventDefault();
-            resetNewPostStack();
-          } else {
-            e.defaultHandler();
-          }
-        },
+        // Remove the tabBarOnPress option as it's no longer needed here.
       })}
     >
       <Tab.Screen name="Feed" component={FeedScreen} />
-      <Tab.Screen name="NewPost" component={NewPostNavigator} listeners={{ tabPress: resetNewPostStack }} />
+      <Tab.Screen
+        name="NewPost"
+        component={EmptyScreen}  // This screen is just a trigger for the modal.
+        listeners={{
+          tabPress: (e) => {
+            // Prevent default tab press behavior and navigate to the modal screen.
+            e.preventDefault();
+            navigation.navigate('NewPostModal');
+          },
+        }}
+      />
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
     </Tab.Navigator>
   );

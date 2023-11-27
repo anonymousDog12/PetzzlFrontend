@@ -1,6 +1,6 @@
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import React, { useEffect, useState } from "react";
-import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RESET_POST_STATE, UPDATE_SELECTED_PHOTOS } from "../../redux/types";
 
@@ -87,37 +87,43 @@ const SelectPhotoScreen = ({ navigation }) => {
 
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.nextButton}
-          onPress={() => {
-            navigation.navigate("AddCaption", { selectedPhotos });
-          }}>
-          <Text style={styles.nextButtonText}>Next</Text>
-        </TouchableOpacity>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.nextButton}
+            onPress={() => {
+              navigation.navigate("AddCaption", { selectedPhotos });
+            }}>
+            <Text style={styles.nextButtonText}>Next</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.previewContainer}>
+          {selectedPhotos.length > 0 && (
+            <Image
+              source={{ uri: selectedPhotos[selectedPhotos.length - 1].uri }}
+              style={styles.previewPhoto}
+            />
+          )}
+        </View>
+        <FlatList
+          data={photos}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+          numColumns={4}
+          style={styles.photoList}
+        />
       </View>
-      <View style={styles.previewContainer}>
-        {selectedPhotos.length > 0 && (
-          <Image
-            source={{ uri: selectedPhotos[selectedPhotos.length - 1].uri }}
-            style={styles.previewPhoto}
-          />
-        )}
-      </View>
-      <FlatList
-        data={photos}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        numColumns={4}
-        style={styles.photoList}
-      />
-    </View>
+    </SafeAreaView>
   );
 };
 
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff', // or any background color you prefer
+  },
   container: {
     flex: 1,
   },
@@ -196,9 +202,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   imageNotSelectable: {
-    opacity: 0.5, 
+    opacity: 0.5,
   },
-
 });
 
 export default SelectPhotoScreen;

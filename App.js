@@ -18,6 +18,7 @@ import Step3 from "./screens/PetProfileCreation/Step3";
 import Step4 from "./screens/PetProfileCreation/Step4";
 import SettingsScreen from "./screens/SettingsScreen";
 import SplashScreen from "./screens/SplashScreen";
+import RootNavigator from './navigation/RootNavigator';
 
 
 enableScreens();
@@ -106,7 +107,11 @@ const App = () => {
   return (
     <Provider store={store}>
       <PetProfileProvider>
-        <MainApp />
+        <SafeAreaProvider>
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
+        </SafeAreaProvider>
       </PetProfileProvider>
     </Provider>
   );
