@@ -3,77 +3,16 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { enableScreens } from "react-native-screens";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider } from "react-redux";
 import { PetProfileProvider } from "./contexts/PetProfileContext";
-import BottomNavBar from "./navigation/BottomNavBar";
+import RootNavigator from "./navigation/RootNavigator";
 import { loadTokens } from "./redux/actions/auth";
 import store from "./redux/store";
-import LoginScreen from "./screens/Authentication/LoginScreen";
-import ResetPasswordScreen from "./screens/Authentication/ResetPasswordScreen";
-import SignUpScreen from "./screens/Authentication/SignUpScreen";
-import Step0 from "./screens/PetProfileCreation/Step0";
-import Step1 from "./screens/PetProfileCreation/Step1";
-import Step2 from "./screens/PetProfileCreation/Step2";
-import Step3 from "./screens/PetProfileCreation/Step3";
-import Step4 from "./screens/PetProfileCreation/Step4";
-import SettingsScreen from "./screens/SettingsScreen";
 import SplashScreen from "./screens/SplashScreen";
-import RootNavigator from './navigation/RootNavigator';
 
 
 enableScreens();
 const Stack = createStackNavigator();
-
-const MainApp = () => {
-  const dispatch = useDispatch();
-  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-  const hasPets = useSelector(state => state.petProfile.hasPets);
-
-  useEffect(() => {
-    dispatch(loadTokens()); // Now this dispatch is correctly used within a component wrapped by Provider
-  }, [dispatch]);
-
-  return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        {isAuthenticated ? (
-          hasPets ? (
-            <Stack.Navigator>
-              <Stack.Screen name="BottomNavBar" component={BottomNavBar} options={{ headerShown: false }} />
-              <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: "Settings" }} />
-            </Stack.Navigator>
-          ) : (
-            <Stack.Navigator>
-              {/* TODO: Enhance the step titles */}
-              <Stack.Screen name="PetProfileCreationStep0" component={Step0}
-                            options={{ title: "Pet Profile Creation" }} />
-              <Stack.Screen name="PetProfileCreationStep1" component={Step1} options={{ title: "Step 1: Pet Name" }} />
-              <Stack.Screen name="PetProfileCreationStep2" component={Step2}
-                            options={{ title: "Step 2: Unique Pet Username" }} />
-              <Stack.Screen name="PetProfileCreationStep3" component={Step3} options={{ title: "Step 3: Pet Type" }} />
-              <Stack.Screen
-                name="PetProfileCreationStep4"
-                component={Step4}
-                options={{
-                  title: "Welcome",
-                  headerLeft: null,
-                  gestureEnabled: false,
-                }}
-              />
-
-            </Stack.Navigator>
-          )
-        ) : (
-          <Stack.Navigator initialRouteName="SignUp">
-            <Stack.Screen name="SignUp" component={SignUpScreen} options={{ title: "Sign Up" }} />
-            <Stack.Screen name="Login" component={LoginScreen} options={{ title: "Log In" }} />
-            <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} options={{ title: "Reset Password" }} />
-          </Stack.Navigator>
-        )}
-      </NavigationContainer>
-    </SafeAreaProvider>
-  );
-};
 
 
 const App = () => {
