@@ -9,7 +9,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 const { width, height } = Dimensions.get("window");
 
-const SelectPhotoScreen = ({ navigation }) => {
+const SelectMediaScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [photos, setPhotos] = useState([]);
   const [lastDeselectedPhoto, setLastDeselectedPhoto] = useState(null);
@@ -317,4 +317,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectPhotoScreen;
+export default SelectMediaScreen;
