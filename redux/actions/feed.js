@@ -50,8 +50,18 @@ export const resetPostState = () => ({
 
 export const updateSelectedPhotos = (photos) => ({
   type: UPDATE_SELECTED_PHOTOS,
-  payload: photos,
+  payload: photos.map(photo => {
+    const isVideo = photo.playableDuration > 0;
+    const mimeType = isVideo ? `video/${photo.extension}` : `image/${photo.extension}`;
+    const extension = `.${photo.extension}`;
+    return {
+      uri: photo.uri,
+      mimeType, // e.g., 'video/mp4' for videos, 'image/png' for images
+      extension // e.g., '.mp4' for videos, '.png' for images
+    };
+  }),
 });
+
 
 export const updateCaption = (caption) => ({
   type: UPDATE_CAPTION,

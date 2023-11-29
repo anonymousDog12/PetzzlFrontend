@@ -31,13 +31,20 @@ const FeedScreen = ({ route }) => {
     const formData = new FormData();
     formData.append("pet_id", petId);
     formData.append("caption", caption);
-    selectedPhotos.forEach((photo, index) => {
+    selectedPhotos.forEach((media, index) => {
+      console.log('++++++');
+      console.log(media);
+
+
       formData.append("media_files", {
-        name: `photo_${index}.jpg`,
-        type: 'image/jpeg',
-        uri: photo.uri
+        name: `media_${index}${media.extension}`, // Use the original extension
+        type: media.mimeType, // Use the mimeType from Redux state
+        uri: media.uri
       });
     });
+
+
+
 
     try {
       const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/create_post/`, {
@@ -83,7 +90,7 @@ const FeedScreen = ({ route }) => {
           {post.media?.map((mediaItem, mediaIndex) => (
             <Image
               key={mediaIndex}
-              source={{ uri: mediaItem.full_size_url }}
+              source={{ uri: mediaItem.thumbnail_medium_url }}
               style={styles.image}
             />
           ))}

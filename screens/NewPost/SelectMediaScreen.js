@@ -24,11 +24,22 @@ const SelectMediaScreen = ({ navigation }) => {
           assetType: "All",
         });
         setPhotos(result.edges);
+
         if (result.edges.length > 0) {
-          // Automatically select the last photo in the album
+          // Automatically select the last media in the album and determine its MIME type and extension
+          const lastMedia = result.edges[0].node.image;
+          const isVideo = lastMedia.playableDuration > 0;
+          const mimeType = isVideo ? `video/${lastMedia.extension}` : `image/${lastMedia.extension}`;
+          const extension = `.${lastMedia.extension}`;
+
           dispatch({
             type: UPDATE_SELECTED_PHOTOS,
-            payload: [{ uri: result.edges[0].node.image.uri, order: 1 }],
+            payload: [{
+              uri: lastMedia.uri,
+              mimeType,
+              extension,
+              order: 1
+            }],
           });
         }
       } catch (error) {
@@ -44,6 +55,7 @@ const SelectMediaScreen = ({ navigation }) => {
   }, [dispatch]);
 
 
+
   const toggleSelectPhoto = (uri) => {
     if (selectedPhotos.length >= 9 && !selectedPhotos.some(p => p.uri === uri)) {
       return;
@@ -53,7 +65,7 @@ const SelectMediaScreen = ({ navigation }) => {
     const selectedIndex = selectedPhotos.findIndex(p => p.uri === uri);
 
     if (selectedIndex !== -1) {
-      // Deselecting a photo
+      // Deselecting a photo/video
       newSelectedPhotos = selectedPhotos.filter(p => p.uri !== uri);
       // Reassign order numbers
       newSelectedPhotos = newSelectedPhotos.map((photo, index) => ({ ...photo, order: index + 1 }));
@@ -62,18 +74,27 @@ const SelectMediaScreen = ({ navigation }) => {
         setLastDeselectedPhoto(uri);
       }
     } else {
-      // Selecting a new photo
+      // Selecting a new photo/video
+      const mediaItem = photos.find(p => p.node.image.uri === uri).node.image;
+      console.log('Selected Media:', mediaItem); // Console log to check the media item details
+
+
+      const mimeType = mediaItem.playableDuration > 0 ? `video/${mediaItem.extension}` : `image/${mediaItem.extension}`;
+      const extension = `.${mediaItem.extension}`;
+
       if (selectedPhotos.length === 0 && lastDeselectedPhoto === uri) {
         // If reselecting the last deselected photo, reset the order
-        newSelectedPhotos = [{ uri, order: 1 }];
+        newSelectedPhotos = [{ uri, mimeType, extension, order: 1 }];
       } else {
         // Otherwise, continue adding to the selection
-        newSelectedPhotos = [...selectedPhotos, { uri, order: selectedPhotos.length + 1 }];
+        newSelectedPhotos = [...selectedPhotos, { uri, mimeType, extension, order: selectedPhotos.length + 1 }];
       }
     }
 
     dispatch({ type: UPDATE_SELECTED_PHOTOS, payload: newSelectedPhotos });
   };
+
+
 
 
 
@@ -86,6 +107,8 @@ const SelectMediaScreen = ({ navigation }) => {
     const selectionOrder = getSelectionOrder(item.node.image.uri);
     const isSelectable = selectedPhotos.length < 9 || selectionOrder !== null;
     const media = item.node.image;
+    // console.log('**************')
+    // console.log(media)
     const isVideo = media.playableDuration > 0;
 
     return (
