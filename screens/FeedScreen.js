@@ -90,7 +90,7 @@ const FeedScreen = ({ route }) => {
           {post.media?.map((mediaItem, mediaIndex) => (
             <Image
               key={mediaIndex}
-              source={{ uri: mediaItem.full_size_url }}
+              source={{ uri: mediaItem.thumbnail_medium_url }}
               style={styles.image}
             />
           ))}
