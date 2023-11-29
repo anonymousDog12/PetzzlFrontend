@@ -1,6 +1,7 @@
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import React, { useEffect, useState } from "react";
 import { Dimensions, FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Video from "react-native-video";
 import { useDispatch, useSelector } from "react-redux";
 import { RESET_POST_STATE, UPDATE_SELECTED_PHOTOS } from "../../redux/types";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -20,7 +21,7 @@ const SelectPhotoScreen = ({ navigation }) => {
       try {
         const result = await CameraRoll.getPhotos({
           first: 20,
-          assetType: "Photos",
+          assetType: "All",
         });
         setPhotos(result.edges);
         if (result.edges.length > 0) {
@@ -84,6 +85,8 @@ const SelectPhotoScreen = ({ navigation }) => {
   const renderItem = ({ item }) => {
     const selectionOrder = getSelectionOrder(item.node.image.uri);
     const isSelectable = selectedPhotos.length < 9 || selectionOrder !== null;
+    const media = item.node.image;
+    const isVideo = media.playableDuration > 0;
 
     return (
       <TouchableOpacity
@@ -91,10 +94,21 @@ const SelectPhotoScreen = ({ navigation }) => {
         disabled={!isSelectable}
       >
         <View style={styles.imageContainer}>
-          <Image
-            style={[styles.image, !isSelectable && styles.imageNotSelectable]}
-            source={{ uri: item.node.image.uri }}
-          />
+          {isVideo ? (
+            // Render a video component or a thumbnail with a play icon
+            <View>
+              <Image
+                style={[styles.image, !isSelectable && styles.imageNotSelectable]}
+                source={{ uri: media.uri }} // You may need to use a thumbnail for videos
+              />
+              <Icon name="play-circle" size={30} color="#FFF" style={styles.playIcon} />
+            </View>
+          ) : (
+            <Image
+              style={[styles.image, !isSelectable && styles.imageNotSelectable]}
+              source={{ uri: media.uri }}
+            />
+          )}
           {isSelectable && (
             <View
               style={[
@@ -111,6 +125,40 @@ const SelectPhotoScreen = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+
+  const getMediaType = (uri) => {
+    const media = photos.find(p => p.node.image.uri === uri);
+    return media && media.node.type === 'video' ? 'video' : 'photo';
+  };
+
+  const convertPHtoAssetsUri = (phUri) => {
+    const uriId = phUri.split('/')[2];
+    return `assets-library://asset/asset.mp4?id=${uriId}&ext=mp4`;
+  };
+
+  const renderPreview = (uri) => {
+    const mediaType = getMediaType(uri);
+
+    if (mediaType === 'video') {
+      const assetUri = convertPHtoAssetsUri(uri);
+      return (
+        <Video
+          source={{ uri: assetUri }}
+          style={styles.previewPhotoVideo}
+          controls
+          resizeMode="contain"
+        />
+      );
+    } else {
+      return (
+        <Image
+          source={{ uri: uri }}
+          style={styles.previewPhotoImage}
+        />
+      );
+    }
+  };
+
 
 
   return (
@@ -132,19 +180,20 @@ const SelectPhotoScreen = ({ navigation }) => {
         </View>
         <View style={styles.previewContainer}>
           {selectedPhotos.length === 0 && lastDeselectedPhoto ? (
-            <Image
-              source={{ uri: lastDeselectedPhoto }}
-              style={styles.previewPhoto}
-            />
+            <React.Fragment>
+              {console.log('Media type:', getMediaType(lastDeselectedPhoto))}
+              {renderPreview(lastDeselectedPhoto)}
+            </React.Fragment>
           ) : (
             selectedPhotos.length > 0 && (
-              <Image
-                source={{ uri: selectedPhotos[selectedPhotos.length - 1].uri }}
-                style={styles.previewPhoto}
-              />
+              <React.Fragment>
+                {console.log('Media type:', getMediaType(selectedPhotos[selectedPhotos.length - 1].uri))}
+                {renderPreview(selectedPhotos[selectedPhotos.length - 1].uri)}
+              </React.Fragment>
             )
           )}
         </View>
+
         <FlatList
           data={photos}
           renderItem={renderItem}
@@ -159,6 +208,16 @@ const SelectPhotoScreen = ({ navigation }) => {
 
 
 const styles = StyleSheet.create({
+  previewPhotoImage: {
+    width: width, // Full width
+    height: "100%", // Full height of the preview container
+    resizeMode: "contain", // Contain the aspect ratio within the preview container
+  },
+  previewPhotoVideo: {
+    width: width, // Full width
+    height: "100%", // Full height of the preview container
+    // Add other styles specific to video if needed
+  },
   safeArea: {
     flex: 1,
     backgroundColor: "#fff",
@@ -179,6 +238,12 @@ const styles = StyleSheet.create({
     left: 10,
     top: 10,
     padding: 10, // Adjust as needed for touchable area
+  },
+  playIcon: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -15 }, { translateY: -15 }], // Adjust size of the icon if needed
   },
   nextButton: {
     // Style for your "Next" button
