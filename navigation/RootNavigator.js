@@ -11,7 +11,8 @@ import Step3 from "../screens/PetProfileCreation/Step3";
 import Step4 from "../screens/PetProfileCreation/Step4";
 import SettingsScreen from "../screens/SettingsScreen";
 import BottomNavBar from "./BottomNavBar";
-import NewPostModalNavigator from "./NewPostModalNavigator"; // Import this navigator
+import NewPostModalNavigator from "./NewPostModalNavigator";
+import PostDetailScreen from '../screens/PostDetailScreen';
 
 const RootStack = createStackNavigator();
 
@@ -44,6 +45,7 @@ const RootNavigator = () => {
           <>
             <RootStack.Screen name="Tabs" component={BottomNavBar} />
             <RootStack.Screen name="Settings" component={SettingsScreen} />
+            <RootStack.Screen name="PostDetailScreen" component={PostDetailScreen} />
             {/* Additional screens for authenticated users with pets */}
           </>
         ) : (

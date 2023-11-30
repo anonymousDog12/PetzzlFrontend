@@ -143,6 +143,12 @@ const DashboardScreen = () => {
     fetchPetProfiles();
   }, [user, dispatch]);
 
+  // New function to handle post click
+  const handlePostSelect = (postId) => {
+    navigation.navigate('PostDetailScreen', { postId });
+  };
+
+
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -254,14 +260,18 @@ const DashboardScreen = () => {
         numColumns={3} // Set the number of columns
         keyExtractor={item => item.post_id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.postItem}>
+          <TouchableOpacity
+            style={styles.postItem}
+            onPress={() => handlePostSelect(item.post_id)}
+          >
             <Image
               source={{ uri: item.thumbnail_url || item.thumbnail_small_url }}
               style={styles.postThumbnail}
             />
-          </View>
+          </TouchableOpacity>
         )}
       />
+
     </View>
   );
 };
