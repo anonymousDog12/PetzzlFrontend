@@ -21,7 +21,7 @@ const SelectMediaScreen = ({ navigation }) => {
       try {
         const result = await CameraRoll.getPhotos({
           first: 20,
-          assetType: "All",
+          assetType: "Photos",
         });
         setPhotos(result.edges);
 
