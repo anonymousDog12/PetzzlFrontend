@@ -57,7 +57,8 @@ const SelectMediaScreen = ({ navigation }) => {
 
 
   const toggleSelectPhoto = (uri) => {
-    if (selectedPhotos.length >= 9 && !selectedPhotos.some(p => p.uri === uri)) {
+    if ((selectedPhotos.some(photo => photo.mimeType.startsWith('video')) && !selectedPhotos.some(p => p.uri === uri)) ||
+      (selectedPhotos.length >= 9 && !selectedPhotos.some(p => p.uri === uri))) {
       return;
     }
 
@@ -67,26 +68,24 @@ const SelectMediaScreen = ({ navigation }) => {
     if (selectedIndex !== -1) {
       // Deselecting a photo/video
       newSelectedPhotos = selectedPhotos.filter(p => p.uri !== uri);
-      // Reassign order numbers
       newSelectedPhotos = newSelectedPhotos.map((photo, index) => ({ ...photo, order: index + 1 }));
       if (newSelectedPhotos.length === 0) {
-        // If all photos are deselected, set the last touched photo as the preview
         setLastDeselectedPhoto(uri);
       }
     } else {
       // Selecting a new photo/video
       const mediaItem = photos.find(p => p.node.image.uri === uri).node.image;
-      console.log('Selected Media:', mediaItem); // Console log to check the media item details
-
-
       const mimeType = mediaItem.playableDuration > 0 ? `video/${mediaItem.extension}` : `image/${mediaItem.extension}`;
       const extension = `.${mediaItem.extension}`;
 
+      if (mediaItem.playableDuration > 0 && selectedPhotos.length > 0) {
+        // If selecting a video and there are already selected items, do not proceed.
+        return;
+      }
+
       if (selectedPhotos.length === 0 && lastDeselectedPhoto === uri) {
-        // If reselecting the last deselected photo, reset the order
         newSelectedPhotos = [{ uri, mimeType, extension, order: 1 }];
       } else {
-        // Otherwise, continue adding to the selection
         newSelectedPhotos = [...selectedPhotos, { uri, mimeType, extension, order: selectedPhotos.length + 1 }];
       }
     }
@@ -98,31 +97,32 @@ const SelectMediaScreen = ({ navigation }) => {
 
 
 
+
   const getSelectionOrder = (uri) => {
     const selectedPhoto = selectedPhotos.find(p => p.uri === uri);
     return selectedPhoto ? selectedPhoto.order : null;
   };
 
   const renderItem = ({ item }) => {
-    const selectionOrder = getSelectionOrder(item.node.image.uri);
-    const isSelectable = selectedPhotos.length < 9 || selectionOrder !== null;
     const media = item.node.image;
-    // console.log('**************')
-    // console.log(media)
     const isVideo = media.playableDuration > 0;
+    const selectionOrder = getSelectionOrder(media.uri);
+
+    const isSelectable = isVideo ?
+      (selectedPhotos.length === 0 || selectionOrder !== null) :
+      (selectedPhotos.length < 9 && !selectedPhotos.some(photo => photo.mimeType.startsWith('video')) || selectionOrder !== null);
 
     return (
       <TouchableOpacity
-        onPress={() => toggleSelectPhoto(item.node.image.uri)}
+        onPress={() => toggleSelectPhoto(media.uri)}
         disabled={!isSelectable}
       >
         <View style={styles.imageContainer}>
           {isVideo ? (
-            // Render a video component or a thumbnail with a play icon
             <View>
               <Image
                 style={[styles.image, !isSelectable && styles.imageNotSelectable]}
-                source={{ uri: media.uri }} // You may need to use a thumbnail for videos
+                source={{ uri: media.uri }}
               />
               <Icon name="play-circle" size={30} color="#FFF" style={styles.playIcon} />
             </View>
@@ -148,6 +148,7 @@ const SelectMediaScreen = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+
 
   const getMediaType = (uri) => {
     const media = photos.find(p => p.node.image.uri === uri);
