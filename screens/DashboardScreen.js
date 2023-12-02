@@ -144,9 +144,11 @@ const DashboardScreen = () => {
   }, [user, dispatch]);
 
   // New function to handle post click
-  const handlePostSelect = (postId) => {
-    navigation.navigate('PostDetailScreen', { postId });
+  // Inside DashboardScreen, where you handle navigation to PostDetailScreen
+  const handlePostSelect = (postId, petProfile) => {
+    navigation.navigate('PostDetailScreen', { postId, petProfile });
   };
+
 
 
 
@@ -262,7 +264,7 @@ const DashboardScreen = () => {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.postItem}
-            onPress={() => handlePostSelect(item.post_id)}
+            onPress={() => handlePostSelect(item.post_id, currentPetProfile)}
           >
             <Image
               source={{ uri: item.thumbnail_url || item.thumbnail_small_url }}
