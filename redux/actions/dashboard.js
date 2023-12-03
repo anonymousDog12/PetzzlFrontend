@@ -1,5 +1,5 @@
 import { CONFIG } from "../../config";
-import { FETCH_POSTS, ADD_POST } from '../types';
+import { FETCH_POSTS, ADD_POST, DELETE_POST_SUCCESS } from "../types";
 
 // Action to fetch posts
 export const fetchPosts = petId => async dispatch => {
@@ -19,4 +19,10 @@ export const addPost = response => ({
     thumbnail_url: response.thumbnail_small_url,
     // Add other fields if needed
   },
+});
+
+
+export const deletePostSuccess = postId => ({
+  type: DELETE_POST_SUCCESS,
+  payload: postId,
 });

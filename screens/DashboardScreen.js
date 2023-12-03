@@ -146,7 +146,7 @@ const DashboardScreen = () => {
   // New function to handle post click
   // Inside DashboardScreen, where you handle navigation to PostDetailScreen
   const handlePostSelect = (postId, petProfile) => {
-    navigation.navigate('PostDetailScreen', { postId, petProfile });
+    navigation.navigate('PostDetailScreen', { postId: postId, petProfile: petProfile });
   };
 
 
