@@ -1,5 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Dimensions, Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Progress from "react-native-progress";
 import SecureStorage from "react-native-secure-storage";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,6 +25,16 @@ const FeedScreen = ({ route }) => {
   const [likeCounts, setLikeCounts] = useState({});
   const currentPetId = useSelector(state => state.petProfile.currentPetId);
   const [likeStatuses, setLikeStatuses] = useState({});
+
+  const navigation = useNavigation();
+
+  const handlePetProfileClick = (petId) => {
+    if (petId === currentPetId) {
+      navigation.navigate('Dashboard'); // Navigate to current user's Dashboard
+    } else {
+      navigation.navigate('OtherUserDashboard', { otherPetId: petId }); // Navigate to Other Pet's Dashboard
+    }
+  };
 
 
   useEffect(() => {
@@ -247,11 +258,13 @@ const FeedScreen = ({ route }) => {
       {feedData.map((post, index) => (
         <View key={index} style={styles.postContainer}>
           <View style={styles.profileHeader}>
-            <Image
+            <TouchableOpacity onPress={() => handlePetProfileClick(post.pet_id)}>
+              <Image
               source={{ uri: getProfilePic(post.pet_profile_pic, post.pet_type) }}
               style={styles.profilePic}
             />
             <Text>{post.pet_id}</Text>
+            </TouchableOpacity>
           </View>
           {renderMedia(post.media)}
           {renderLikeIcon(post.post_id)}
