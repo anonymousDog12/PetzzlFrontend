@@ -115,6 +115,14 @@ const PostDetailScreen = ({ route }) => {
     return <Text>Loading...</Text>;
   }
 
+  const renderLikeIcon = () => {
+    return (
+      <View style={styles.likeIconContainer}>
+        <Ionicons name="heart-outline" size={24} color="black" />
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.profileHeader}>
@@ -168,6 +176,7 @@ const PostDetailScreen = ({ route }) => {
           )}
         />
       </View>
+      {renderLikeIcon()}
       <Text style={{ textAlign: 'center', padding: 10 }}>{postDetails.caption}</Text>
 
     </SafeAreaView>
@@ -244,6 +253,13 @@ const styles = StyleSheet.create({
   username: {
     fontWeight: 'bold',
     // add more styles if needed
+  },
+  likeIconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginTop: 5,
+    marginLeft: 10, // Adjust as needed
   },
 });
 
