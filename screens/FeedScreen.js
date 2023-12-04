@@ -7,6 +7,8 @@ import { CONFIG } from "../config";
 import { addPost, fetchFeed } from "../redux/actions/feed";
 import { DEFAULT_PROFILE_PICS} from "../data/FieldNames";
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 
 
 const { width } = Dimensions.get('window');
@@ -78,6 +80,15 @@ const FeedScreen = ({ route }) => {
     }
   };
 
+  const renderLikeIcon = () => {
+    return (
+      <View style={styles.likeIconContainer}>
+        <Ionicons name="heart-outline" size={24} color="black" />
+      </View>
+    );
+  };
+
+
   // If there are post details, upload the post
   useEffect(() => {
     if (postDetails) {
@@ -86,6 +97,11 @@ const FeedScreen = ({ route }) => {
   }, [postDetails]);
 
   const renderMedia = (mediaItems) => {
+    if (!mediaItems || mediaItems.length === 0) {
+      // Return some fallback UI or null
+      return null;
+    }
+    
     // Use SwiperFlatList for multiple images or a single image with the same style
     return (
       <View style={{ height: imageContainerHeight }}>
@@ -127,6 +143,7 @@ const FeedScreen = ({ route }) => {
             <Text>{post.pet_id}</Text>
           </View>
           {renderMedia(post.media)}
+          {renderLikeIcon()}
           <Text>{post.caption}</Text>
         </View>
       ))}
@@ -170,6 +187,13 @@ const styles = StyleSheet.create({
   imageStyle: {
     width: '100%',
     height: '100%',
+  },
+  likeIconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginTop: 5,
+    marginLeft: 10, // Adjust as needed
   },
 });
 
