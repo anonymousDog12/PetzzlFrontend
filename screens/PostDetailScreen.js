@@ -5,7 +5,7 @@ import {
   Alert, View, Text, Image, Dimensions, StyleSheet, SafeAreaView, TouchableOpacity, Modal, PanResponder, Animated
 } from "react-native";
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../config";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { deletePostSuccess } from "../redux/actions/dashboard";
@@ -18,7 +18,14 @@ const PostDetailScreen = ({ route }) => {
   const [postDetails, setPostDetails] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const [isLiked, setIsLiked] = useState(false);
+  const currentPetId = useSelector(state => state.petProfile.currentPetId);
+
+
+
   const { postId, petProfile } = route.params;
+
+  const [likeCount, setLikeCount] = useState(0);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -100,6 +107,8 @@ const PostDetailScreen = ({ route }) => {
 
   useEffect(() => {
     const fetchPostDetails = async () => {
+      const accessToken = await SecureStorage.getItem("access");
+
       try {
         const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/post_media/${postId}/full/`);
         const data = await response.json();
@@ -107,21 +116,118 @@ const PostDetailScreen = ({ route }) => {
       } catch (error) {
         console.error("Failed to fetch post details", error);
       }
+
+      // Fetch the like count
+      try {
+        const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/likecount/`, {
+          method: 'GET',
+          // Add headers if necessary, such as for authentication
+        });
+        const data = await response.json();
+        setLikeCount(data.like_count);
+      } catch (error) {
+        console.error('Error fetching like count:', error);
+      }
+
+      // Fetch Like Status
+      if (accessToken && currentPetId) {
+        try {
+          const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/likestatus/${currentPetId}/`, {
+            method: 'GET',
+            headers: {
+              "Authorization": `JWT ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setIsLiked(data.liked);
+          } else {
+            console.error(`HTTP error! status: ${response.status}`);
+          }
+        } catch (error) {
+          console.error('Error fetching like status:', error);
+        }
+      }
+
     };
     fetchPostDetails();
   }, [postId]);
+
+
+  const handleLike = async () => {
+    const accessToken = await SecureStorage.getItem("access");
+    if (accessToken && currentPetId) {
+      try {
+        const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/like/${currentPetId}/`, {
+          method: 'POST',
+          headers: {
+            "Authorization": `JWT ${accessToken}`
+          }
+        });
+
+        if (response.ok) {
+          setIsLiked(true);
+          setLikeCount(prevCount => prevCount + 1);
+        } else {
+          console.error('Failed to like the post');
+        }
+      } catch (error) {
+        console.error("Error liking post:", error);
+      }
+    }
+  };
+
+  const handleUnlike = async () => {
+    const accessToken = await SecureStorage.getItem("access");
+    if (accessToken && currentPetId) {
+      try {
+        const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/unlike/${currentPetId}/`, {
+          method: 'POST',
+          headers: {
+            "Authorization": `JWT ${accessToken}`
+          }
+        });
+
+        if (response.ok) {
+          setIsLiked(false);
+          setLikeCount(prevCount => Math.max(prevCount - 1, 0));
+        } else {
+          console.error('Failed to unlike the post');
+        }
+      } catch (error) {
+        console.error("Error unliking post:", error);
+      }
+    }
+  };
+
+
 
   if (!postDetails) {
     return <Text>Loading...</Text>;
   }
 
   const renderLikeIcon = () => {
+    const iconName = isLiked ? 'heart' : 'heart-outline';
+    const iconColor = isLiked ? 'red' : 'black';
+
+    const onPressLikeIcon = () => {
+      if (isLiked) {
+        handleUnlike();
+      } else {
+        handleLike();
+      }
+    };
+
     return (
       <View style={styles.likeIconContainer}>
-        <Ionicons name="heart-outline" size={24} color="black" />
+        <Ionicons name={iconName} size={24} color={iconColor} onPress={onPressLikeIcon} />
+        <Text style={styles.likeCountText}>{likeCount}</Text>
       </View>
     );
   };
+
+
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -261,6 +367,10 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginLeft: 10, // Adjust as needed
   },
+  likeCountText: {
+    marginLeft: 5, // Adjust the space between the icon and the text
+  },
+
 });
 
 export default PostDetailScreen;
