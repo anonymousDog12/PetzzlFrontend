@@ -9,7 +9,9 @@ import { DEFAULT_PROFILE_PICS} from "../data/FieldNames";
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 
 
-const screenWidth = Dimensions.get("window").width;
+const { width } = Dimensions.get('window');
+const imageContainerHeight = 300;
+
 
 const FeedScreen = ({ route }) => {
   const [isUploading, setIsUploading] = useState(false);
@@ -84,37 +86,31 @@ const FeedScreen = ({ route }) => {
   }, [postDetails]);
 
   const renderMedia = (mediaItems) => {
-    if (mediaItems && mediaItems.length > 1) {
-      // Use SwiperFlatList for multiple images
-      return (
+    // Use SwiperFlatList for multiple images or a single image with the same style
+    return (
+      <View style={{ height: imageContainerHeight }}>
         <SwiperFlatList
           index={0}
           showPagination
-          style={styles.swiper}
-          paginationStyle={styles.pagination}
+          paginationStyle={styles.paginationStyle}
           paginationDefaultColor="gray"
           paginationActiveColor="white"
-          paginationStyleItem={styles.paginationItem}
+          paginationStyleItem={styles.paginationStyleItem}
         >
           {mediaItems.map((item, index) => (
-            <View key={index} style={[styles.child]}>
-              <Image source={{ uri: item.full_size_url }} style={styles.image} />
+            // Even if it's one image, it's rendered the same way as multiple
+            <View key={`media-item-${index}`} style={{ width, height: imageContainerHeight }}>
+              <Image source={{ uri: item.full_size_url }}
+                     style={styles.imageStyle}
+                     resizeMode='contain' // This will keep the aspect ratio
+              />
             </View>
           ))}
         </SwiperFlatList>
-      );
-    } else if (mediaItems && mediaItems.length === 1) {
-      // Render single image
-      return (
-        <Image
-          source={{ uri: mediaItems[0].full_size_url }}
-          style={styles.image}
-        />
-      );
-    }
-    // Return null or a placeholder if no media items are available
-    return null;
+      </View>
+    );
   };
+
 
 
   return (
@@ -161,14 +157,19 @@ const styles = StyleSheet.create({
   petIdText: {
     fontSize: 16,
   },
-  child: {
-    width: screenWidth,
-    justifyContent: 'center',
+  paginationStyle: {
+    position: 'absolute',
+    bottom: 15, // Adjust this value to place the dots just above the bottom of the image container
+    alignSelf: 'center',
   },
-  image: {
-    width: screenWidth,
-    height: screenWidth,
-    resizeMode: "cover",
+  paginationStyleItem: {
+    width: 8, // Set the width of the dots
+    height: 8, // Set the height of the dots
+    borderRadius: 4, // Half of either width or height will ensure a circular shape
+  },
+  imageStyle: {
+    width: '100%',
+    height: '100%',
   },
 });
 
