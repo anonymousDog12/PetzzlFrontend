@@ -21,6 +21,10 @@ const FeedScreen = ({ route }) => {
   const feedData = useSelector(state => state.feed.feed);
   const dispatch = useDispatch();
   const { postDetails } = route.params || {};
+  const [likeCounts, setLikeCounts] = useState({});
+  const currentPetId = useSelector(state => state.petProfile.currentPetId);
+  const [likeStatuses, setLikeStatuses] = useState({});
+
 
   useEffect(() => {
     dispatch(fetchFeed());
@@ -34,6 +38,7 @@ const FeedScreen = ({ route }) => {
   const handlePostUpload = async ({ selectedPhotos, caption, petId }) => {
     setIsUploading(true);
 
+    // TODO: move get accessToken up
     const accessToken = await SecureStorage.getItem("access");
     if (!accessToken) {
       console.error("JWT token not found");
@@ -80,13 +85,119 @@ const FeedScreen = ({ route }) => {
     }
   };
 
-  const renderLikeIcon = () => {
+  const fetchLikeCount = async (postId) => {
+    try {
+      const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/likecount/`, {
+        method: 'GET',
+        // Add headers if necessary, such as for authentication
+      });
+      const data = await response.json();
+      setLikeCounts(prevCounts => ({ ...prevCounts, [postId]: data.like_count }));
+    } catch (error) {
+      console.error('Error fetching like count:', error);
+    }
+  };
+
+  const fetchLikeStatus = async (postId, petId) => {
+    const accessToken = await SecureStorage.getItem("access");
+
+    try {
+      const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/likestatus/${petId}/`, {
+        method: 'GET',
+        headers: {
+          "Authorization": `JWT ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      const data = await response.json();
+      setLikeStatuses(prevStatuses => ({ ...prevStatuses, [postId]: data.liked }));
+    } catch (error) {
+      console.error('Error fetching like status:', error);
+    }
+  };
+
+
+  const handleLike = async (postId, petId) => {
+    const accessToken = await SecureStorage.getItem("access");
+    if (accessToken) {
+      try {
+        const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/like/${petId}/`, {
+          method: 'POST',
+          headers: {
+            "Authorization": `JWT ${accessToken}`
+          }
+        });
+
+        if (response.ok) {
+          // Update like status and count
+          setLikeStatuses(prevStatuses => ({ ...prevStatuses, [postId]: true }));
+          setLikeCounts(prevCounts => ({ ...prevCounts, [postId]: (prevCounts[postId] || 0) + 1 }));
+        } else {
+          console.error('Failed to like the post');
+        }
+      } catch (error) {
+        console.error("Error liking post:", error);
+      }
+    }
+  };
+
+  const handleUnlike = async (postId, petId) => {
+    const accessToken = await SecureStorage.getItem("access");
+    if (accessToken) {
+      try {
+        const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/unlike/${petId}/`, {
+          method: 'POST',
+          headers: {
+            "Authorization": `JWT ${accessToken}`
+          }
+        });
+
+        if (response.ok) {
+          // Update like status and count
+          setLikeStatuses(prevStatuses => ({ ...prevStatuses, [postId]: false }));
+          setLikeCounts(prevCounts => ({ ...prevCounts, [postId]: Math.max((prevCounts[postId] || 1) - 1, 0) }));
+        } else {
+          console.error('Failed to unlike the post');
+        }
+      } catch (error) {
+        console.error("Error unliking post:", error);
+      }
+    }
+  };
+
+
+
+  useEffect(() => {
+    if (currentPetId) {
+      feedData.forEach(post => {
+        fetchLikeCount(post.post_id);  // You already have this for fetching like counts
+        fetchLikeStatus(post.post_id, currentPetId);
+      });
+    }
+  }, [feedData, currentPetId]);
+
+
+  const renderLikeIcon = (postId) => {
+    const iconName = likeStatuses[postId] ? 'heart' : 'heart-outline';
+    const iconColor = likeStatuses[postId] ? 'red' : 'black';
+
+    const onPressLikeIcon = () => {
+      if (likeStatuses[postId]) {
+        handleUnlike(postId, currentPetId);
+      } else {
+        handleLike(postId, currentPetId);
+      }
+    };
+
     return (
       <View style={styles.likeIconContainer}>
-        <Ionicons name="heart-outline" size={24} color="black" />
+        <Ionicons name={iconName} size={24} color={iconColor} onPress={onPressLikeIcon} />
+        <Text>{likeCounts[postId] || 0}</Text>
       </View>
     );
   };
+
+
 
 
   // If there are post details, upload the post
@@ -101,7 +212,7 @@ const FeedScreen = ({ route }) => {
       // Return some fallback UI or null
       return null;
     }
-    
+
     // Use SwiperFlatList for multiple images or a single image with the same style
     return (
       <View style={{ height: imageContainerHeight }}>
@@ -143,7 +254,7 @@ const FeedScreen = ({ route }) => {
             <Text>{post.pet_id}</Text>
           </View>
           {renderMedia(post.media)}
-          {renderLikeIcon()}
+          {renderLikeIcon(post.post_id)}
           <Text>{post.caption}</Text>
         </View>
       ))}
