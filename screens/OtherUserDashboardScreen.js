@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from "react
 import Icon from "react-native-vector-icons/Ionicons";
 import { CONFIG } from "../config";
 import { useDispatch } from "react-redux";
-// Import other necessary components and libraries
+import { DEFAULT_PROFILE_PICS } from "../data/FieldNames"; // Import DEFAULT_PROFILE_PICS
 
 const OtherUserDashboardScreen = ({ route }) => {
   const { otherPetId } = route.params;
@@ -26,7 +26,6 @@ const OtherUserDashboardScreen = ({ route }) => {
   const fetchPostsForOtherPet = async () => {
     try {
       const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/pet_posts/${otherPetId}/`);
-
       const data = await response.json();
       console.log(data);
       setPosts(data);
@@ -34,7 +33,6 @@ const OtherUserDashboardScreen = ({ route }) => {
       console.error("Failed to fetch posts for other pet", error);
     }
   };
-
 
   useEffect(() => {
     fetchOtherPetProfile();
@@ -51,12 +49,16 @@ const OtherUserDashboardScreen = ({ route }) => {
     );
   };
 
+  const getProfilePic = (profilePic, petType) => {
+    return profilePic || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS['other'];
+  };
+
   return (
     <View style={styles.container}>
       {otherPetProfile && (
         <View style={styles.petProfile}>
           <Image
-            source={{ uri: otherPetProfile.profile_pic_thumbnail_small }}
+            source={{ uri: getProfilePic(otherPetProfile.profile_pic_thumbnail_small, otherPetProfile.pet_type) }}
             style={styles.profilePic}
           />
           <Text>{otherPetProfile.pet_name}</Text>
