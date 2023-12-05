@@ -211,6 +211,17 @@ const PostDetailScreen = ({ route }) => {
     const iconName = isLiked ? 'heart' : 'heart-outline';
     const iconColor = isLiked ? 'red' : 'black';
 
+    let likeTextComponent;
+    if (likeCount > 0) {
+      likeTextComponent = (
+        <TouchableOpacity onPress={() => navigation.navigate('LikerListScreen', { postId })}>
+          <Text style={[styles.likeCountText, styles.boldText]}>{likeCount === 1 ? '1 like' : `${likeCount} likes`}</Text>
+        </TouchableOpacity>
+      );
+    } else {
+      likeTextComponent = <Text style={styles.likeCountText}>Be the first to like this post</Text>;
+    }
+
     const onPressLikeIcon = () => {
       if (isLiked) {
         handleUnlike();
@@ -222,10 +233,12 @@ const PostDetailScreen = ({ route }) => {
     return (
       <View style={styles.likeIconContainer}>
         <Ionicons name={iconName} size={24} color={iconColor} onPress={onPressLikeIcon} />
-        <Text style={styles.likeCountText}>{likeCount}</Text>
+        {likeTextComponent}
       </View>
     );
   };
+
+
 
 
 
@@ -359,6 +372,9 @@ const styles = StyleSheet.create({
   username: {
     fontWeight: 'bold',
     // add more styles if needed
+  },
+  boldText: {
+    fontWeight: 'bold',
   },
   likeIconContainer: {
     flexDirection: 'row',

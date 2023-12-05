@@ -177,7 +177,6 @@ const FeedScreen = ({ route }) => {
   };
 
 
-
   useEffect(() => {
     if (currentPetId) {
       feedData.forEach(post => {
@@ -188,9 +187,26 @@ const FeedScreen = ({ route }) => {
   }, [feedData, currentPetId]);
 
 
+  const navigateToLikerList = (postId) => {
+    navigation.navigate('LikerListScreen', { postId });
+  };
+
+
   const renderLikeIcon = (postId) => {
     const iconName = likeStatuses[postId] ? 'heart' : 'heart-outline';
     const iconColor = likeStatuses[postId] ? 'red' : 'black';
+    const likeCount = likeCounts[postId] || 0;
+
+    let likeTextComponent;
+    if (likeCount > 0) {
+      likeTextComponent = (
+        <TouchableOpacity onPress={() => navigateToLikerList(postId)}>
+          <Text style={[styles.likeCountText, styles.boldText]}>{likeCount === 1 ? '1 like' : `${likeCount} likes`}</Text>
+        </TouchableOpacity>
+      );
+    } else {
+      likeTextComponent = <Text style={styles.likeCountText}>Be the first to like this post</Text>;
+    }
 
     const onPressLikeIcon = () => {
       if (likeStatuses[postId]) {
@@ -203,10 +219,11 @@ const FeedScreen = ({ route }) => {
     return (
       <View style={styles.likeIconContainer}>
         <Ionicons name={iconName} size={24} color={iconColor} onPress={onPressLikeIcon} />
-        <Text>{likeCounts[postId] || 0}</Text>
+        {likeTextComponent}
       </View>
     );
   };
+
 
 
 
@@ -279,6 +296,9 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     // justifyContent and alignItems removed for better scrolling
+  },
+  boldText: {
+    fontWeight: 'bold',
   },
   postContainer: {
     width: '100%', // Ensure full width

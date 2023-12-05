@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import LoginScreen from "../screens/Authentication/LoginScreen";
 import ResetPasswordScreen from "../screens/Authentication/ResetPasswordScreen";
 import SignUpScreen from "../screens/Authentication/SignUpScreen";
+import LikerListScreen from "../screens/LikerListScreen";
 import OtherUserDashboardScreen from "../screens/OtherUserDashboardScreen";
 import OtherUserPostDetailScreen from "../screens/OtherUserPostDetailScreen";
 import Step0 from "../screens/PetProfileCreation/Step0";
@@ -50,6 +51,7 @@ const RootNavigator = () => {
             <RootStack.Screen name="PostDetailScreen" component={PostDetailScreen} />
             <RootStack.Screen name="OtherUserDashboard" component={OtherUserDashboardScreen} />
             <RootStack.Screen name="OtherUserPostDetailScreen" component={OtherUserPostDetailScreen} />
+            <RootStack.Screen name="LikerListScreen" component={LikerListScreen} />
           </>
         ) : (
           <>
