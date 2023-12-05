@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -9,7 +10,7 @@ const OtherUserDashboardScreen = ({ route }) => {
   const { otherPetId } = route.params;
   const [otherPetProfile, setOtherPetProfile] = useState(null);
   const [posts, setPosts] = useState([]);
-  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   // Function to fetch other pet's profile
   const fetchOtherPetProfile = async () => {
@@ -39,15 +40,25 @@ const OtherUserDashboardScreen = ({ route }) => {
     fetchPostsForOtherPet();
   }, [otherPetId]);
 
+  console.log(otherPetProfile)
   // Function to render each post
   const renderPost = ({ item }) => {
     return (
-      <View style={styles.postContainer}>
+      <TouchableOpacity
+        style={styles.postContainer}
+        onPress={() => navigation.navigate('OtherUserPostDetailScreen', {
+          postId: item.post_id,
+          petId: otherPetProfile.pet_id,
+          petName: otherPetProfile.pet_name,
+          // TODO: refactor the get profile pic into a common variable
+          petProfilePic: getProfilePic(otherPetProfile.profile_pic_thumbnail_small, otherPetProfile.pet_type)
+        })}
+      >
         <Image source={{ uri: item.thumbnail_url }} style={styles.postThumbnail} />
-        {/* Additional post details */}
-      </View>
+      </TouchableOpacity>
     );
   };
+
 
   const getProfilePic = (profilePic, petType) => {
     return profilePic || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS['other'];
