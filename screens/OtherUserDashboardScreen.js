@@ -77,7 +77,8 @@ const OtherUserDashboardScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingTop: 40,
+    paddingHorizontal: 20,
   },
   petProfile: {
     padding: 10,
