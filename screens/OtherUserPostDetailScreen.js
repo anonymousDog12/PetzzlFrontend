@@ -1,5 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Dimensions, Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Dimensions, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import SecureStorage from "react-native-secure-storage";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -16,6 +17,8 @@ const OtherUserPostDetailScreen = ({ route }) => {
   const currentPetId = useSelector(state => state.petProfile.currentPetId);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const navigation = useNavigation();
+
 
   useEffect(() => {
     const fetchPostDetails = async () => {
@@ -107,8 +110,20 @@ const OtherUserPostDetailScreen = ({ route }) => {
   };
 
   const renderLikeIcon = () => {
-    const iconName = isLiked ? "heart" : "heart-outline";
-    const iconColor = isLiked ? "red" : "black";
+    const iconName = isLiked ? 'heart' : 'heart-outline';
+    const iconColor = isLiked ? 'red' : 'black';
+
+    let likeTextComponent;
+    if (likeCount > 0) {
+      likeTextComponent = (
+        <TouchableOpacity onPress={() => navigation.navigate('LikerListScreen', { postId })}>
+          <Text style={[styles.likeCountText, styles.boldText]}>{likeCount === 1 ? '1 like' : `${likeCount} likes`}</Text>
+        </TouchableOpacity>
+      );
+    } else {
+      likeTextComponent = <Text style={styles.likeCountText}>Be the first to like this post</Text>;
+    }
+
     const onPressLikeIcon = () => {
       if (isLiked) {
         handleUnlike();
@@ -116,13 +131,15 @@ const OtherUserPostDetailScreen = ({ route }) => {
         handleLike();
       }
     };
+
     return (
       <View style={styles.likeIconContainer}>
         <Ionicons name={iconName} size={24} color={iconColor} onPress={onPressLikeIcon} />
-        <Text style={styles.likeCountText}>{likeCount}</Text>
+        {likeTextComponent}
       </View>
     );
   };
+
 
   if (!postDetails) {
     return <Text>Loading...</Text>;
@@ -186,6 +203,19 @@ const styles = StyleSheet.create({
   imageStyle: {
     width: "100%",
     height: "100%",
+  },
+  likeIconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginTop: 5,
+    marginLeft: 10, // Adjust as needed
+  },
+  likeCountText: {
+    marginLeft: 5, // Adjust the space between the icon and the text
+  },
+  boldText: {
+    fontWeight: 'bold',
   },
   paginationStyleItem: {
     width: 8,
