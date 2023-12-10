@@ -249,7 +249,10 @@ const PostDetailScreen = ({ route }) => {
           source={{ uri: petProfile.profile_pic_thumbnail_small }}
           style={styles.profilePic}
         />
-        <Text style={styles.username}>{petProfile.pet_name}</Text>
+        <View style={styles.petInfo}>
+          <Text style={styles.username}>{petProfile.pet_name}</Text>
+          <Text style={styles.postDateText}>{postDetails.posted_date}</Text>
+        </View>
         <TouchableOpacity style={styles.menuButton} onPress={toggleModal}>
           <Ionicons name="ellipsis-horizontal" size={20} color="black" />
         </TouchableOpacity>
@@ -368,6 +371,16 @@ const styles = StyleSheet.create({
     height: 50, // adjust the size as needed
     borderRadius: 25, // half the size to make it round
     marginRight: 10,
+  },
+  petInfo: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    flex: 1, // Ensure it takes the remaining space
+  },
+
+  postDateText: {
+    fontSize: 14,
+    color: 'gray',
   },
   username: {
     fontWeight: 'bold',
