@@ -149,8 +149,12 @@ const OtherUserPostDetailScreen = ({ route }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.profileHeader}>
         <Image source={{ uri: petProfilePic }} style={styles.profilePic} />
-        <Text style={styles.username}>{petId}</Text>
+        <View style={styles.petInfo}>
+          <Text style={styles.username}>{petId}</Text>
+          <Text style={styles.postDateText}>{postDetails.posted_date}</Text>
+        </View>
       </View>
+
 
       <View style={{ height: imageContainerHeight }}>
         <SwiperFlatList
@@ -222,6 +226,17 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
   },
+  petInfo: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    flex: 1, // Ensure it takes the remaining space
+  },
+
+  postDateText: {
+    fontSize: 14,
+    color: 'gray',
+  },
+
 });
 
 export default OtherUserPostDetailScreen;

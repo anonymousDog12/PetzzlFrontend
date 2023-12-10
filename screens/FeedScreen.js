@@ -275,12 +275,15 @@ const FeedScreen = ({ route }) => {
       {feedData.map((post, index) => (
         <View key={index} style={styles.postContainer}>
           <View style={styles.profileHeader}>
-            <TouchableOpacity onPress={() => handlePetProfileClick(post.pet_id)}>
+            <TouchableOpacity onPress={() => handlePetProfileClick(post.pet_id)} style={styles.profileInfoContainer}>
               <Image
-              source={{ uri: getProfilePic(post.pet_profile_pic, post.pet_type) }}
-              style={styles.profilePic}
-            />
-            <Text>{post.pet_id}</Text>
+                source={{ uri: getProfilePic(post.pet_profile_pic, post.pet_type) }}
+                style={styles.profilePic}
+              />
+              <View style={styles.petInfo}>
+                <Text style={styles.petIdText}>{post.pet_id}</Text>
+                <Text style={styles.postDateText}>{post.posted_date}</Text>
+              </View>
             </TouchableOpacity>
           </View>
           {renderMedia(post.media)}
@@ -315,9 +318,6 @@ const styles = StyleSheet.create({
     borderRadius: 25, // Half of width/height to make it circular
     marginRight: 10,
   },
-  petIdText: {
-    fontSize: 16,
-  },
   paginationStyle: {
     position: 'absolute',
     bottom: 15, // Adjust this value to place the dots just above the bottom of the image container
@@ -339,6 +339,27 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginLeft: 10, // Adjust as needed
   },
+  profileInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  petInfo: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginLeft: 10, // Adjust spacing between profile picture and text
+  },
+
+  petIdText: {
+    fontSize: 16,
+    fontWeight: 'bold', // Adjust as needed
+  },
+
+  postDateText: {
+    fontSize: 14, // Adjust as needed
+    color: 'gray',
+  },
+
 });
 
 export default FeedScreen;
