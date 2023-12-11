@@ -12,10 +12,11 @@ import Step1 from "../screens/PetProfileCreation/Step1";
 import Step2 from "../screens/PetProfileCreation/Step2";
 import Step3 from "../screens/PetProfileCreation/Step3";
 import Step4 from "../screens/PetProfileCreation/Step4";
+import PostDetailScreen from "../screens/PostDetailScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import BottomNavBar from "./BottomNavBar";
 import NewPostModalNavigator from "./NewPostModalNavigator";
-import PostDetailScreen from '../screens/PostDetailScreen';
+
 
 const RootStack = createStackNavigator();
 
@@ -26,7 +27,6 @@ const RootNavigator = () => {
   return (
     <RootStack.Navigator
       screenOptions={{
-        headerShown: false,
         cardStyleInterpolator: ({ current, layouts }) => {
           return {
             cardStyle: {
@@ -48,10 +48,24 @@ const RootNavigator = () => {
           <>
             <RootStack.Screen name="Tabs" component={BottomNavBar} />
             <RootStack.Screen name="Settings" component={SettingsScreen} />
-            <RootStack.Screen name="PostDetailScreen" component={PostDetailScreen} />
+            <RootStack.Screen
+              name="PostDetailScreen"
+              component={PostDetailScreen}
+              options={{
+                headerShown: true,
+                headerBackTitle: "Back",
+              }}
+            />
             <RootStack.Screen name="OtherUserDashboard" component={OtherUserDashboardScreen} />
             <RootStack.Screen name="OtherUserPostDetailScreen" component={OtherUserPostDetailScreen} />
-            <RootStack.Screen name="LikerListScreen" component={LikerListScreen} />
+            <RootStack.Screen
+              name="LikerListScreen"
+              component={LikerListScreen}
+              options={{
+                headerShown: true,
+                headerBackTitle: "Back",
+              }}
+            />
           </>
         ) : (
           <>

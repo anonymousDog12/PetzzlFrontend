@@ -28,8 +28,7 @@ const BottomNavBar = ({ initialRouteName }) => {
         }}
       />
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      <Tab.Screen name="PostDetailScreen" component={PostDetailScreen} options={{ tabBarButton: () => null }} />
-      <Tab.Screen name="LikerListScreen" component={LikerListScreen} options={{ tabBarButton: () => null }} />
+
     </Tab.Navigator>
   );
 };
