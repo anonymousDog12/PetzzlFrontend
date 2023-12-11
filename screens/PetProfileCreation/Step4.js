@@ -5,23 +5,21 @@ import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
 import { setHasPetsAndNavigate } from "../../redux/actions/petProfile";
 
+
 const Step4 = ({ navigation }) => {
   const dispatch = useDispatch();
   const { petProfile } = usePetProfile();
 
   const continueToDashboard = () => {
-    dispatch(setHasPetsAndNavigate(true, navigation))
+    dispatch(setHasPetsAndNavigate(true, navigation, false))
       .then(() => {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'BottomNavBar', params: { screen: 'Dashboard' } }],
-        });
+        // Attempt direct navigation to the 'Dashboard' screen
+        navigation.navigate("Dashboard");
       })
       .catch(error => {
-        console.error('Navigation error:', error);
+        console.error("Navigation error:", error);
       });
   };
-
 
 
   return (

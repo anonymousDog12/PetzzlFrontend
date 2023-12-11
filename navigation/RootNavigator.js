@@ -23,6 +23,7 @@ const RootStack = createStackNavigator();
 const RootNavigator = () => {
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
   const hasPets = useSelector(state => state.petProfile.hasPets);
+  const isNewPetProfile = useSelector(state => state.petProfile.isNewPetProfile);
 
   return (
     <RootStack.Navigator
@@ -44,7 +45,7 @@ const RootNavigator = () => {
       }}
     >
       {isAuthenticated ? (
-        hasPets ? (
+        hasPets && !isNewPetProfile ? (
           <>
             <RootStack.Screen name="Tabs" component={BottomNavBar} />
             <RootStack.Screen name="Settings" component={SettingsScreen} />
