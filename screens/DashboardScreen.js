@@ -6,12 +6,19 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../config";
 import ImageCropper from "../imageHandling/ImageCropper";
-import { setCurrentPetId } from "../redux/actions/petProfile";
+import { setCurrentPetId, setNewPetProfile } from "../redux/actions/petProfile";
 import { fetchPosts, addPost } from "../redux/actions/dashboard";
+
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered.']);
 
 
 const DashboardScreen = () => {
   const user = useSelector(state => state.auth.user);
+  const hasPets = useSelector(state => state.petProfile.hasPets);
+  const isNewPetProfile = useSelector(state => state.petProfile.isNewPetProfile);
+
   const currentPetId = useSelector(state => state.petProfile.currentPetId);
   const navigation = useNavigation();
   const [petProfiles, setPetProfiles] = useState([]);
@@ -71,6 +78,19 @@ const DashboardScreen = () => {
       });
     });
   };
+
+
+  const handleAddNewPet = () => {
+    console.log("Before dispatching setNewPetProfile: hasPets", hasPets, "isNewPetProfile", isNewPetProfile);
+    dispatch(setNewPetProfile(true));
+    // Add a slight delay to ensure state updates before navigating
+    setTimeout(() => {
+      console.log("Navigating to PetProfileCreationStep0");
+      navigation.navigate("PetProfileCreationStep0");
+    }, 500);
+  };
+
+
 
 
   const handleProfilePicUpdate = () => {
@@ -179,18 +199,32 @@ const DashboardScreen = () => {
         visible={dropdownVisible}
         onRequestClose={() => setDropdownVisible(!dropdownVisible)}
       >
-        <View style={styles.dropdownContainer}>
-          {petProfiles.map((pet, index) => (
+        <TouchableOpacity
+          style={styles.fullScreenButton}
+          activeOpacity={1} // Keeps the touchable area visible
+          onPressOut={() => setDropdownVisible(false)} // Closes the dropdown when the area outside is pressed
+        >
+          <View style={styles.dropdownContainer} onStartShouldSetResponder={() => true}>
+            {petProfiles.map((pet, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.dropdownItem}
+                onPress={() => handleSelectPetProfile(pet.pet_id, pet.pet_name)}
+              >
+                <Text>{pet.pet_name}</Text>
+              </TouchableOpacity>
+            ))}
             <TouchableOpacity
-              key={index}
-              style={styles.dropdownItem}
-              onPress={() => handleSelectPetProfile(pet.pet_id, pet.pet_name)}
+              onPress={handleAddNewPet}
+              style={styles.addNewPetButton}
             >
-              <Text>{pet.pet_name}</Text>
+              <Text style={styles.addNewPetText}>Add a New Pet</Text>
             </TouchableOpacity>
-          ))}
-        </View>
+          </View>
+        </TouchableOpacity>
       </Modal>
+
+
 
       {currentPetProfile && (
         <FlatList
@@ -356,6 +390,21 @@ const styles = StyleSheet.create({
     height: '100%', // Take up all available height
     borderRadius: 5, // Adjust as necessary
   },
+  addNewPetButton: {
+    padding: 10,
+    alignItems: 'center', // Center the text horizontally
+  },
+  addNewPetText: {
+    color: 'blue',
+    fontSize: 16, // Adjust font size as necessary
+  },
+  fullScreenButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent', // Ensures that the area outside the dropdown is transparent
+  }
+
 });
 
 export default DashboardScreen;

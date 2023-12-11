@@ -17,9 +17,9 @@ export const setNewPetProfile = (isNewPetProfile) => {
 };
 
 
-export const setHasPetsAndNavigate = (hasPets, navigation) => (dispatch) => {
+export const setHasPetsAndNavigate = (hasPets, navigation, isNewPetProfile = false) => (dispatch) => {
   dispatch(setHasPets(hasPets));
-  dispatch(setNewPetProfile(false));
+  dispatch(setNewPetProfile(isNewPetProfile));
   // If you have asynchronous actions, make sure they are completed before resolving.
   return Promise.resolve();
 };

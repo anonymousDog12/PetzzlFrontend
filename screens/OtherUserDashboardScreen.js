@@ -28,7 +28,6 @@ const OtherUserDashboardScreen = ({ route }) => {
     try {
       const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/pet_posts/${otherPetId}/`);
       const data = await response.json();
-      console.log(data);
       setPosts(data);
     } catch (error) {
       console.error("Failed to fetch posts for other pet", error);
