@@ -95,11 +95,16 @@ export const load_user = () => async dispatch => {
         dispatch(setCurrentPetId(petRes.data[0].pet_id));
       }
     } catch (err) {
-      // Handle errors
-      dispatch({ type: USER_LOADED_FAIL });
-      dispatch({ type: AUTHENTICATED_FAIL });
-      SecureStorage.removeItem("access");
-      SecureStorage.removeItem("refresh");
+      // Check if the error is due to an expired token
+      if (err.response && err.response.data.code === "token_not_valid") {
+        // Token is invalid or expired
+        dispatch({ type: AUTHENTICATED_FAIL });
+        SecureStorage.removeItem("access");
+        SecureStorage.removeItem("refresh");
+      } else {
+        // Handle other errors
+        dispatch({ type: USER_LOADED_FAIL });
+      }
     }
   } else {
     // Handle no access token found
