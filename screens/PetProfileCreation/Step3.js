@@ -38,8 +38,14 @@ const Step3 = ({ navigation }) => {
 
       // Navigate to Step 4 if POST request is successful
       if (response.ok) {
-        updateProfile(updatedProfile);
-        navigation.navigate("PetProfileCreationStep4");
+        const responseData = await response.json();
+        const newPetId = responseData.pet_id; // Assuming 'pet_id' is the key in the response
+
+        // Update the context with the new pet ID
+        updateProfile({ ...updatedProfile, pet_id: newPetId });
+
+        // Navigate to Step 4
+        navigation.navigate("PetProfileCreationStep4", { newPetId });
       } else {
         // Handle server-side error
         console.log("Server returned an error:", await response.text());
