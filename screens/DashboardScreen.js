@@ -8,6 +8,8 @@ import { CONFIG } from "../config";
 import ImageCropper from "../imageHandling/ImageCropper";
 import { setCurrentPetId, setNewPetProfile } from "../redux/actions/petProfile";
 import { fetchPosts, addPost } from "../redux/actions/dashboard";
+import { useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { LogBox } from 'react-native';
 
@@ -31,6 +33,18 @@ const DashboardScreen = () => {
   const dispatch = useDispatch();
 
 
+  const route = useRoute();
+  const newPetIdFromStep4 = route.params?.newPetId;
+
+  useEffect(() => {
+    if (newPetIdFromStep4 && newPetIdFromStep4 !== currentPetId) {
+      console.log("Received newPetId from Step 4:", newPetIdFromStep4);
+      dispatch(setCurrentPetId(newPetIdFromStep4));
+      fetchPetProfile(newPetIdFromStep4);
+    }
+  }, [newPetIdFromStep4, currentPetId, dispatch]);
+
+
   useEffect(() => {
     if (currentPetId) {
       dispatch(fetchPosts(currentPetId));
@@ -38,12 +52,36 @@ const DashboardScreen = () => {
   }, [currentPetId, dispatch]);
 
   // Function to handle pet profile selection
-  const handleSelectPetProfile = (petId, petName) => {
-    dispatch(setCurrentPetId(petId));
-    setSelectedPetName(petName);
-    fetchPetProfile(petId);
-    setDropdownVisible(false);
+  const handleSelectPetProfile = async (petId, petName) => {
+    try {
+      await AsyncStorage.setItem('selectedPetId', petId);
+      dispatch(setCurrentPetId(petId));
+      setSelectedPetName(petName);
+      fetchPetProfile(petId);
+      setDropdownVisible(false);
+    } catch (error) {
+      console.error("Error storing selected pet ID:", error);
+    }
   };
+
+
+  useEffect(() => {
+    const getStoredPetId = async () => {
+      try {
+        const storedPetId = await AsyncStorage.getItem('selectedPetId');
+        if (storedPetId) {
+          dispatch(setCurrentPetId(storedPetId));
+          fetchPetProfile(storedPetId);
+        }
+      } catch (error) {
+        console.error("Error retrieving stored pet ID:", error);
+      }
+    };
+
+    getStoredPetId();
+  }, [dispatch]);
+
+
 
   const takePhoto = () => {
     setShowActionSheet(false); // Close the action sheet before opening the camera
@@ -119,10 +157,10 @@ const DashboardScreen = () => {
   };
 
 
-  const fetchPetProfile = async () => {
-    if (!currentPetId) return;
+  const fetchPetProfile = async (petId) => {
+    if (!petId) return;
     try {
-      const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/${currentPetId}/`);
+      const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/${petId}/`);
       const data = await response.json();
       const cacheBustedImageUrl = data.profile_pic_thumbnail_small
         ? `${data.profile_pic_thumbnail_small}?cb=${new Date().getTime()}`
@@ -152,8 +190,11 @@ const DashboardScreen = () => {
           const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${user.id}/`);
           const data = await response.json();
           setPetProfiles(data);
-          if (data.length > 0 && !currentPetId) {
-            dispatch(setCurrentPetId(data[0].pet_id));
+          if (data.length > 0) {
+            const storedPetId = await AsyncStorage.getItem('selectedPetId');
+            const initialPetId = storedPetId || data[0].pet_id;
+            dispatch(setCurrentPetId(initialPetId));
+            fetchPetProfile(initialPetId);
           }
         } catch (error) {
           console.error("Failed to fetch pet profiles", error);
