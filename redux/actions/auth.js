@@ -1,8 +1,6 @@
 import axios from "axios";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../config";
-import { setHasPets } from './petProfile';
-import { setCurrentPetId } from './petProfile';
 
 import {
   AUTHENTICATED_FAIL,
@@ -18,6 +16,7 @@ import {
   USER_LOADED_FAIL,
   USER_LOADED_SUCCESS,
 } from "../types";
+import { setCurrentPetId, setHasPets } from "./petProfile";
 
 
 export const loadTokens = () => async dispatch => {
@@ -112,7 +111,6 @@ export const load_user = () => async dispatch => {
     dispatch({ type: AUTHENTICATED_FAIL });
   }
 };
-
 
 
 export const reset_password = (email) => async dispatch => {

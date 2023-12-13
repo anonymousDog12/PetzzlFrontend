@@ -1,9 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CONFIG } from "../config";
-import { useDispatch } from "react-redux";
 import { DEFAULT_PROFILE_PICS } from "../data/FieldNames"; // Import DEFAULT_PROFILE_PICS
 
 const OtherUserDashboardScreen = ({ route }) => {
@@ -39,18 +37,17 @@ const OtherUserDashboardScreen = ({ route }) => {
     fetchPostsForOtherPet();
   }, [otherPetId]);
 
-  console.log(otherPetProfile)
   // Function to render each post
   const renderPost = ({ item }) => {
     return (
       <TouchableOpacity
         style={styles.postContainer}
-        onPress={() => navigation.navigate('OtherUserPostDetailScreen', {
+        onPress={() => navigation.navigate("OtherUserPostDetailScreen", {
           postId: item.post_id,
           petId: otherPetProfile.pet_id,
           petName: otherPetProfile.pet_name,
           // TODO: refactor the get profile pic into a common variable
-          petProfilePic: getProfilePic(otherPetProfile.profile_pic_thumbnail_small, otherPetProfile.pet_type)
+          petProfilePic: getProfilePic(otherPetProfile.profile_pic_thumbnail_small, otherPetProfile.pet_type),
         })}
       >
         <Image source={{ uri: item.thumbnail_url }} style={styles.postThumbnail} />
@@ -60,7 +57,7 @@ const OtherUserDashboardScreen = ({ route }) => {
 
 
   const getProfilePic = (profilePic, petType) => {
-    return profilePic || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS['other'];
+    return profilePic || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS["other"];
   };
 
   return (
@@ -95,7 +92,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     backgroundColor: "lightgrey",
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
   },
   profilePic: {
     width: 100,
@@ -108,8 +105,8 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   postThumbnail: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     borderRadius: 5,
   },
   // Add more styles as needed

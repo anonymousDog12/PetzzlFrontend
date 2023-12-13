@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet, Image } from "react-native";
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from "react-native";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../config";
 
 const LikerListScreen = ({ route }) => {
   const { postId } = route.params;
-  console.log(postId)
+  const navigation = useNavigation();
+  const currentPetId = useSelector(state => state.petProfile.currentPetId);
   const [likers, setLikers] = useState([]);
 
 
@@ -32,15 +35,27 @@ const LikerListScreen = ({ route }) => {
     fetchLikers();
   }, [postId]);
 
-  console.log(likers)
+  const navigateToDashboard = (selectedPetId) => {
+    if (selectedPetId === currentPetId) {
+      navigation.navigate('Dashboard');
+    } else {
+      navigation.navigate('OtherUserDashboard', { otherPetId: selectedPetId });
+    }
+  };
 
 
   const renderLiker = ({ item }) => {
     return (
-      <View style={styles.likerContainer}>
-        <Image source={{ uri: item.pet_profile__profile_pic_thumbnail_small }} style={styles.profilePic} />
+      <TouchableOpacity
+        style={styles.likerContainer}
+        onPress={() => navigateToDashboard(item.pet_profile__pet_id)}
+      >
+        <Image
+          source={{ uri: item.pet_profile__profile_pic_thumbnail_small }}
+          style={styles.profilePic}
+        />
         <Text style={styles.likerName}>{item.pet_profile__pet_id}</Text>
-      </View>
+      </TouchableOpacity>
     );
   };
 

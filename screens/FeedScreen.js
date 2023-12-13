@@ -3,16 +3,15 @@ import React, { useEffect, useState } from "react";
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Progress from "react-native-progress";
 import SecureStorage from "react-native-secure-storage";
+import { SwiperFlatList } from "react-native-swiper-flatlist";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../config";
+import { DEFAULT_PROFILE_PICS } from "../data/FieldNames";
 import { addPost, fetchFeed } from "../redux/actions/feed";
-import { DEFAULT_PROFILE_PICS} from "../data/FieldNames";
-import { SwiperFlatList } from 'react-native-swiper-flatlist';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
-
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const imageContainerHeight = 300;
 
 
@@ -30,9 +29,9 @@ const FeedScreen = ({ route }) => {
 
   const handlePetProfileClick = (petId) => {
     if (petId === currentPetId) {
-      navigation.navigate('Dashboard'); // Navigate to current user's Dashboard
+      navigation.navigate("Dashboard"); // Navigate to current user's Dashboard
     } else {
-      navigation.navigate('OtherUserDashboard', { otherPetId: petId }); // Navigate to Other Pet's Dashboard
+      navigation.navigate("OtherUserDashboard", { otherPetId: petId }); // Navigate to Other Pet's Dashboard
     }
   };
 
@@ -42,7 +41,7 @@ const FeedScreen = ({ route }) => {
   }, [dispatch]);
 
   const getProfilePic = (petProfilePic, petType) => {
-    return petProfilePic || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS['other'];
+    return petProfilePic || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS["other"];
   };
 
 
@@ -99,13 +98,13 @@ const FeedScreen = ({ route }) => {
   const fetchLikeCount = async (postId) => {
     try {
       const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/likecount/`, {
-        method: 'GET',
+        method: "GET",
         // Add headers if necessary, such as for authentication
       });
       const data = await response.json();
       setLikeCounts(prevCounts => ({ ...prevCounts, [postId]: data.like_count }));
     } catch (error) {
-      console.error('Error fetching like count:', error);
+      console.error("Error fetching like count:", error);
     }
   };
 
@@ -114,7 +113,7 @@ const FeedScreen = ({ route }) => {
 
     try {
       const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/likestatus/${petId}/`, {
-        method: 'GET',
+        method: "GET",
         headers: {
           "Authorization": `JWT ${accessToken}`,
           "Content-Type": "multipart/form-data",
@@ -123,7 +122,7 @@ const FeedScreen = ({ route }) => {
       const data = await response.json();
       setLikeStatuses(prevStatuses => ({ ...prevStatuses, [postId]: data.liked }));
     } catch (error) {
-      console.error('Error fetching like status:', error);
+      console.error("Error fetching like status:", error);
     }
   };
 
@@ -133,10 +132,10 @@ const FeedScreen = ({ route }) => {
     if (accessToken) {
       try {
         const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/like/${petId}/`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            "Authorization": `JWT ${accessToken}`
-          }
+            "Authorization": `JWT ${accessToken}`,
+          },
         });
 
         if (response.ok) {
@@ -144,7 +143,7 @@ const FeedScreen = ({ route }) => {
           setLikeStatuses(prevStatuses => ({ ...prevStatuses, [postId]: true }));
           setLikeCounts(prevCounts => ({ ...prevCounts, [postId]: (prevCounts[postId] || 0) + 1 }));
         } else {
-          console.error('Failed to like the post');
+          console.error("Failed to like the post");
         }
       } catch (error) {
         console.error("Error liking post:", error);
@@ -157,10 +156,10 @@ const FeedScreen = ({ route }) => {
     if (accessToken) {
       try {
         const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/unlike/${petId}/`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            "Authorization": `JWT ${accessToken}`
-          }
+            "Authorization": `JWT ${accessToken}`,
+          },
         });
 
         if (response.ok) {
@@ -168,7 +167,7 @@ const FeedScreen = ({ route }) => {
           setLikeStatuses(prevStatuses => ({ ...prevStatuses, [postId]: false }));
           setLikeCounts(prevCounts => ({ ...prevCounts, [postId]: Math.max((prevCounts[postId] || 1) - 1, 0) }));
         } else {
-          console.error('Failed to unlike the post');
+          console.error("Failed to unlike the post");
         }
       } catch (error) {
         console.error("Error unliking post:", error);
@@ -188,20 +187,21 @@ const FeedScreen = ({ route }) => {
 
 
   const navigateToLikerList = (postId) => {
-    navigation.navigate('LikerListScreen', { postId });
+    navigation.navigate("LikerListScreen", { postId });
   };
 
 
   const renderLikeIcon = (postId) => {
-    const iconName = likeStatuses[postId] ? 'heart' : 'heart-outline';
-    const iconColor = likeStatuses[postId] ? 'red' : 'black';
+    const iconName = likeStatuses[postId] ? "heart" : "heart-outline";
+    const iconColor = likeStatuses[postId] ? "red" : "black";
     const likeCount = likeCounts[postId] || 0;
 
     let likeTextComponent;
     if (likeCount > 0) {
       likeTextComponent = (
         <TouchableOpacity onPress={() => navigateToLikerList(postId)}>
-          <Text style={[styles.likeCountText, styles.boldText]}>{likeCount === 1 ? '1 like' : `${likeCount} likes`}</Text>
+          <Text
+            style={[styles.likeCountText, styles.boldText]}>{likeCount === 1 ? "1 like" : `${likeCount} likes`}</Text>
         </TouchableOpacity>
       );
     } else {
@@ -223,9 +223,6 @@ const FeedScreen = ({ route }) => {
       </View>
     );
   };
-
-
-
 
 
   // If there are post details, upload the post
@@ -257,7 +254,7 @@ const FeedScreen = ({ route }) => {
             <View key={`media-item-${index}`} style={{ width, height: imageContainerHeight }}>
               <Image source={{ uri: item.full_size_url }}
                      style={styles.imageStyle}
-                     resizeMode='contain' // This will keep the aspect ratio
+                     resizeMode="contain" // This will keep the aspect ratio
               />
             </View>
           ))}
@@ -265,7 +262,6 @@ const FeedScreen = ({ route }) => {
       </View>
     );
   };
-
 
 
   return (
@@ -301,10 +297,10 @@ const styles = StyleSheet.create({
     // justifyContent and alignItems removed for better scrolling
   },
   boldText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   postContainer: {
-    width: '100%', // Ensure full width
+    width: "100%", // Ensure full width
     marginBottom: 20,
   },
   profileHeader: {
@@ -319,9 +315,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   paginationStyle: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 15, // Adjust this value to place the dots just above the bottom of the image container
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   paginationStyleItem: {
     width: 8, // Set the width of the dots
@@ -329,35 +325,35 @@ const styles = StyleSheet.create({
     borderRadius: 4, // Half of either width or height will ensure a circular shape
   },
   imageStyle: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   likeIconContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
     marginTop: 5,
     marginLeft: 10, // Adjust as needed
   },
   profileInfoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   petInfo: {
-    flexDirection: 'column',
-    justifyContent: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
     marginLeft: 10, // Adjust spacing between profile picture and text
   },
 
   petIdText: {
     fontSize: 16,
-    fontWeight: 'bold', // Adjust as needed
+    fontWeight: "bold", // Adjust as needed
   },
 
   postDateText: {
     fontSize: 14, // Adjust as needed
-    color: 'gray',
+    color: "gray",
   },
 
 });

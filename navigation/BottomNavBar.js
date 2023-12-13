@@ -3,8 +3,6 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import DashboardScreen from "../screens/DashboardScreen";
 import FeedScreen from "../screens/FeedScreen";
-import LikerListScreen from "../screens/LikerListScreen";
-import PostDetailScreen from "../screens/PostDetailScreen";
 
 
 const Tab = createBottomTabNavigator();
