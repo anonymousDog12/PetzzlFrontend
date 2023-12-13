@@ -1,9 +1,10 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import SecureStorage from "react-native-secure-storage";
+import { useSelector } from "react-redux";
 import { CONFIG } from "../config";
+
 
 const LikerListScreen = ({ route }) => {
   const { postId } = route.params;
@@ -25,10 +26,10 @@ const LikerListScreen = ({ route }) => {
         if (response.ok) {
           setLikers(data.likers);
         } else {
-          console.error('Error fetching likers:', data);
+          console.error("Error fetching likers:", data);
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     };
 
@@ -37,9 +38,9 @@ const LikerListScreen = ({ route }) => {
 
   const navigateToDashboard = (selectedPetId) => {
     if (selectedPetId === currentPetId) {
-      navigation.navigate('Dashboard');
+      navigation.navigate("Dashboard");
     } else {
-      navigation.navigate('OtherUserDashboard', { otherPetId: selectedPetId });
+      navigation.navigate("OtherUserDashboard", { otherPetId: selectedPetId });
     }
   };
 
