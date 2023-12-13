@@ -3,38 +3,57 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { enableScreens } from "react-native-screens";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { PetProfileProvider } from "./contexts/PetProfileContext";
 import RootNavigator from "./navigation/RootNavigator";
 import { loadTokens } from "./redux/actions/auth";
+import { setCurrentPetId } from "./redux/actions/petProfile";
 import store from "./redux/store";
 import SplashScreen from "./screens/SplashScreen";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 enableScreens();
 const Stack = createStackNavigator();
 
+const AppInitializer = () => {
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      const storedPetId = await AsyncStorage.getItem('selectedPetId');
+      if (storedPetId) {
+        dispatch(setCurrentPetId(storedPetId));
+      }
+      setIsLoading(false);
+    };
+
+    initializeApp();
+  }, [dispatch]);
+
+  if (isLoading) {
+    return <SplashScreen />;
+  }
+
+  return <RootNavigator />;
+};
 
 const App = () => {
   const [isSplash, setIsSplash] = useState(true);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
 
   useEffect(() => {
-    // Load tokens and check authentication state
     store.dispatch(loadTokens())
       .then(() => {
-        console.log("Authentication check complete"); // Debugging log
-        setIsAuthChecked(true); // Set state to true once auth check is complete
+        setIsAuthChecked(true);
       })
       .catch((error) => {
-        console.error("Error during authentication check:", error); // Error handling
+        console.error("Error during authentication check:", error);
       });
 
-    // Set a timer for the splash screen
     const timer = setTimeout(() => {
-      console.log("Splash screen timer complete"); // Debugging log
       setIsSplash(false);
-    }, 2000); // 2 seconds delay
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -48,7 +67,7 @@ const App = () => {
       <PetProfileProvider>
         <SafeAreaProvider>
           <NavigationContainer>
-            <RootNavigator />
+            <AppInitializer />
           </NavigationContainer>
         </SafeAreaProvider>
       </PetProfileProvider>

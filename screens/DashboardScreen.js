@@ -1,19 +1,17 @@
-import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { FlatList, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, LogBox, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../config";
 import ImageCropper from "../imageHandling/ImageCropper";
+import { fetchPosts } from "../redux/actions/dashboard";
 import { setCurrentPetId, setNewPetProfile } from "../redux/actions/petProfile";
-import { fetchPosts, addPost } from "../redux/actions/dashboard";
-import { useRoute } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { LogBox } from 'react-native';
 
-LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered.']);
+LogBox.ignoreLogs(["Sending `onAnimatedValueUpdate` with no listeners registered."]);
 
 
 const DashboardScreen = () => {
@@ -54,7 +52,7 @@ const DashboardScreen = () => {
   // Function to handle pet profile selection
   const handleSelectPetProfile = async (petId, petName) => {
     try {
-      await AsyncStorage.setItem('selectedPetId', petId);
+      await AsyncStorage.setItem("selectedPetId", petId);
       dispatch(setCurrentPetId(petId));
       setSelectedPetName(petName);
       fetchPetProfile(petId);
@@ -68,7 +66,7 @@ const DashboardScreen = () => {
   useEffect(() => {
     const getStoredPetId = async () => {
       try {
-        const storedPetId = await AsyncStorage.getItem('selectedPetId');
+        const storedPetId = await AsyncStorage.getItem("selectedPetId");
         if (storedPetId) {
           dispatch(setCurrentPetId(storedPetId));
           fetchPetProfile(storedPetId);
@@ -80,7 +78,6 @@ const DashboardScreen = () => {
 
     getStoredPetId();
   }, [dispatch]);
-
 
 
   const takePhoto = () => {
@@ -129,8 +126,6 @@ const DashboardScreen = () => {
   };
 
 
-
-
   const handleProfilePicUpdate = () => {
     setShowActionSheet(true);
   };
@@ -176,11 +171,9 @@ const DashboardScreen = () => {
   };
 
 
-
   useEffect(() => {
     fetchPetProfile();
   }, [currentPetId]);
-
 
 
   useEffect(() => {
@@ -191,7 +184,7 @@ const DashboardScreen = () => {
           const data = await response.json();
           setPetProfiles(data);
           if (data.length > 0) {
-            const storedPetId = await AsyncStorage.getItem('selectedPetId');
+            const storedPetId = await AsyncStorage.getItem("selectedPetId");
             const initialPetId = storedPetId || data[0].pet_id;
             dispatch(setCurrentPetId(initialPetId));
             fetchPetProfile(initialPetId);
@@ -207,10 +200,8 @@ const DashboardScreen = () => {
   // New function to handle post click
   // Inside DashboardScreen, where you handle navigation to PostDetailScreen
   const handlePostSelect = (postId, petProfile) => {
-    navigation.navigate('PostDetailScreen', { postId: postId, petProfile: petProfile });
+    navigation.navigate("PostDetailScreen", { postId: postId, petProfile: petProfile });
   };
-
-
 
 
   React.useLayoutEffect(() => {
@@ -264,7 +255,6 @@ const DashboardScreen = () => {
           </View>
         </TouchableOpacity>
       </Modal>
-
 
 
       {currentPetProfile && (
@@ -427,24 +417,24 @@ const styles = StyleSheet.create({
     padding: 2, // Adjust padding as necessary
   },
   postThumbnail: {
-    width: '100%', // Take up all available width
-    height: '100%', // Take up all available height
+    width: "100%", // Take up all available width
+    height: "100%", // Take up all available height
     borderRadius: 5, // Adjust as necessary
   },
   addNewPetButton: {
     padding: 10,
-    alignItems: 'center', // Center the text horizontally
+    alignItems: "center", // Center the text horizontally
   },
   addNewPetText: {
-    color: 'blue',
+    color: "blue",
     fontSize: 16, // Adjust font size as necessary
   },
   fullScreenButton: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent', // Ensures that the area outside the dropdown is transparent
-  }
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "transparent", // Ensures that the area outside the dropdown is transparent
+  },
 
 });
 
