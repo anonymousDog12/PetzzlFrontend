@@ -36,7 +36,6 @@ const DashboardScreen = () => {
 
   useEffect(() => {
     if (newPetIdFromStep4 && newPetIdFromStep4 !== currentPetId) {
-      console.log("Received newPetId from Step 4:", newPetIdFromStep4);
       dispatch(setCurrentPetId(newPetIdFromStep4));
       fetchPetProfile(newPetIdFromStep4);
     }
@@ -116,11 +115,9 @@ const DashboardScreen = () => {
 
 
   const handleAddNewPet = () => {
-    console.log("Before dispatching setNewPetProfile: hasPets", hasPets, "isNewPetProfile", isNewPetProfile);
     dispatch(setNewPetProfile(true));
     // Add a slight delay to ensure state updates before navigating
     setTimeout(() => {
-      console.log("Navigating to PetProfileCreationStep0");
       navigation.navigate("PetProfileCreationStep0");
     }, 500);
   };

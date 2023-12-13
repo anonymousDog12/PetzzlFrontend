@@ -110,14 +110,15 @@ const OtherUserPostDetailScreen = ({ route }) => {
   };
 
   const renderLikeIcon = () => {
-    const iconName = isLiked ? 'heart' : 'heart-outline';
-    const iconColor = isLiked ? 'red' : 'black';
+    const iconName = isLiked ? "heart" : "heart-outline";
+    const iconColor = isLiked ? "red" : "black";
 
     let likeTextComponent;
     if (likeCount > 0) {
       likeTextComponent = (
-        <TouchableOpacity onPress={() => navigation.navigate('LikerListScreen', { postId })}>
-          <Text style={[styles.likeCountText, styles.boldText]}>{likeCount === 1 ? '1 like' : `${likeCount} likes`}</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("LikerListScreen", { postId })}>
+          <Text
+            style={[styles.likeCountText, styles.boldText]}>{likeCount === 1 ? "1 like" : `${likeCount} likes`}</Text>
         </TouchableOpacity>
       );
     } else {
@@ -209,9 +210,9 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   likeIconContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
     marginTop: 5,
     marginLeft: 10, // Adjust as needed
   },
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
     marginLeft: 5, // Adjust the space between the icon and the text
   },
   boldText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   paginationStyleItem: {
     width: 8,
@@ -227,14 +228,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   petInfo: {
-    flexDirection: 'column',
-    justifyContent: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
     flex: 1, // Ensure it takes the remaining space
   },
 
   postDateText: {
     fontSize: 14,
-    color: 'gray',
+    color: "gray",
   },
 
 });
