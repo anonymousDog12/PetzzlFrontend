@@ -25,6 +25,23 @@ const RootNavigator = () => {
   const hasPets = useSelector(state => state.petProfile.hasPets);
   const isNewPetProfile = useSelector(state => state.petProfile.isNewPetProfile);
 
+
+  const rightToLeftInterpolator = ({ current, layouts }) => {
+    return {
+      cardStyle: {
+        transform: [
+          {
+            translateX: current.progress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [layouts.screen.width, 0],
+            }),
+          },
+        ],
+      },
+    };
+  };
+
+
   return (
     <RootStack.Navigator
       screenOptions={{
@@ -73,27 +90,42 @@ const RootNavigator = () => {
             <RootStack.Screen
               name="PetProfileCreationStep0"
               component={Step0}
-              options={{ title: ' ' }}
+              options={{
+                title: " ",
+                cardStyleInterpolator: rightToLeftInterpolator,
+              }}
             />
             <RootStack.Screen
               name="PetProfileCreationStep1"
               component={Step1}
-              options={{ title: 'Step 1 of 3' }}
+              options={{
+                title: "Step 1 of 3",
+                cardStyleInterpolator: rightToLeftInterpolator,
+              }}
             />
             <RootStack.Screen
               name="PetProfileCreationStep2"
               component={Step2}
-              options={{ title: 'Step 2 of 3' }}
+              options={{
+                title: "Step 2 of 3",
+                cardStyleInterpolator: rightToLeftInterpolator,
+              }}
             />
             <RootStack.Screen
               name="PetProfileCreationStep3"
               component={Step3}
-              options={{ title: 'Step 3 of 3' }}
+              options={{
+                title: "Step 3 of 3",
+                cardStyleInterpolator: rightToLeftInterpolator,
+              }}
             />
             <RootStack.Screen
               name="PetProfileCreationStep4"
               component={Step4}
-              options={{ title: ' ' }}
+              options={{
+                title: " ",
+                cardStyleInterpolator: rightToLeftInterpolator,
+              }}
             />
           </>
         )
