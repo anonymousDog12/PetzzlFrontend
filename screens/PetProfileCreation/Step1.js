@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Button, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput } from "react-native";
+import { Button, KeyboardAvoidingView, Text, TextInput } from "react-native";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
-
+import PetProfileCreationStyles from "./PetProfileCreationStyles"; 
 
 const Step1 = ({ navigation }) => {
   const [petName, setPetName] = useState("");
@@ -15,13 +15,13 @@ const Step1 = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={PetProfileCreationStyles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      <Text style={styles.title}>What's your pet's name?</Text>
+      <Text style={PetProfileCreationStyles.mainTitle}>What's your pet's name?</Text>
       <TextInput
-        style={styles.input}
+        style={PetProfileCreationStyles.input} // Apply the common input style (if defined)
         onChangeText={text => setPetName(text)}
         value={petName}
         placeholder="Enter your pet's name"
@@ -33,21 +33,5 @@ const Step1 = ({ navigation }) => {
     </KeyboardAvoidingView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    width: 200,
-    marginTop: 10,
-    padding: 10,
-  },
-});
 
 export default Step1;

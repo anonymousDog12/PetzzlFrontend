@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Button, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput } from "react-native";
+import { Button, KeyboardAvoidingView, Platform, Text, TextInput } from "react-native";
 import { CONFIG } from "../../config";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
-
+import PetProfileCreationStyles from "./PetProfileCreationStyles";
 
 const Step2 = ({ navigation }) => {
   const { petProfile, updateProfile } = usePetProfile();
@@ -24,7 +24,6 @@ const Step2 = ({ navigation }) => {
     return data.is_unique;
   };
 
-
   const handleContinue = async () => {
     if (validatePetId(petId)) {
       const isUnique = await checkUniqueId();
@@ -42,13 +41,18 @@ const Step2 = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={PetProfileCreationStyles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      <Text>Choose a unique identifier for {petProfile[PET_PAGE_CREATION_FIELD_NAMES.PET_NAME]}</Text>
+      <Text style={PetProfileCreationStyles.mainTitle}>
+        Choose a unique ID for {petProfile[PET_PAGE_CREATION_FIELD_NAMES.PET_NAME]}
+      </Text>
+      <Text style={PetProfileCreationStyles.subTitle}>
+        IDs can include letters, numbers, and dashes
+      </Text>
       <TextInput
-        style={styles.input}
+        style={PetProfileCreationStyles.input}
         onChangeText={text => {
           setPetId(text);
           setErrorMessage(null);
@@ -56,8 +60,7 @@ const Step2 = ({ navigation }) => {
         value={petId}
         placeholder="Enter your identifier"
       />
-
-      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+      {errorMessage && <Text style={PetProfileCreationStyles.errorText}>{errorMessage}</Text>}
       <Button
         title="Continue"
         onPress={handleContinue}
@@ -65,25 +68,5 @@ const Step2 = ({ navigation }) => {
     </KeyboardAvoidingView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    width: 200,
-    marginTop: 10,
-    padding: 10,
-  },
-  errorText: {
-    color: "red",
-    marginTop: 10,
-  },
-});
 
 export default Step2;

@@ -4,7 +4,8 @@ import DropDownPicker from "react-native-dropdown-picker";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../config";
 import { usePetProfile } from "../../contexts/PetProfileContext";
-import { PET_PAGE_CREATION_FIELD_NAMES, PET_TYPES } from "../../data/FieldNames";
+import { PET_PAGE_CREATION_FIELD_NAMES, PET_TYPE_DISPLAY, PET_TYPES } from "../../data/FieldNames";
+import PetProfileCreationStyles from "./PetProfileCreationStyles";
 
 
 const Step3 = ({ navigation }) => {
@@ -56,21 +57,22 @@ const Step3 = ({ navigation }) => {
     }
   };
 
+
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>What kind of pet is {petProfile[PET_PAGE_CREATION_FIELD_NAMES.PET_NAME]}?</Text>
+    <View style={PetProfileCreationStyles.container}>
+      <Text style={PetProfileCreationStyles.mainTitle}>
+        What kind of pet is {petProfile[PET_PAGE_CREATION_FIELD_NAMES.PET_NAME]}?
+      </Text>
       <DropDownPicker
-        items={Object.values(PET_TYPES).map(type => ({ label: type, value: type }))}
+        items={Object.values(PET_TYPES).map(type => ({ label: PET_TYPE_DISPLAY[type], value: type }))}
         open={open}
         setOpen={setOpen}
         value={petType}
         setValue={setPetType}
-        containerStyle={{ height: 40, width: 150 }}
-        style={{ backgroundColor: "#fafafa" }}
-        itemStyle={{
-          justifyContent: "flex-start",
-        }}
-        dropDownStyle={{ backgroundColor: "#fafafa" }}
+        containerStyle={PetProfileCreationStyles.dropdownContainer}
+        style={PetProfileCreationStyles.dropdown}
+        itemStyle={PetProfileCreationStyles.itemStyle}
+        dropDownStyle={PetProfileCreationStyles.dropdownStyle}
       />
       <Button
         title="Continue"

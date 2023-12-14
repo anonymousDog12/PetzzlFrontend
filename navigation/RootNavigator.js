@@ -70,12 +70,31 @@ const RootNavigator = () => {
           </>
         ) : (
           <>
-            <RootStack.Screen name="PetProfileCreationStep0" component={Step0} />
-            <RootStack.Screen name="PetProfileCreationStep1" component={Step1} />
-            <RootStack.Screen name="PetProfileCreationStep2" component={Step2} />
-            <RootStack.Screen name="PetProfileCreationStep3" component={Step3} />
-            <RootStack.Screen name="PetProfileCreationStep4" component={Step4} />
-            {/* Additional screens for authenticated users without pets */}
+            <RootStack.Screen
+              name="PetProfileCreationStep0"
+              component={Step0}
+              options={{ title: ' ' }}
+            />
+            <RootStack.Screen
+              name="PetProfileCreationStep1"
+              component={Step1}
+              options={{ title: 'Step 1 of 3' }}
+            />
+            <RootStack.Screen
+              name="PetProfileCreationStep2"
+              component={Step2}
+              options={{ title: 'Step 2 of 3' }}
+            />
+            <RootStack.Screen
+              name="PetProfileCreationStep3"
+              component={Step3}
+              options={{ title: 'Step 3 of 3' }}
+            />
+            <RootStack.Screen
+              name="PetProfileCreationStep4"
+              component={Step4}
+              options={{ title: ' ' }}
+            />
           </>
         )
       ) : (
