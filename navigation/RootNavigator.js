@@ -41,9 +41,22 @@ const RootNavigator = () => {
     };
   };
 
+  // Redirect logic based on user's pet profile status
+  let initialRouteName;
+  if (isAuthenticated) {
+    if (!hasPets) {
+      initialRouteName = "PetProfileCreationStep0";
+    } else if (isNewPetProfile) {
+      initialRouteName = "PetProfileCreationStep1";
+    } else {
+      initialRouteName = "Tabs";
+    }
+  }
+
 
   return (
     <RootStack.Navigator
+      initialRouteName={initialRouteName}
       screenOptions={{
         cardStyleInterpolator: ({ current, layouts }) => {
           return {

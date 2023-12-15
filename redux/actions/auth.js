@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../config";
@@ -16,7 +17,7 @@ import {
   USER_LOADED_FAIL,
   USER_LOADED_SUCCESS,
 } from "../types";
-import { setCurrentPetId, setHasPets } from "./petProfile";
+import { setCurrentPetId, setHasPets, setNewPetProfile } from "./petProfile";
 
 
 export const loadTokens = () => async dispatch => {
@@ -88,6 +89,7 @@ export const load_user = () => async dispatch => {
       const petRes = await axios.get(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${res.data.id}/`, config);
       const userHasPets = petRes.data && Array.isArray(petRes.data) && petRes.data.length > 0;
       dispatch(setHasPets(userHasPets));
+      dispatch(setNewPetProfile(!userHasPets));
 
       if (userHasPets) {
         // Set the first pet's ID as the current pet ID
@@ -139,6 +141,9 @@ export const logout = () => async dispatch => {
   // Remove the tokens from SecureStorage
   await SecureStorage.removeItem("access");
   await SecureStorage.removeItem("refresh");
+
+  // Clear the selectedPetId from AsyncStorage
+  await AsyncStorage.removeItem("selectedPetId");
 
   // Dispatch the LOGOUT action to update the Redux state
   dispatch({ type: LOGOUT });

@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
@@ -10,7 +11,7 @@ import { loadTokens } from "./redux/actions/auth";
 import { setCurrentPetId } from "./redux/actions/petProfile";
 import store from "./redux/store";
 import SplashScreen from "./screens/SplashScreen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 enableScreens();
 const Stack = createStackNavigator();
@@ -21,7 +22,7 @@ const AppInitializer = () => {
 
   useEffect(() => {
     const initializeApp = async () => {
-      const storedPetId = await AsyncStorage.getItem('selectedPetId');
+      const storedPetId = await AsyncStorage.getItem("selectedPetId");
       if (storedPetId) {
         dispatch(setCurrentPetId(storedPetId));
       }
