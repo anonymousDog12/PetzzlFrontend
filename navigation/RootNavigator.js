@@ -25,7 +25,6 @@ const RootNavigator = () => {
   const hasPets = useSelector(state => state.petProfile.hasPets);
   const isNewPetProfile = useSelector(state => state.petProfile.isNewPetProfile);
 
-
   const rightToLeftInterpolator = ({ current, layouts }) => {
     return {
       cardStyle: {
@@ -42,7 +41,7 @@ const RootNavigator = () => {
   };
 
   // Redirect logic based on user's pet profile status
-  let initialRouteName;
+  let initialRouteName = "SignUp";
   if (isAuthenticated) {
     if (!hasPets) {
       initialRouteName = "PetProfileCreationStep0";
