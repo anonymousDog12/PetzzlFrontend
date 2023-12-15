@@ -2,7 +2,18 @@ import { useNavigation } from "@react-navigation/native";
 import SecureStorage from "react-native-secure-storage";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Alert, View, Text, Image, Dimensions, StyleSheet, SafeAreaView, TouchableOpacity, Modal, PanResponder, Animated
+  Alert,
+  View,
+  Text,
+  Image,
+  Dimensions,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  Modal,
+  PanResponder,
+  Animated,
+  ActivityIndicator,
 } from "react-native";
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import { useDispatch, useSelector } from "react-redux";
@@ -21,11 +32,10 @@ const PostDetailScreen = ({ route }) => {
   const [isLiked, setIsLiked] = useState(false);
   const currentPetId = useSelector(state => state.petProfile.currentPetId);
 
-
-
   const { postId, petProfile } = route.params;
 
   const [likeCount, setLikeCount] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -35,6 +45,7 @@ const PostDetailScreen = ({ route }) => {
   console.log(postId)
 
   const deletePost = async () => {
+    setIsDeleting(true);
     const accessToken = await SecureStorage.getItem("access"); // Retrieve the access token
 
     if (accessToken) {
@@ -58,6 +69,7 @@ const PostDetailScreen = ({ route }) => {
         // Handle post deletion error (e.g., show error message)
       }
     }
+    setIsDeleting(false);
   };
 
   const showDeleteConfirmation = () => {
@@ -238,6 +250,15 @@ const PostDetailScreen = ({ route }) => {
     );
   };
 
+  if (isDeleting) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Deleting...</Text>
+      </View>
+    );
+  }
+
 
 
 
@@ -309,6 +330,11 @@ const styles = StyleSheet.create({
   menuButton: {
     marginLeft: 'auto', // Pushes the button to the far right
     paddingRight: 10, // Optional padding for the button
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   sliderHandle: {
     width: 40,
