@@ -178,6 +178,7 @@ const DashboardScreen = () => {
   }, [currentPetId]);
 
 
+// In DashboardScreen
   useEffect(() => {
     const fetchPetProfiles = async () => {
       if (user) {
@@ -196,8 +197,10 @@ const DashboardScreen = () => {
         }
       }
     };
-    fetchPetProfiles();
-  }, [user, dispatch]);
+
+    return navigation.addListener('focus', fetchPetProfiles);
+  }, [user, navigation, dispatch]);
+
 
   // New function to handle post click
   // Inside DashboardScreen, where you handle navigation to PostDetailScreen
