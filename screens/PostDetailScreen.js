@@ -1,28 +1,28 @@
 import { useNavigation } from "@react-navigation/native";
-import SecureStorage from "react-native-secure-storage";
 import React, { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
-  View,
-  Text,
-  Image,
+  Animated,
   Dimensions,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
+  Image,
   Modal,
   PanResponder,
-  Animated,
-  ActivityIndicator,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { SwiperFlatList } from 'react-native-swiper-flatlist';
+import SecureStorage from "react-native-secure-storage";
+import { SwiperFlatList } from "react-native-swiper-flatlist";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../config";
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { deletePostSuccess } from "../redux/actions/dashboard";
 
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const imageContainerHeight = 300;
 
 const PostDetailScreen = ({ route }) => {
@@ -42,7 +42,7 @@ const PostDetailScreen = ({ route }) => {
 
 
   const modalY = useRef(new Animated.Value(0)).current;
-  console.log(postId)
+  console.log(postId);
 
   const deletePost = async () => {
     setIsDeleting(true);
@@ -51,14 +51,14 @@ const PostDetailScreen = ({ route }) => {
     if (accessToken) {
       try {
         const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/delete_post/${postId}/`, {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            "Authorization": `JWT ${accessToken}`
+            "Authorization": `JWT ${accessToken}`,
           },
         });
 
         if (!response.ok) {
-          console.error('Failed to delete the post');
+          console.error("Failed to delete the post");
         }
 
         console.log(`Post ${postId} has been deleted.`); // Log the post id
@@ -79,15 +79,15 @@ const PostDetailScreen = ({ route }) => {
       [
         {
           text: "Cancel",
-          style: "cancel"
+          style: "cancel",
         },
         {
           text: "Delete",
           onPress: deletePost,
-          style: 'destructive'
-        }
+          style: "destructive",
+        },
       ],
-      { cancelable: false }
+      { cancelable: false },
     );
   };
 
@@ -96,7 +96,7 @@ const PostDetailScreen = ({ route }) => {
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: Animated.event(
       [null, { dy: modalY }],
-      { useNativeDriver: false }
+      { useNativeDriver: false },
     ),
     onPanResponderRelease: (e, { dy }) => {
       if (dy > 50) { // Threshold to close the modal
@@ -105,10 +105,10 @@ const PostDetailScreen = ({ route }) => {
         // Reset position
         Animated.spring(modalY, {
           toValue: 0,
-          useNativeDriver: false
+          useNativeDriver: false,
         }).start();
       }
-    }
+    },
   })).current;
 
 
@@ -132,20 +132,20 @@ const PostDetailScreen = ({ route }) => {
       // Fetch the like count
       try {
         const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/likecount/`, {
-          method: 'GET',
+          method: "GET",
           // Add headers if necessary, such as for authentication
         });
         const data = await response.json();
         setLikeCount(data.like_count);
       } catch (error) {
-        console.error('Error fetching like count:', error);
+        console.error("Error fetching like count:", error);
       }
 
       // Fetch Like Status
       if (accessToken && currentPetId) {
         try {
           const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/likestatus/${currentPetId}/`, {
-            method: 'GET',
+            method: "GET",
             headers: {
               "Authorization": `JWT ${accessToken}`,
               "Content-Type": "application/json",
@@ -158,7 +158,7 @@ const PostDetailScreen = ({ route }) => {
             console.error(`HTTP error! status: ${response.status}`);
           }
         } catch (error) {
-          console.error('Error fetching like status:', error);
+          console.error("Error fetching like status:", error);
         }
       }
 
@@ -172,17 +172,17 @@ const PostDetailScreen = ({ route }) => {
     if (accessToken && currentPetId) {
       try {
         const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/like/${currentPetId}/`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            "Authorization": `JWT ${accessToken}`
-          }
+            "Authorization": `JWT ${accessToken}`,
+          },
         });
 
         if (response.ok) {
           setIsLiked(true);
           setLikeCount(prevCount => prevCount + 1);
         } else {
-          console.error('Failed to like the post');
+          console.error("Failed to like the post");
         }
       } catch (error) {
         console.error("Error liking post:", error);
@@ -195,17 +195,17 @@ const PostDetailScreen = ({ route }) => {
     if (accessToken && currentPetId) {
       try {
         const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/unlike/${currentPetId}/`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            "Authorization": `JWT ${accessToken}`
-          }
+            "Authorization": `JWT ${accessToken}`,
+          },
         });
 
         if (response.ok) {
           setIsLiked(false);
           setLikeCount(prevCount => Math.max(prevCount - 1, 0));
         } else {
-          console.error('Failed to unlike the post');
+          console.error("Failed to unlike the post");
         }
       } catch (error) {
         console.error("Error unliking post:", error);
@@ -214,20 +214,20 @@ const PostDetailScreen = ({ route }) => {
   };
 
 
-
   if (!postDetails) {
     return <Text>Loading...</Text>;
   }
 
   const renderLikeIcon = () => {
-    const iconName = isLiked ? 'heart' : 'heart-outline';
-    const iconColor = isLiked ? 'red' : 'black';
+    const iconName = isLiked ? "heart" : "heart-outline";
+    const iconColor = isLiked ? "red" : "black";
 
     let likeTextComponent;
     if (likeCount > 0) {
       likeTextComponent = (
-        <TouchableOpacity onPress={() => navigation.navigate('LikerListScreen', { postId })}>
-          <Text style={[styles.likeCountText, styles.boldText]}>{likeCount === 1 ? '1 like' : `${likeCount} likes`}</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("LikerListScreen", { postId })}>
+          <Text
+            style={[styles.likeCountText, styles.boldText]}>{likeCount === 1 ? "1 like" : `${likeCount} likes`}</Text>
         </TouchableOpacity>
       );
     } else {
@@ -258,9 +258,6 @@ const PostDetailScreen = ({ route }) => {
       </View>
     );
   }
-
-
-
 
 
   return (
@@ -312,15 +309,15 @@ const PostDetailScreen = ({ route }) => {
               <Image
                 source={{ uri: item.full_size_url }}
                 style={styles.imageStyle}
-                resizeMode='contain' // This will keep the aspect ratio
-                onError={(e) => console.log('Failed to load image', e.nativeEvent.error)}
+                resizeMode="contain" // This will keep the aspect ratio
+                onError={(e) => console.log("Failed to load image", e.nativeEvent.error)}
               />
             </View>
           )}
         />
       </View>
       {renderLikeIcon()}
-      <Text style={{ textAlign: 'center', padding: 10 }}>{postDetails.caption}</Text>
+      <Text style={{ textAlign: "center", padding: 10 }}>{postDetails.caption}</Text>
 
     </SafeAreaView>
   );
@@ -328,8 +325,8 @@ const PostDetailScreen = ({ route }) => {
 
 const styles = StyleSheet.create({
   menuButton: {
-    marginLeft: 'auto', // Pushes the button to the far right
-    paddingRight: 10, // Optional padding for the button
+    marginLeft: "auto",
+    paddingRight: 10,
   },
   loadingContainer: {
     flex: 1,
@@ -340,29 +337,29 @@ const styles = StyleSheet.create({
     width: 40,
     height: 5,
     borderRadius: 2.5,
-    backgroundColor: '#ccc',
-    alignSelf: 'center',
+    backgroundColor: "#ccc",
+    alignSelf: "center",
     marginTop: 1,
-    marginBottom: 15
+    marginBottom: 15,
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-end'
+    justifyContent: "flex-end",
   },
   modalView: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   modalTextDelete: {
     marginBottom: 15,
@@ -370,60 +367,59 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   paginationStyle: {
-    position: 'absolute',
-    bottom: 15, // Adjust this value to place the dots just above the bottom of the image container
-    alignSelf: 'center',
+    position: "absolute",
+    bottom: 15,
+    alignSelf: "center",
   },
   imageStyle: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   paginationStyleItem: {
-    width: 8, // Set the width of the dots
-    height: 8, // Set the height of the dots
-    borderRadius: 4, // Half of either width or height will ensure a circular shape
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   profileHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
     padding: 10,
-    backgroundColor: 'white', // or any color that suits your app design
-    borderBottomWidth: 1, // optional, for a subtle separation from the content below
-    borderBottomColor: '#e1e1e1', // optional, color for the border line
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1e1e1",
   },
   profilePic: {
-    width: 50, // adjust the size as needed
-    height: 50, // adjust the size as needed
-    borderRadius: 25, // half the size to make it round
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     marginRight: 10,
   },
   petInfo: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    flex: 1, // Ensure it takes the remaining space
+    flexDirection: "column",
+    justifyContent: "center",
+    flex: 1,
   },
 
   postDateText: {
     fontSize: 14,
-    color: 'gray',
+    color: "gray",
   },
   username: {
-    fontWeight: 'bold',
-    // add more styles if needed
+    fontWeight: "bold",
   },
   boldText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   likeIconContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
     marginTop: 5,
-    marginLeft: 10, // Adjust as needed
+    marginLeft: 10,
   },
   likeCountText: {
-    marginLeft: 5, // Adjust the space between the icon and the text
+    marginLeft: 5,
   },
 
 });
