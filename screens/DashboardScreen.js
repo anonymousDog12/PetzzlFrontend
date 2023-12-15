@@ -3,6 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { FlatList, Image, LogBox, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../config";
@@ -28,6 +29,8 @@ const DashboardScreen = () => {
 
   const posts = useSelector(state => state.dashboard.posts);
   const dispatch = useDispatch();
+
+  const [isLoading, setIsLoading] = useState(true);
 
 
   const route = useRoute();
@@ -156,6 +159,7 @@ const DashboardScreen = () => {
   const fetchPetProfile = async (petId) => {
     if (!petId) return;
     try {
+      setIsLoading(true);
       const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/${petId}/`);
       const data = await response.json();
       const cacheBustedImageUrl = data.profile_pic_thumbnail_small
@@ -168,6 +172,8 @@ const DashboardScreen = () => {
       setSelectedPetName(data.pet_name);
     } catch (error) {
       console.error("Failed to fetch individual pet profile", error);
+    } finally {
+      setIsLoading(false); // Stop loading once fetching is done or failed
     }
   };
 
@@ -229,119 +235,129 @@ const DashboardScreen = () => {
   return (
     <View style={styles.container}>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={dropdownVisible}
-        onRequestClose={() => setDropdownVisible(!dropdownVisible)}
-      >
-        <TouchableOpacity
-          style={styles.fullScreenButton}
-          activeOpacity={1} // Keeps the touchable area visible
-          onPressOut={() => setDropdownVisible(false)} // Closes the dropdown when the area outside is pressed
-        >
-          <View style={styles.dropdownContainer} onStartShouldSetResponder={() => true}>
-            {petProfiles.map((pet, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.dropdownItem}
-                onPress={() => handleSelectPetProfile(pet.pet_id, pet.pet_name)}
-              >
-                <Text>{pet.pet_name}</Text>
-              </TouchableOpacity>
-            ))}
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <Ionicons name="refresh" size={50} color="#000" />
+          <Text>Loading...</Text>
+        </View>
+      ) : (
+        <>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={dropdownVisible}
+            onRequestClose={() => setDropdownVisible(!dropdownVisible)}
+          >
             <TouchableOpacity
-              onPress={handleAddNewPet}
-              style={styles.addNewPetButton}
+              style={styles.fullScreenButton}
+              activeOpacity={1} // Keeps the touchable area visible
+              onPressOut={() => setDropdownVisible(false)} // Closes the dropdown when the area outside is pressed
             >
-              <Text style={styles.addNewPetText}>Add a New Pet</Text>
+              <View style={styles.dropdownContainer} onStartShouldSetResponder={() => true}>
+                {petProfiles.map((pet, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.dropdownItem}
+                    onPress={() => handleSelectPetProfile(pet.pet_id, pet.pet_name)}
+                  >
+                    <Text>{pet.pet_name}</Text>
+                  </TouchableOpacity>
+                ))}
+                <TouchableOpacity
+                  onPress={handleAddNewPet}
+                  style={styles.addNewPetButton}
+                >
+                  <Text style={styles.addNewPetText}>Add a New Pet</Text>
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+          </Modal>
 
 
-      {currentPetProfile && (
-        <FlatList
-          data={[currentPetProfile]}
-          keyExtractor={item => item.pet_id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.petProfile}>
-              <TouchableOpacity onPress={handleProfilePicUpdate}>
-                {item.profile_pic_thumbnail_small ? (
-                  <Image
-                    source={{ uri: item.profile_pic_thumbnail_small }}
-                    style={styles.profilePic}
-                  />
-                ) : (
-                  <View style={styles.cameraIconContainer}>
-                    <Icon name="camera" size={50} color="#000" />
-                  </View>
-                )}
-              </TouchableOpacity>
-              <Text>Pet Name: {item.pet_name}</Text>
-              <Text>Pet Type: {item.pet_type}</Text>
-            </View>
+          {currentPetProfile && (
+            <FlatList
+              data={[currentPetProfile]}
+              keyExtractor={item => item.pet_id.toString()}
+              renderItem={({ item }) => (
+                <View style={styles.petProfile}>
+                  <TouchableOpacity onPress={handleProfilePicUpdate}>
+                    {item.profile_pic_thumbnail_small ? (
+                      <Image
+                        source={{ uri: item.profile_pic_thumbnail_small }}
+                        style={styles.profilePic}
+                      />
+                    ) : (
+                      <View style={styles.cameraIconContainer}>
+                        <Icon name="camera" size={50} color="#000" />
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                  <Text>Pet Name: {item.pet_name}</Text>
+                  <Text>Pet Type: {item.pet_type}</Text>
+                </View>
+              )}
+            />
           )}
-        />
-      )}
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={showActionSheet}
-        onRequestClose={() => setShowActionSheet(false)}
-      >
-        <TouchableOpacity
-          style={styles.actionSheetBackground}
-          onPress={() => setShowActionSheet(false)}
-        >
-          <View style={styles.actionSheet}>
-            {/* Action sheet options here */}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={showActionSheet}
+            onRequestClose={() => setShowActionSheet(false)}
+          >
             <TouchableOpacity
-              style={styles.actionSheetButton}
-              onPress={() => {
-                setShowActionSheet(false);
-                takePhoto();
-              }}
-            >
-              <Text style={styles.actionSheetText}>Take Photo...</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.actionSheetButton}
-              onPress={() => {
-                setShowActionSheet(false);
-                chooseFromLibrary();
-              }}
-            >
-              <Text style={styles.actionSheetText}>Choose from Library...</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.actionSheetButton}
+              style={styles.actionSheetBackground}
               onPress={() => setShowActionSheet(false)}
             >
-              <Text style={styles.actionSheetText}>Cancel</Text>
+              <View style={styles.actionSheet}>
+                {/* Action sheet options here */}
+                <TouchableOpacity
+                  style={styles.actionSheetButton}
+                  onPress={() => {
+                    setShowActionSheet(false);
+                    takePhoto();
+                  }}
+                >
+                  <Text style={styles.actionSheetText}>Take Photo...</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.actionSheetButton}
+                  onPress={() => {
+                    setShowActionSheet(false);
+                    chooseFromLibrary();
+                  }}
+                >
+                  <Text style={styles.actionSheetText}>Choose from Library...</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.actionSheetButton}
+                  onPress={() => setShowActionSheet(false)}
+                >
+                  <Text style={styles.actionSheetText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-      {/* Posts rendering */}
-      <FlatList
-        data={posts}
-        numColumns={3} // Set the number of columns
-        keyExtractor={item => item.post_id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.postItem}
-            onPress={() => handlePostSelect(item.post_id, currentPetProfile)}
-          >
-            <Image
-              source={{ uri: item.thumbnail_url || item.thumbnail_small_url }}
-              style={styles.postThumbnail}
-            />
-          </TouchableOpacity>
-        )}
-      />
+          </Modal>
+          <FlatList
+            data={posts}
+            numColumns={3} // Set the number of columns
+            keyExtractor={item => item.post_id.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.postItem}
+                onPress={() => handlePostSelect(item.post_id, currentPetProfile)}
+              >
+                <Image
+                  source={{ uri: item.thumbnail_url || item.thumbnail_small_url }}
+                  style={styles.postThumbnail}
+                />
+              </TouchableOpacity>
+            )}
+          />
+        </>
+      )}
+
+
 
     </View>
   );
