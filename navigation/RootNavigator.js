@@ -62,83 +62,42 @@ const RootNavigator = () => {
       }}
     >
       {isAuthenticated ? (
-        hasPets && !isNewPetProfile ? (
-          <>
-            <RootStack.Screen name="Tabs" component={BottomNavBar} />
-            <RootStack.Screen name="Settings" component={SettingsScreen} />
-            <RootStack.Screen
-              name="PostDetailScreen"
-              component={PostDetailScreen}
-              options={{
-                headerShown: true,
-                headerBackTitle: "Back",
-              }}
-            />
-            <RootStack.Screen name="OtherUserDashboard" component={OtherUserDashboardScreen} />
-            <RootStack.Screen name="OtherUserPostDetailScreen" component={OtherUserPostDetailScreen} />
-            <RootStack.Screen
-              name="LikerListScreen"
-              component={LikerListScreen}
-              options={{
-                headerShown: true,
-                headerBackTitle: "Back",
-              }}
-            />
-          </>
-        ) : (
-          <>
-            <RootStack.Screen
-              name="PetProfileCreationStep0"
-              component={Step0}
-              options={{
-                title: " ",
-                cardStyleInterpolator: rightToLeftInterpolator,
-              }}
-            />
-            <RootStack.Screen
-              name="PetProfileCreationStep1"
-              component={Step1}
-              options={{
-                title: "Step 1 of 3",
-                cardStyleInterpolator: rightToLeftInterpolator,
-              }}
-            />
-            <RootStack.Screen
-              name="PetProfileCreationStep2"
-              component={Step2}
-              options={{
-                title: "Step 2 of 3",
-                cardStyleInterpolator: rightToLeftInterpolator,
-              }}
-            />
-            <RootStack.Screen
-              name="PetProfileCreationStep3"
-              component={Step3}
-              options={{
-                title: "Step 3 of 3",
-                cardStyleInterpolator: rightToLeftInterpolator,
-              }}
-            />
-            <RootStack.Screen
-              name="PetProfileCreationStep4"
-              component={Step4}
-              options={{
-                title: " ",
-                cardStyleInterpolator: rightToLeftInterpolator,
-              }}
-            />
-          </>
-        )
+        <>
+          {/* For authenticated users with pets or when adding a new pet profile */}
+          <RootStack.Screen name="Tabs" component={BottomNavBar} />
+          <RootStack.Screen name="Settings" component={SettingsScreen} />
+          <RootStack.Screen name="PostDetailScreen" component={PostDetailScreen}
+                            options={{ headerShown: true, headerBackTitle: "Back" }} />
+          <RootStack.Screen name="OtherUserDashboard" component={OtherUserDashboardScreen} />
+          <RootStack.Screen name="OtherUserPostDetailScreen" component={OtherUserPostDetailScreen} />
+          <RootStack.Screen name="LikerListScreen" component={LikerListScreen}
+                            options={{ headerShown: true, headerBackTitle: "Back" }} />
+
+          {!hasPets && (
+            <RootStack.Screen name="PetProfileCreationStep0" component={Step0}
+                              options={{ title: " ", cardStyleInterpolator: rightToLeftInterpolator }} />
+          )}
+          {isNewPetProfile && (
+            <>
+              <RootStack.Screen name="PetProfileCreationStep1" component={Step1}
+                                options={{ title: "Step 1 of 3", cardStyleInterpolator: rightToLeftInterpolator }} />
+              <RootStack.Screen name="PetProfileCreationStep2" component={Step2}
+                                options={{ title: "Step 2 of 3", cardStyleInterpolator: rightToLeftInterpolator }} />
+              <RootStack.Screen name="PetProfileCreationStep3" component={Step3}
+                                options={{ title: "Step 3 of 3", cardStyleInterpolator: rightToLeftInterpolator }} />
+              <RootStack.Screen name="PetProfileCreationStep4" component={Step4}
+                                options={{ title: " ", cardStyleInterpolator: rightToLeftInterpolator }} />
+            </>
+          )}
+        </>
       ) : (
         <>
           <RootStack.Screen name="SignUp" component={SignUpScreen} />
           <RootStack.Screen name="Login" component={LoginScreen} />
           <RootStack.Screen name="ResetPassword" component={ResetPasswordScreen} />
-          {/* Additional screens for unauthenticated users */}
         </>
       )}
       <RootStack.Screen name="NewPostModal" component={NewPostModalNavigator} />
-      {/* Additional modals or screens that should be available regardless of authentication status */}
     </RootStack.Navigator>
   );
 };

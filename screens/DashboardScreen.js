@@ -113,13 +113,18 @@ const DashboardScreen = () => {
     });
   };
 
+  useEffect(() => {
+    if (isNewPetProfile) {
+      navigation.navigate("PetProfileCreationStep1", { comingFromDashboard: true });
+      setDropdownVisible(false);
 
+    }
+  }, [isNewPetProfile, navigation]);
+
+
+  // Updated handleAddNewPet function
   const handleAddNewPet = () => {
     dispatch(setNewPetProfile(true));
-    // Add a slight delay to ensure state updates before navigating
-    setTimeout(() => {
-      navigation.navigate("PetProfileCreationStep0");
-    }, 500);
   };
 
 

@@ -1,14 +1,30 @@
-import React, { useState } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import { Button, KeyboardAvoidingView, Text, TextInput } from "react-native";
+import { useDispatch } from "react-redux";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
+import { setNewPetProfile } from "../../redux/actions/petProfile";
 import PetProfileCreationStyles from "./PetProfileCreationStyles";
 
 
-const Step1 = ({ navigation }) => {
+const Step1 = () => {
   const [petName, setPetName] = useState("");
   const [error, setError] = useState("");
   const { petProfile, updateProfile } = usePetProfile();
+
+  const navigation = useNavigation();
+  const route = useRoute();
+  const dispatch = useDispatch();
+  const comingFromDashboard = route.params?.comingFromDashboard || false;
+
+  useEffect(() => {
+    return navigation.addListener('beforeRemove', (e) => {
+      if (comingFromDashboard) {
+        dispatch(setNewPetProfile(false));
+      }
+    });
+  }, [comingFromDashboard, dispatch, navigation]);
 
   const validatePetName = (name) => {
     if (name.length < 2 || name.length > 50) {
@@ -19,6 +35,7 @@ const Step1 = ({ navigation }) => {
     }
     return "";
   };
+
 
   const handleContinue = () => {
     const validationError = validatePetName(petName);
