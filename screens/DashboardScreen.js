@@ -16,7 +16,6 @@ LogBox.ignoreLogs(["Sending `onAnimatedValueUpdate` with no listeners registered
 
 const DashboardScreen = () => {
   const user = useSelector(state => state.auth.user);
-  const hasPets = useSelector(state => state.petProfile.hasPets);
   const isNewPetProfile = useSelector(state => state.petProfile.isNewPetProfile);
 
   const currentPetId = useSelector(state => state.petProfile.currentPetId);
@@ -198,7 +197,7 @@ const DashboardScreen = () => {
       }
     };
 
-    return navigation.addListener('focus', fetchPetProfiles);
+    return navigation.addListener("focus", fetchPetProfiles);
   }, [user, navigation, dispatch]);
 
 
