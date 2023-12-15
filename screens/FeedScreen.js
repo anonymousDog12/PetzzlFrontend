@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Progress from "react-native-progress";
@@ -176,14 +176,22 @@ const FeedScreen = ({ route }) => {
   };
 
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    if (currentPetId) {
+    if (isFocused) {
+      dispatch(fetchFeed());
+    }
+  }, [dispatch, isFocused]);
+
+  useEffect(() => {
+    if (isFocused && currentPetId) {
       feedData.forEach(post => {
-        fetchLikeCount(post.post_id);  // You already have this for fetching like counts
+        fetchLikeCount(post.post_id);
         fetchLikeStatus(post.post_id, currentPetId);
       });
     }
-  }, [feedData, currentPetId]);
+  }, [feedData, currentPetId, isFocused]);
 
 
   const navigateToLikerList = (postId) => {
