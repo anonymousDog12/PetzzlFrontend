@@ -46,6 +46,8 @@ export const signup = (first_name, last_name, email, password, re_password) => a
     const body = JSON.stringify({ first_name, last_name, email, password, re_password });
     const res = await axios.post(`${CONFIG.BACKEND_URL}/auth/users/`, body, config);
     dispatch({ type: SIGNUP_SUCCESS, payload: res.data });
+    dispatch(setNewPetProfile(true));
+    dispatch(setHasPets(false));
     return null;
   } catch (err) {
     dispatch({ type: SIGNUP_FAIL });
