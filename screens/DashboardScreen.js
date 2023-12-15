@@ -10,6 +10,7 @@ import { CONFIG } from "../config";
 import ImageCropper from "../imageHandling/ImageCropper";
 import { fetchPosts } from "../redux/actions/dashboard";
 import { setCurrentPetId, setNewPetProfile } from "../redux/actions/petProfile";
+import { ActivityIndicator } from 'react-native';
 
 
 LogBox.ignoreLogs(["Sending `onAnimatedValueUpdate` with no listeners registered."]);
@@ -237,7 +238,7 @@ const DashboardScreen = () => {
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <Ionicons name="refresh" size={50} color="#000" />
+          <ActivityIndicator size="large" color="#0000ff" />
           <Text>Loading...</Text>
         </View>
       ) : (
@@ -367,6 +368,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   petProfile: {
     padding: 10,
