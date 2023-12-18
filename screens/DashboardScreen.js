@@ -1,16 +1,24 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { FlatList, Image, LogBox, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  LogBox,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../config";
 import ImageCropper from "../imageHandling/ImageCropper";
 import { fetchPosts } from "../redux/actions/dashboard";
 import { setCurrentPetId, setNewPetProfile } from "../redux/actions/petProfile";
-import { ActivityIndicator } from 'react-native';
 
 
 LogBox.ignoreLogs(["Sending `onAnimatedValueUpdate` with no listeners registered."]);
@@ -357,9 +365,6 @@ const DashboardScreen = () => {
           />
         </>
       )}
-
-
-
     </View>
   );
 };
@@ -371,8 +376,8 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   petProfile: {
     padding: 10,
