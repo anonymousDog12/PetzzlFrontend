@@ -75,7 +75,11 @@ const RootNavigator = () => {
       {isAuthenticated ? (
         <>
           {/* For authenticated users with pets or when adding a new pet profile */}
-          <RootStack.Screen name="Tabs" component={BottomNavBar} />
+          <RootStack.Screen
+            name="Tabs"
+            component={BottomNavBar}
+            options={{ headerShown: false }}
+          />
           <RootStack.Screen name="Settings" component={SettingsScreen} />
           <RootStack.Screen name="PostDetailScreen" component={PostDetailScreen}
                             options={{ headerShown: true, headerBackTitle: "Back" }} />
