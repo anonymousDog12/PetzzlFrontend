@@ -42,7 +42,6 @@ const PostDetailScreen = ({ route }) => {
 
 
   const modalY = useRef(new Animated.Value(0)).current;
-  console.log(postId);
 
   const deletePost = async () => {
     setIsDeleting(true);
@@ -61,12 +60,10 @@ const PostDetailScreen = ({ route }) => {
           console.error("Failed to delete the post");
         }
 
-        console.log(`Post ${postId} has been deleted.`); // Log the post id
         dispatch(deletePostSuccess(postId));
         navigation.goBack();
       } catch (error) {
         console.error("Deletion error:", error);
-        // Handle post deletion error (e.g., show error message)
       }
     }
     setIsDeleting(false);
