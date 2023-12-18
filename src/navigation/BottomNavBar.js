@@ -20,20 +20,19 @@ const BottomNavBar = ({ initialRouteName }) => {
           let iconName;
 
           if (route.name === 'Feed') {
-            iconName = focused ? 'home' : 'home-outline'; // Updated icon names
+            iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'NewPost') {
             iconName = focused ? 'add-circle' : 'add-circle-outline';
           } else if (route.name === 'Dashboard') {
-            iconName = focused ? 'paw' : 'paw-outline'; // Updated icon names
+            iconName = focused ? 'paw' : 'paw-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
+        tabBarActiveTintColor: 'black',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: [{ display: 'flex' }, null]
       })}
-      tabBarOptions={{
-        activeTintColor: 'black',
-        inactiveTintColor: 'gray',
-      }}
     >
       <Tab.Screen name="Feed" component={FeedScreen} />
       <Tab.Screen
@@ -41,11 +40,11 @@ const BottomNavBar = ({ initialRouteName }) => {
         component={EmptyScreen}
         options={{
           tabBarLabel: 'New Post',
-        }}
-        listeners={{
-          tabPress: (e) => {
-            e.preventDefault();
-            navigation.navigate("NewPostModal");
+          listeners: {
+            tabPress: (e) => {
+              e.preventDefault();
+              navigation.navigate("NewPostModal");
+            },
           },
         }}
       />
