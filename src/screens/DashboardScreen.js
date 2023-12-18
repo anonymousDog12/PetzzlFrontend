@@ -15,7 +15,7 @@ import {
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
-import { CONFIG } from "../config";
+import { CONFIG } from "../../config";
 import ImageCropper from "../imageHandling/ImageCropper";
 import { fetchPosts } from "../redux/actions/dashboard";
 import { setCurrentPetId, setNewPetProfile } from "../redux/actions/petProfile";

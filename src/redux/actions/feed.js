@@ -1,5 +1,5 @@
 import SecureStorage from "react-native-secure-storage";
-import { CONFIG } from "../../config";
+import { CONFIG } from "../../../config";
 import {
   ADD_POST,
   FETCH_FEED,

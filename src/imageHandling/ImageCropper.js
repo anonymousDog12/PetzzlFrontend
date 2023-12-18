@@ -1,7 +1,7 @@
 import axios from "axios";
 import ImageCropPicker from "react-native-image-crop-picker";
 import SecureStorage from "react-native-secure-storage";
-import { CONFIG } from "../config";
+import { CONFIG } from "../../config";
 
 // TODO: set time out isn't the most ideal solution
 // try to find out more about the root cause of why ImageCropPicker.openCropper doesn't show up
