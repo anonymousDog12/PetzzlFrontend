@@ -46,7 +46,7 @@ function authReducer(state = initialState, action) {
     case AUTHENTICATED_SUCCESS:
       return {
         ...state,
-        isAuthenticated: true,
+        isAuthenticated: state.user != null,
       };
 
     case LOGIN_SUCCESS:

@@ -52,7 +52,6 @@ const RootNavigator = () => {
     }
   }
 
-
   return (
     <RootStack.Navigator
       initialRouteName={initialRouteName}

@@ -26,8 +26,8 @@ export const loadTokens = () => async dispatch => {
     const refresh = await SecureStorage.getItem("refresh");
 
     if (access && refresh) {
+      await dispatch(load_user());
       dispatch({ type: AUTHENTICATED_SUCCESS });
-      dispatch(load_user()); // Add this line to load the user and check for pets
     } else {
       dispatch({ type: AUTHENTICATED_FAIL });
     }
