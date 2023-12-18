@@ -24,7 +24,7 @@ const BottomNavBar = ({ initialRouteName }) => {
           } else if (route.name === 'NewPost') {
             iconName = focused ? 'add-circle' : 'add-circle-outline';
           } else if (route.name === 'Dashboard') {
-            iconName = focused ? 'person' : 'person-outline'; // Updated icon names
+            iconName = focused ? 'paw' : 'paw-outline'; // Updated icon names
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
