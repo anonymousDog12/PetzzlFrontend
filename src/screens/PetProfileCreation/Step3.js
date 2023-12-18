@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Text, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import SecureStorage from "react-native-secure-storage";
-import { CONFIG } from "../../config";
+import { CONFIG } from "../../../config";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES, PET_TYPE_DISPLAY, PET_TYPES } from "../../data/FieldNames";
 import PetProfileCreationStyles from "./PetProfileCreationStyles";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, KeyboardAvoidingView, Platform, Text, TextInput } from "react-native";
-import { CONFIG } from "../../config";
+import { CONFIG } from "../../../config";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
 import PetProfileCreationStyles from "./PetProfileCreationStyles";

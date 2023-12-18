@@ -1,4 +1,4 @@
-import { CONFIG } from "../../config";
+import { CONFIG } from "../../../config";
 import { FETCH_POSTS, ADD_POST, DELETE_POST_SUCCESS } from "../types";
 
 // Action to fetch posts

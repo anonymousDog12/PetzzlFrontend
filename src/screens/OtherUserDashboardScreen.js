@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { CONFIG } from "../config";
+import { CONFIG } from "../../config";
 import { DEFAULT_PROFILE_PICS } from "../data/FieldNames"; // Import DEFAULT_PROFILE_PICS
 
 const OtherUserDashboardScreen = ({ route }) => {

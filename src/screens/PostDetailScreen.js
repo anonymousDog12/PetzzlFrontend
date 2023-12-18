@@ -18,7 +18,7 @@ import SecureStorage from "react-native-secure-storage";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
-import { CONFIG } from "../config";
+import { CONFIG } from "../../config";
 import { deletePostSuccess } from "../redux/actions/dashboard";
 
 
