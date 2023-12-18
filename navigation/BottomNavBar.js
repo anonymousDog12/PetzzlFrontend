@@ -31,7 +31,7 @@ const BottomNavBar = ({ initialRouteName }) => {
         },
       })}
       tabBarOptions={{
-        activeTintColor: 'tomato',
+        activeTintColor: 'black',
         inactiveTintColor: 'gray',
       }}
     >
@@ -39,6 +39,9 @@ const BottomNavBar = ({ initialRouteName }) => {
       <Tab.Screen
         name="NewPost"
         component={EmptyScreen}
+        options={{
+          tabBarLabel: 'New Post',
+        }}
         listeners={{
           tabPress: (e) => {
             e.preventDefault();
