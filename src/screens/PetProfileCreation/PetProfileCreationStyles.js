@@ -1,5 +1,11 @@
 import { StyleSheet } from "react-native";
 
+const colors = {
+  logo_grey: "#3d3d3d",
+  logo_yellow: "#ffc02c",
+  lightGray: "#fafafa",
+};
+
 export const PetProfileCreationStyles = StyleSheet.create({
   container: {
     flex: 1,
@@ -17,18 +23,18 @@ export const PetProfileCreationStyles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
     textAlign: "center",
-    color: "gray",
+    color: colors.gray,
   },
   input: {
     height: 40,
-    borderColor: "gray",
+    borderColor: colors.gray,
     borderWidth: 1,
     width: '80%',
     marginTop: 10,
     padding: 10,
   },
   errorText: {
-    color: "red",
+    color: colors.red,
     marginTop: 10,
   },
   dropdownContainer: {
@@ -37,13 +43,13 @@ export const PetProfileCreationStyles = StyleSheet.create({
     marginBottom: 20,
   },
   dropdown: {
-    backgroundColor: "#fafafa",
+    backgroundColor: colors.lightGray,
   },
   itemStyle: {
     justifyContent: "flex-start",
   },
   dropdownStyle: {
-    backgroundColor: "#fafafa",
+    backgroundColor: colors.lightGray,
   },
 });
 
