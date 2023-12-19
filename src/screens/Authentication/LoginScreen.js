@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableO
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/actions/auth";
 import { checkEmailExists } from "../../utils/auth";
+import { authStyles } from "./AuthenticationStyles";
 
 
 export default function LoginScreen({ navigation }) {
@@ -38,11 +39,11 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={authStyles.container} // Updated to use authStyles
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
+      {errorMessage && <Text style={authStyles.error}>{errorMessage}</Text>}
       <TextInput
         placeholder="Email"
         value={email}
@@ -51,7 +52,7 @@ export default function LoginScreen({ navigation }) {
           handleDismissError();
         }}
         onFocus={handleDismissError}
-        style={styles.input}
+        style={authStyles.input} // Updated to use authStyles
       />
       <TextInput
         placeholder="Password"
@@ -62,20 +63,20 @@ export default function LoginScreen({ navigation }) {
         }}
         onFocus={handleDismissError}
         secureTextEntry
-        style={styles.input}
+        style={authStyles.input} // Updated to use authStyles
       />
-      <TouchableOpacity onPress={handleLogin} style={styles.button}>
-        <Text style={styles.buttonText}>Login</Text>
+      <TouchableOpacity onPress={handleLogin} style={authStyles.button}>
+        <Text style={authStyles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <Text style={styles.footer}>
+      <Text style={authStyles.footer}>
         Don't have an account yet? &nbsp;
-        <Text style={styles.footerLink} onPress={() => navigation.navigate("SignUp")}>
+        <Text style={authStyles.footerLink} onPress={() => navigation.navigate("SignUp")}>
           Sign Up
         </Text>
       </Text>
-      <Text style={styles.footer}>
+      <Text style={authStyles.footer}>
         Forgot Password? &nbsp;
-        <Text style={styles.footerLink} onPress={() => navigation.navigate("ResetPassword")}>
+        <Text style={authStyles.footerLink} onPress={() => navigation.navigate("ResetPassword")}>
           Reset
         </Text>
       </Text>

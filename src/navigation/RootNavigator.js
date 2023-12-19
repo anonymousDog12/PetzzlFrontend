@@ -56,7 +56,7 @@ const RootNavigator = () => {
     <RootStack.Navigator
       initialRouteName={initialRouteName}
       screenOptions={{
-        headerTintColor: '#ffc02c', 
+        headerTintColor: '#ffc02c',
         cardStyleInterpolator: ({ current, layouts }) => {
           return {
             cardStyle: {
