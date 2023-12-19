@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableO
 import { useDispatch } from "react-redux";
 import { login, signup } from "../../redux/actions/auth";
 import { extractErrorMessages } from "../../utils/auth";
+import { authStyles } from './AuthenticationStyles';
 
 
 export default function SignUpScreen({ navigation }) {
@@ -42,11 +43,11 @@ export default function SignUpScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={authStyles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
+      {errorMessage && <Text style={authStyles.error}>{errorMessage}</Text>}
       <TextInput
         placeholder="First Name"
         value={firstName}
@@ -55,7 +56,7 @@ export default function SignUpScreen({ navigation }) {
           handleDismissError();
         }}
         onFocus={handleDismissError}
-        style={styles.input}
+        style={authStyles.input}
       />
       <TextInput
         placeholder="Last Name"
@@ -65,7 +66,7 @@ export default function SignUpScreen({ navigation }) {
           handleDismissError();
         }}
         onFocus={handleDismissError}
-        style={styles.input}
+        style={authStyles.input}
       />
       <TextInput
         placeholder="Email"
@@ -75,7 +76,7 @@ export default function SignUpScreen({ navigation }) {
           handleDismissError();
         }}
         onFocus={handleDismissError}
-        style={styles.input}
+        style={authStyles.input}
       />
       <TextInput
         placeholder="Password"
@@ -86,15 +87,15 @@ export default function SignUpScreen({ navigation }) {
         }}
         secureTextEntry
         onFocus={handleDismissError}
-        style={styles.input}
+        style={authStyles.input}
       />
 
-      <TouchableOpacity onPress={handleSignUp} style={styles.button}>
-        <Text style={styles.buttonText}>Sign Up</Text>
+      <TouchableOpacity onPress={handleSignUp} style={authStyles.button}>
+        <Text style={authStyles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
-      <Text style={styles.footer}>
+      <Text style={authStyles.footer}>
         Already have an account? &nbsp;
-        <Text style={styles.footerLink} onPress={() => navigation.navigate("Login")}>
+        <Text style={authStyles.footerLink} onPress={() => navigation.navigate("Login")}>
           Login
         </Text>
       </Text>
