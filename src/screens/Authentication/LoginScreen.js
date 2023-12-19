@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/actions/auth";
 import { checkEmailExists } from "../../utils/auth";
@@ -38,49 +46,52 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={authStyles.container} // Updated to use authStyles
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
-    >
-      {errorMessage && <Text style={authStyles.error}>{errorMessage}</Text>}
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={(text) => {
-          setEmail(text);
-          handleDismissError();
-        }}
-        onFocus={handleDismissError}
-        style={authStyles.input} // Updated to use authStyles
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={(text) => {
-          setPassword(text);
-          handleDismissError();
-        }}
-        onFocus={handleDismissError}
-        secureTextEntry
-        style={authStyles.input} // Updated to use authStyles
-      />
-      <TouchableOpacity onPress={handleLogin} style={authStyles.button}>
-        <Text style={authStyles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <Text style={authStyles.footer}>
-        Don't have an account yet? &nbsp;
-        <Text style={authStyles.footerLink} onPress={() => navigation.navigate("SignUp")}>
-          Sign Up
+    <SafeAreaView style={authStyles.safeArea}>
+      <KeyboardAvoidingView
+        style={authStyles.container} // Updated to use authStyles
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+      >
+        <Text style={authStyles.welcomeMessage}>Welcome Back! 🐾</Text>
+        {errorMessage && <Text style={authStyles.error}>{errorMessage}</Text>}
+        <TextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={(text) => {
+            setEmail(text);
+            handleDismissError();
+          }}
+          onFocus={handleDismissError}
+          style={authStyles.input}
+        />
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={(text) => {
+            setPassword(text);
+            handleDismissError();
+          }}
+          onFocus={handleDismissError}
+          secureTextEntry
+          style={authStyles.input} // Updated to use authStyles
+        />
+        <TouchableOpacity onPress={handleLogin} style={authStyles.button}>
+          <Text style={authStyles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <Text style={authStyles.footer}>
+          Don't have an account yet? &nbsp;
+          <Text style={authStyles.footerLink} onPress={() => navigation.navigate("SignUp")}>
+            Sign Up
+          </Text>
         </Text>
-      </Text>
-      <Text style={authStyles.footer}>
-        Forgot Password? &nbsp;
-        <Text style={authStyles.footerLink} onPress={() => navigation.navigate("ResetPassword")}>
-          Reset
+        <Text style={authStyles.footer}>
+          Forgot Password? &nbsp;
+          <Text style={authStyles.footerLink} onPress={() => navigation.navigate("ResetPassword")}>
+            Reset
+          </Text>
         </Text>
-      </Text>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
