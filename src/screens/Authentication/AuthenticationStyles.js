@@ -12,15 +12,18 @@ export const authStyles = StyleSheet.create({
     backgroundColor: '#f2f2f2', // or any other background color you want
   },
   logoContainer: {
-    position: 'absolute', // Position over the KeyboardAvoidingView
-    top: 10, // Align to the top of the safe area
-    left: 10, // Align to the left of the safe area
-    zIndex: 10,
+    alignItems: 'center', // Center the logo within the container
+    justifyContent: 'center', // Center vertically
+    marginTop: 60, // Increase top margin to push down the content
+    marginLeft:0,
+    height: 60, // Set the height of the container
   },
   logo: {
-    width: 40, // Set your desired size
     height: 40,
+    width: 800,
+    resizeMode: 'contain',
   },
+
   input: {
     backgroundColor: '#ffffff', // White background color
     borderWidth: 1, // Define border width

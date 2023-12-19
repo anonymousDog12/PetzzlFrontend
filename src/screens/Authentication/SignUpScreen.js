@@ -15,7 +15,7 @@ import { extractErrorMessages } from "../../utils/auth";
 import { authStyles } from "./AuthenticationStyles";
 
 
-const pawPrintLogo = require("../../assets/images/logo/pawprint.png");
+const pawPrintLogo = require("../../assets/images/logo/logo-with-text-horizontal-yelllow.png");
 
 export default function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = useState("");
