@@ -12,6 +12,13 @@ export const authStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f2f2f2",
   },
+  welcomeMessage: {
+    fontWeight: 'bold',
+    color: '#3d3d3d',
+    fontSize: 23,
+    textAlign: 'center',
+    marginVertical: 20,
+  },
   logoContainer: {
     alignItems: "flex-start",
     marginTop: 0,
@@ -52,9 +59,11 @@ export const authStyles = StyleSheet.create({
   footer: {
     marginTop: 20,
     textAlign: "center",
+    fontSize: 16,
   },
   footerLink: {
-    color: "#007BFF",
+    color: "#797979",
+    textDecorationLine: "underline",
   },
   error: {
     color: "red",

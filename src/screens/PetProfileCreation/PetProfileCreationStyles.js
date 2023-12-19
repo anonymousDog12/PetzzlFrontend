@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 const colors = {
   logo_grey: "#3d3d3d",
   logo_yellow: "#ffc02c",
+  grey: "#797979",
   lightGray: "#fafafa",
 };
 
