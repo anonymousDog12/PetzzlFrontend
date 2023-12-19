@@ -7,6 +7,20 @@ export const authStyles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: '#f2f2f2', // Set to light grey background
   },
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f2f2f2', // or any other background color you want
+  },
+  logoContainer: {
+    position: 'absolute', // Position over the KeyboardAvoidingView
+    top: 10, // Align to the top of the safe area
+    left: 10, // Align to the left of the safe area
+    zIndex: 10,
+  },
+  logo: {
+    width: 40, // Set your desired size
+    height: 40,
+  },
   input: {
     backgroundColor: '#ffffff', // White background color
     borderWidth: 1, // Define border width
