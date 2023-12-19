@@ -107,9 +107,42 @@ const RootNavigator = () => {
         </>
       ) : (
         <>
-          <RootStack.Screen name="SignUp" component={SignUpScreen}  options={{ title: 'Sign Up' }}  />
-          <RootStack.Screen name="Login" component={LoginScreen}    options={{ title: 'Log In' }}  />
-          <RootStack.Screen name="ResetPassword" component={ResetPasswordScreen}  options={{ title: 'Reset Password' }}   />
+          <RootStack.Screen
+            name="SignUp"
+            component={SignUpScreen}
+            options={{
+              title: '',
+              headerStyle: {
+                backgroundColor: 'transparent',
+                elevation: 0,
+                shadowOpacity: 0
+              }
+            }}
+          />
+          <RootStack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{
+              title: '',
+              headerStyle: {
+                backgroundColor: 'transparent',
+                elevation: 0,
+                shadowOpacity: 0
+              }
+            }}
+          />
+          <RootStack.Screen
+            name="ResetPassword"
+            component={ResetPasswordScreen}
+            options={{
+              title: '',
+              headerStyle: {
+                backgroundColor: 'transparent',
+                elevation: 0,
+                shadowOpacity: 0
+              }
+            }}
+          />
         </>
       )}
       <RootStack.Screen name="NewPostModal" component={NewPostModalNavigator} />
