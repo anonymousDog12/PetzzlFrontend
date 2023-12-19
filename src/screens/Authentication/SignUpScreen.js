@@ -10,13 +10,14 @@ import {
   View,
 } from "react-native";
 import { useDispatch } from "react-redux";
+import images from "../../assets/assets";
 import { login, signup } from "../../redux/actions/auth";
 import { extractErrorMessages } from "../../utils/auth";
 import { authStyles } from "./AuthenticationStyles";
 
+
 const welcomeMessage = "Join the Petzzl Family!🐾";
 
-const pawPrintLogo = require("../../assets/images/logo/logo-with-text-horizontal-yelllow.png");
 
 export default function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = useState("");
@@ -55,7 +56,7 @@ export default function SignUpScreen({ navigation }) {
   return (
     <SafeAreaView style={authStyles.safeArea}>
       <View style={authStyles.logoContainer}>
-        <Image source={pawPrintLogo} style={authStyles.logo} />
+        <Image source={images.pawPrintLogo} style={authStyles.logo} />
       </View>
       <KeyboardAvoidingView
         style={authStyles.container}

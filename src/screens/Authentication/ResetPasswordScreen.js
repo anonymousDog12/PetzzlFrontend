@@ -1,8 +1,19 @@
 import React, { useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useDispatch } from "react-redux";
+import images from "../../assets/assets";
 import { reset_password } from "../../redux/actions/auth";
 import { checkEmailExists } from "../../utils/auth";
+import { authStyles } from "./AuthenticationStyles";
 
 
 export default function ResetPasswordScreen({ navigation }) {
@@ -30,58 +41,31 @@ export default function ResetPasswordScreen({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
-    >
-      {successMessage && <Text style={styles.successMessage}>{successMessage}</Text>}
-      {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={(text) => {
-          setEmail(text);
-          handleDismissError();
-        }}
-        onFocus={handleDismissError}
-        style={styles.input}
-      />
-      <TouchableOpacity onPress={handleResetPassword} style={styles.button}>
-        <Text style={styles.buttonText}>Reset Password</Text>
-      </TouchableOpacity>
-    </KeyboardAvoidingView>
+    <SafeAreaView style={authStyles.safeArea}>
+      <View style={authStyles.logoContainer}>
+        <Image source={images.pawPrintLogo} style={authStyles.logo} />
+      </View>
+      <KeyboardAvoidingView
+        style={authStyles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+      >
+        {successMessage && <Text style={authStyles.successMessage}>{successMessage}</Text>}
+        {errorMessage && <Text style={authStyles.error}>{errorMessage}</Text>}
+        <TextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={(text) => {
+            setEmail(text);
+            handleDismissError();
+          }}
+          onFocus={handleDismissError}
+          style={authStyles.input}
+        />
+        <TouchableOpacity onPress={handleResetPassword} style={authStyles.button}>
+          <Text style={authStyles.buttonText}>Reset Password</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
-  input: {
-    borderBottomWidth: 1,
-    marginBottom: 15,
-    padding: 8,
-  },
-  button: {
-    backgroundColor: "#007BFF",
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: "#fff",
-    textAlign: "center",
-  },
-  successMessage: {
-    color: "green",
-    textAlign: "center",
-    marginBottom: 10,
-  },
-  error: {
-    color: "red",
-    textAlign: "center",
-    marginTop: 10,
-  },
-});

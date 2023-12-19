@@ -13,23 +13,22 @@ export const authStyles = StyleSheet.create({
     backgroundColor: "#f2f2f2",
   },
   welcomeMessage: {
-    fontWeight: 'bold',
-    color: '#3d3d3d',
+    fontWeight: "bold",
+    color: "#3d3d3d",
     fontSize: 23,
-    textAlign: 'center',
+    textAlign: "center",
     marginVertical: 20,
   },
   logoContainer: {
-    alignItems: "flex-start",
+    flexDirection: 'row', // ensures the children (logo) are laid out in a row
+    justifyContent: 'flex-end', // aligns children to the end of the main axis (right side)
     marginTop: 0,
-    marginLeft: 0,
+    marginRight: 10,
     height: 40,
-    width: 120,
   },
   logo: {
     height: 40,
     width: 120,
-    marginLeft: 10,
     resizeMode: "contain",
   },
   input: {
@@ -69,5 +68,10 @@ export const authStyles = StyleSheet.create({
     color: "red",
     textAlign: "center",
     marginTop: 10,
+  },
+  successMessage: {
+    color: "green",
+    textAlign: "center",
+    marginBottom: 10,
   },
 });
