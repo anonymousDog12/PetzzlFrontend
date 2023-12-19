@@ -128,7 +128,8 @@ const RootNavigator = () => {
                 backgroundColor: 'transparent',
                 elevation: 0,
                 shadowOpacity: 0
-              }
+              },
+              cardStyleInterpolator: rightToLeftInterpolator
             }}
           />
           <RootStack.Screen
@@ -140,7 +141,8 @@ const RootNavigator = () => {
                 backgroundColor: 'transparent',
                 elevation: 0,
                 shadowOpacity: 0
-              }
+              },
+              cardStyleInterpolator: rightToLeftInterpolator
             }}
           />
         </>
