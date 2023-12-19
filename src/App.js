@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
+import { ActivityIndicator, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { enableScreens } from "react-native-screens";
 import { Provider, useDispatch } from "react-redux";
@@ -10,7 +11,6 @@ import RootNavigator from "./navigation/RootNavigator";
 import { loadTokens } from "./redux/actions/auth";
 import { setCurrentPetId } from "./redux/actions/petProfile";
 import store from "./redux/store";
-import SplashScreen from "./screens/SplashScreen";
 
 
 enableScreens();
@@ -33,8 +33,13 @@ const AppInitializer = () => {
   }, [dispatch]);
 
   if (isLoading) {
-    return <SplashScreen />;
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#000000" />
+      </View>
+    );
   }
+
 
   return <RootNavigator />;
 };
@@ -60,8 +65,13 @@ const App = () => {
   }, []);
 
   if (isSplash || !isAuthChecked) {
-    return <SplashScreen />;
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#000000" />
+      </View>
+    );
   }
+
 
   return (
     <Provider store={store}>
