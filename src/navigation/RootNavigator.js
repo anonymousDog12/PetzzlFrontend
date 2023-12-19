@@ -107,9 +107,9 @@ const RootNavigator = () => {
         </>
       ) : (
         <>
-          <RootStack.Screen name="SignUp" component={SignUpScreen} />
-          <RootStack.Screen name="Login" component={LoginScreen} />
-          <RootStack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+          <RootStack.Screen name="SignUp" component={SignUpScreen}  options={{ title: '' }}  />
+          <RootStack.Screen name="Login" component={LoginScreen}    options={{ title: '' }}  />
+          <RootStack.Screen name="ResetPassword" component={ResetPasswordScreen}  options={{ title: '' }}   />
         </>
       )}
       <RootStack.Screen name="NewPostModal" component={NewPostModalNavigator} />
