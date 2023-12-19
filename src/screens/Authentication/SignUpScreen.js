@@ -14,6 +14,7 @@ import { login, signup } from "../../redux/actions/auth";
 import { extractErrorMessages } from "../../utils/auth";
 import { authStyles } from "./AuthenticationStyles";
 
+const welcomeMessage = "Join the Petzzl Family!🐾";
 
 const pawPrintLogo = require("../../assets/images/logo/logo-with-text-horizontal-yelllow.png");
 
@@ -61,6 +62,7 @@ export default function SignUpScreen({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
+        <Text style={authStyles.welcomeMessage}>{welcomeMessage}</Text>
         {errorMessage && <Text style={authStyles.error}>{errorMessage}</Text>}
         <TextInput
           placeholder="First Name"
