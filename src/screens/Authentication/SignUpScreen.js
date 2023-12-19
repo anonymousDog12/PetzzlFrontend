@@ -53,14 +53,14 @@ export default function SignUpScreen({ navigation }) {
 
   return (
     <SafeAreaView style={authStyles.safeArea}>
+      <View style={authStyles.logoContainer}>
+        <Image source={pawPrintLogo} style={authStyles.logo} />
+      </View>
       <KeyboardAvoidingView
         style={authStyles.container}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
-        <View style={authStyles.logoContainer}>
-          <Image source={pawPrintLogo} style={authStyles.logo} />
-        </View>
         {errorMessage && <Text style={authStyles.error}>{errorMessage}</Text>}
         <TextInput
           placeholder="First Name"
