@@ -1,9 +1,10 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import DashboardScreen from "../screens/DashboardScreen";
 import FeedScreen from "../screens/FeedScreen";
-import Ionicons from 'react-native-vector-icons/Ionicons';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -19,19 +20,24 @@ const BottomNavBar = ({ initialRouteName }) => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === 'Feed') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'NewPost') {
-            iconName = focused ? 'add-circle' : 'add-circle-outline';
-          } else if (route.name === 'Dashboard') {
-            iconName = focused ? 'paw' : 'paw-outline';
+          if (route.name === "Feed") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "NewPost") {
+            iconName = focused ? "add-circle" : "add-circle-outline";
+          } else if (route.name === "Dashboard") {
+            iconName = focused ? "paw" : "paw-outline";
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: 'black',
-        tabBarInactiveTintColor: 'gray',
-        tabBarStyle: [{ display: 'flex' }, null]
+        tabBarActiveTintColor: "black",
+        tabBarInactiveTintColor: "gray",
+        tabBarStyle: [
+          {
+            display: "flex",
+          },
+          null,
+        ],
       })}
     >
       <Tab.Screen name="Feed" component={FeedScreen} />
@@ -39,12 +45,12 @@ const BottomNavBar = ({ initialRouteName }) => {
         name="NewPost"
         component={EmptyScreen}
         options={{
-          tabBarLabel: 'New Post',
-          listeners: {
-            tabPress: (e) => {
-              e.preventDefault();
-              navigation.navigate("NewPostModal");
-            },
+          tabBarLabel: "New Post",
+        }}
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate("NewPostModal");
           },
         }}
       />
