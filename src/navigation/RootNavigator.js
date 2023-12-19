@@ -112,11 +112,7 @@ const RootNavigator = () => {
             component={SignUpScreen}
             options={{
               title: '',
-              headerStyle: {
-                backgroundColor: 'transparent',
-                elevation: 0,
-                shadowOpacity: 0
-              }
+              headerTransparent: true,
             }}
           />
           <RootStack.Screen
@@ -124,11 +120,7 @@ const RootNavigator = () => {
             component={LoginScreen}
             options={{
               title: '',
-              headerStyle: {
-                backgroundColor: 'transparent',
-                elevation: 0,
-                shadowOpacity: 0
-              },
+              headerTransparent: true,
               cardStyleInterpolator: rightToLeftInterpolator
             }}
           />
@@ -137,11 +129,7 @@ const RootNavigator = () => {
             component={ResetPasswordScreen}
             options={{
               title: '',
-              headerStyle: {
-                backgroundColor: 'transparent',
-                elevation: 0,
-                shadowOpacity: 0
-              },
+              headerTransparent: true,
               cardStyleInterpolator: rightToLeftInterpolator
             }}
           />
