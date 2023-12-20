@@ -8,49 +8,106 @@ const colors = {
 };
 
 export const PetProfileCreationStyles = StyleSheet.create({
+
+  // Common
+
+  errorText: {
+    color: "red",
+    marginTop: 10,
+  },
+
+  // Regular color scheme
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: colors.logo_yellow,
   },
   mainTitle: {
-    fontSize: 24,
+    fontSize: 25,
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
+    color: colors.lightGray,
   },
   subTitle: {
     fontSize: 18,
     marginBottom: 20,
     textAlign: "center",
-    color: colors.gray,
-  },
-  input: {
-    height: 40,
-    borderColor: colors.gray,
-    borderWidth: 1,
-    width: '80%',
-    marginTop: 10,
-    padding: 10,
-  },
-  errorText: {
-    color: colors.red,
-    marginTop: 10,
-  },
-  dropdownContainer: {
-    height: 40,
-    width: '80%',
-    marginBottom: 20,
-  },
-  dropdown: {
-    backgroundColor: colors.lightGray,
+    color: colors.lightGray,
   },
   itemStyle: {
     justifyContent: "flex-start",
   },
-  dropdownStyle: {
+
+  button: {
+    backgroundColor: 'white',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginTop: 10,
+    borderRadius: 50,
+    width: '50%',
+  },
+  buttonText: {
+    color: colors.logo_grey,
+    fontSize: 18,
+    textAlign: "center",
+  },
+
+  // Reverse color scheme
+  containerReverse: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
     backgroundColor: colors.lightGray,
+  },
+  mainTitleReverse: {
+    fontSize: 25,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
+    color: colors.logo_yellow,
+  },
+  subTitleReverse: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+    color: colors.logo_grey,
+  },
+  buttonReverse: {
+    backgroundColor: 'black',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginTop: 40,
+    borderRadius: 50,
+    width: '50%',
+  },
+  buttonTextReverse: {
+    color: colors.lightGray,
+    fontSize: 18,
+    textAlign: "center",
+  },
+  dropdownContainer: {
+    height: 45,
+    width: '80%',
+  },
+  dropdown: {
+    backgroundColor: "#ffffff",
+    borderColor: "#cccccc",
+    borderRadius: 5,
+  },
+
+  input: {
+    height: 45,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#cccccc",
+    borderRadius: 5,
+    width: '80%',
+    marginTop: 10,
+    padding: 10,
   },
 });
 

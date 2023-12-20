@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
-import { Button, Text, View } from "react-native";
+import { Button, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch } from "react-redux";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
@@ -32,7 +32,7 @@ const Step4 = ({ navigation, route }) => {
 
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <View style={PetProfileCreationStyles.container}>
       <Text style={PetProfileCreationStyles.mainTitle}>
         Welcome, {petProfile[PET_PAGE_CREATION_FIELD_NAMES.PET_NAME]}!
       </Text>
@@ -40,10 +40,13 @@ const Step4 = ({ navigation, route }) => {
       <Text style={PetProfileCreationStyles.subTitle}>
         Your new pet ID is: {newPetId}
       </Text>}
-      <Button
-        title="Let's Go!"
+      <TouchableOpacity
+        style={PetProfileCreationStyles.button}
         onPress={continueToDashboard}
-      />
+      >
+        <Text style={PetProfileCreationStyles.buttonText}>Let's Go</Text>
+      </TouchableOpacity>
+
     </View>
   );
 };
