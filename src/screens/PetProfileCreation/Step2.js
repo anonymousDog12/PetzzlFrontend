@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, KeyboardAvoidingView, Platform, Text, TextInput } from "react-native";
+import { Button, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity } from "react-native";
 import { CONFIG } from "../../../config";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
@@ -41,14 +41,14 @@ const Step2 = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-      style={PetProfileCreationStyles.container}
+      style={PetProfileCreationStyles.containerReverse}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      <Text style={PetProfileCreationStyles.mainTitle}>
+      <Text style={PetProfileCreationStyles.mainTitleReverse}>
         Choose a unique ID for {petProfile[PET_PAGE_CREATION_FIELD_NAMES.PET_NAME]}
       </Text>
-      <Text style={PetProfileCreationStyles.subTitle}>
+      <Text style={PetProfileCreationStyles.subTitleReverse}>
         IDs can include letters, numbers, and dashes
       </Text>
       <TextInput
@@ -61,10 +61,12 @@ const Step2 = ({ navigation }) => {
         placeholder="Enter your identifier"
       />
       {errorMessage && <Text style={PetProfileCreationStyles.errorText}>{errorMessage}</Text>}
-      <Button
-        title="Continue"
+      <TouchableOpacity
+        style={PetProfileCreationStyles.buttonReverse}
         onPress={handleContinue}
-      />
+      >
+        <Text style={PetProfileCreationStyles.buttonTextReverse}>Continue</Text>
+      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 };

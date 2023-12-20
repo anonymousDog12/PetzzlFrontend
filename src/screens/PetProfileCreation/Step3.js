@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Text, View } from "react-native";
+import { Button, Text, TouchableOpacity, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../../config";
@@ -59,8 +59,8 @@ const Step3 = ({ navigation }) => {
 
 
   return (
-    <View style={PetProfileCreationStyles.container}>
-      <Text style={PetProfileCreationStyles.mainTitle}>
+    <View style={PetProfileCreationStyles.containerReverse}>
+      <Text style={PetProfileCreationStyles.mainTitleReverse}>
         What kind of pet is {petProfile[PET_PAGE_CREATION_FIELD_NAMES.PET_NAME]}?
       </Text>
       <DropDownPicker
@@ -72,12 +72,13 @@ const Step3 = ({ navigation }) => {
         containerStyle={PetProfileCreationStyles.dropdownContainer}
         style={PetProfileCreationStyles.dropdown}
         itemStyle={PetProfileCreationStyles.itemStyle}
-        dropDownStyle={PetProfileCreationStyles.dropdownStyle}
       />
-      <Button
-        title="Continue"
+      <TouchableOpacity
+        style={PetProfileCreationStyles.buttonReverse}
         onPress={handleContinue}
-      />
+      >
+        <Text style={PetProfileCreationStyles.buttonTextReverse}>Continue</Text>
+      </TouchableOpacity>
     </View>
   );
 };

@@ -6,6 +6,7 @@ import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
 import { setNewPetProfile } from "../../redux/actions/petProfile";
 import PetProfileCreationStyles from "./PetProfileCreationStyles";
+import { TouchableOpacity } from 'react-native';
 
 
 const Step1 = () => {
@@ -48,11 +49,11 @@ const Step1 = () => {
 
   return (
     <KeyboardAvoidingView
-      style={PetProfileCreationStyles.container}
+      style={PetProfileCreationStyles.containerReverse}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      <Text style={PetProfileCreationStyles.mainTitle}>What's your pet's name?</Text>
+      <Text style={PetProfileCreationStyles.mainTitleReverse}>What's your pet's name?</Text>
       <TextInput
         style={PetProfileCreationStyles.input}
         onChangeText={text => {
@@ -63,10 +64,12 @@ const Step1 = () => {
         placeholder="Enter your pet's name"
       />
       {error ? <Text style={PetProfileCreationStyles.errorText}>{error}</Text> : null}
-      <Button
-        title="Continue"
+      <TouchableOpacity
+        style={PetProfileCreationStyles.buttonReverse}
         onPress={handleContinue}
-      />
+      >
+        <Text style={PetProfileCreationStyles.buttonTextReverse}>Continue</Text>
+      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 };
