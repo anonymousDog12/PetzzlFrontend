@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { Button, KeyboardAvoidingView, Text, TextInput } from "react-native";
 import { useDispatch } from "react-redux";
 import { usePetProfile } from "../../contexts/PetProfileContext";
@@ -18,13 +18,12 @@ const Step1 = () => {
   const dispatch = useDispatch();
   const comingFromDashboard = route.params?.comingFromDashboard || false;
 
-  useEffect(() => {
-    return navigation.addListener('beforeRemove', (e) => {
-      if (comingFromDashboard) {
-        dispatch(setNewPetProfile(false));
-      }
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        comingFromDashboard ? <Button onPress={() => dispatch(setNewPetProfile(false))} title="Cancel" /> : null,
     });
-  }, [comingFromDashboard, dispatch, navigation]);
+  }, [navigation, comingFromDashboard]);
 
   const validatePetName = (name) => {
     if (name.length < 2 || name.length > 50) {

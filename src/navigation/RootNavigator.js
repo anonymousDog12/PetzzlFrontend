@@ -56,7 +56,7 @@ const RootNavigator = () => {
     <RootStack.Navigator
       initialRouteName={initialRouteName}
       screenOptions={{
-        headerTintColor: '#ffc02c',
+        headerTintColor: "#ffc02c",
         cardStyleInterpolator: ({ current, layouts }) => {
           return {
             cardStyle: {
@@ -75,19 +75,7 @@ const RootNavigator = () => {
     >
       {isAuthenticated ? (
         <>
-          {/* For authenticated users with pets or when adding a new pet profile */}
-          <RootStack.Screen
-            name="Tabs"
-            component={BottomNavBar}
-            options={{ headerShown: false }}
-          />
-          <RootStack.Screen name="Settings" component={SettingsScreen} />
-          <RootStack.Screen name="PostDetailScreen" component={PostDetailScreen}
-                            options={{ headerShown: true, headerBackTitle: "Back" }} />
-          <RootStack.Screen name="OtherUserDashboard" component={OtherUserDashboardScreen} />
-          <RootStack.Screen name="OtherUserPostDetailScreen" component={OtherUserPostDetailScreen} />
-          <RootStack.Screen name="LikerListScreen" component={LikerListScreen}
-                            options={{ headerShown: true, headerBackTitle: "Back" }} />
+
 
           {!hasPets && (
             <RootStack.Screen name="PetProfileCreationStep0" component={Step0}
@@ -105,6 +93,22 @@ const RootNavigator = () => {
                                 options={{ title: " ", cardStyleInterpolator: rightToLeftInterpolator }} />
             </>
           )}
+          {hasPets && !isNewPetProfile && (
+            <>
+              <RootStack.Screen
+                name="Tabs"
+                children={() => <BottomNavBar initialRouteName={initialRouteName} />}
+                options={{ headerShown: false }}
+              />
+              <RootStack.Screen name="Settings" component={SettingsScreen} />
+              <RootStack.Screen name="PostDetailScreen" component={PostDetailScreen}
+                                options={{ headerShown: true, headerBackTitle: "Back" }} />
+              <RootStack.Screen name="OtherUserDashboard" component={OtherUserDashboardScreen} />
+              <RootStack.Screen name="OtherUserPostDetailScreen" component={OtherUserPostDetailScreen} />
+              <RootStack.Screen name="LikerListScreen" component={LikerListScreen}
+                                options={{ headerShown: true, headerBackTitle: "Back" }} />
+            </>
+          )}
         </>
       ) : (
         <>
@@ -112,7 +116,7 @@ const RootNavigator = () => {
             name="SignUp"
             component={SignUpScreen}
             options={{
-              title: '',
+              title: "",
               headerTransparent: true,
             }}
           />
@@ -120,18 +124,18 @@ const RootNavigator = () => {
             name="Login"
             component={LoginScreen}
             options={{
-              title: '',
+              title: "",
               headerTransparent: true,
-              cardStyleInterpolator: rightToLeftInterpolator
+              cardStyleInterpolator: rightToLeftInterpolator,
             }}
           />
           <RootStack.Screen
             name="ResetPassword"
             component={ResetPasswordScreen}
             options={{
-              title: '',
+              title: "",
               headerTransparent: true,
-              cardStyleInterpolator: rightToLeftInterpolator
+              cardStyleInterpolator: rightToLeftInterpolator,
             }}
           />
         </>
