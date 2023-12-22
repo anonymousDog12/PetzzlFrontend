@@ -287,7 +287,7 @@ const DashboardScreen = () => {
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color="#ffc02c" />
           <Text>Loading...</Text>
         </View>
       ) : (

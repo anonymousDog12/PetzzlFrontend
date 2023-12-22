@@ -1,6 +1,15 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import * as Progress from "react-native-progress";
 import SecureStorage from "react-native-secure-storage";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
@@ -24,6 +33,36 @@ const FeedScreen = ({ route }) => {
   const [likeCounts, setLikeCounts] = useState({});
   const currentPetId = useSelector(state => state.petProfile.currentPetId);
   const [likeStatuses, setLikeStatuses] = useState({});
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoadingPage, setIsLoadingPage] = useState(false);
+  const hasNextPage = useSelector(state => state.feed.hasNextPage);
+
+  const [isGlobalLoading, setIsGlobalLoading] = useState(false);
+
+
+  useEffect(() => {
+    // Fetch the first page when the component mounts
+    dispatch(fetchFeed(1));
+  }, [dispatch]);
+
+  const loadMore = () => {
+    if (!isLoadingPage && hasNextPage) {
+      setIsLoadingPage(true);
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      dispatch(fetchFeed(nextPage));
+    }
+  };
+
+  useEffect(() => {
+    // Check if new data is loaded by comparing the length of feedData before and after
+    const isDataLoaded = feedData.length > 0 && currentPage > 1;
+    if (isDataLoaded) {
+      setIsLoadingPage(false);
+    }
+  }, [feedData, currentPage]);
+
 
   const navigation = useNavigation();
 
@@ -178,20 +217,37 @@ const FeedScreen = ({ route }) => {
 
   const isFocused = useIsFocused();
 
-  useEffect(() => {
-    if (isFocused) {
-      dispatch(fetchFeed());
-    }
-  }, [dispatch, isFocused]);
 
   useEffect(() => {
-    if (isFocused && currentPetId) {
-      feedData.forEach(post => {
-        fetchLikeCount(post.post_id);
-        fetchLikeStatus(post.post_id, currentPetId);
-      });
-    }
+    let active = true;
+
+    const fetchData = async () => {
+      if (isFocused && Array.isArray(feedData)) {
+        setIsGlobalLoading(true);
+        const fetchPromises = feedData.flatMap(post => [
+          fetchLikeCount(post.post_id),
+          fetchLikeStatus(post.post_id, currentPetId)
+        ]);
+
+        try {
+          await Promise.all(fetchPromises);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          if (active) {
+            setIsGlobalLoading(false);
+          }
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      active = false; // Prevents setting state on unmounted component
+    };
   }, [feedData, currentPetId, isFocused]);
+
 
 
   const navigateToLikerList = (postId) => {
@@ -273,10 +329,11 @@ const FeedScreen = ({ route }) => {
 
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.container}>
       {postDetails && isUploading && <Progress.Bar indeterminate={true} width={200} />}
       {postSuccess && <Text>Post successful! {" "}✓</Text>}
-      {feedData.map((post, index) => (
+      {Array.isArray(feedData) && feedData.map((post, index) => (
         <View key={index} style={styles.postContainer}>
           <View style={styles.profileHeader}>
             <TouchableOpacity onPress={() => handlePetProfileClick(post.pet_id)} style={styles.profileInfoContainer}>
@@ -295,7 +352,17 @@ const FeedScreen = ({ route }) => {
           <Text>{post.caption}</Text>
         </View>
       ))}
+      <TouchableOpacity onPress={loadMore} style={styles.loadMoreContainer}>
+        <Text style={styles.loadMoreText}>Load More</Text>
+      </TouchableOpacity>
+
     </ScrollView>
+      {isGlobalLoading && (
+        <View style={styles.overlay}>
+          <ActivityIndicator size="large" color="#ffc02c" />
+        </View>
+      )}
+    </View>
   );
 };
 
@@ -303,6 +370,29 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     // justifyContent and alignItems removed for better scrolling
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2,
+  },
+  loadMoreContainer: {
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f0f0f0",
+    borderRadius: 5,
+    margin: 10,
+  },
+  loadMoreText: {
+    color: "#ffc02c",
+    fontSize: 16,
   },
   boldText: {
     fontWeight: "bold",
