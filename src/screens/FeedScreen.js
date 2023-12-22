@@ -185,13 +185,14 @@ const FeedScreen = ({ route }) => {
   }, [dispatch, isFocused]);
 
   useEffect(() => {
-    if (isFocused && currentPetId) {
+    if (isFocused && Array.isArray(feedData)) {
       feedData.forEach(post => {
         fetchLikeCount(post.post_id);
         fetchLikeStatus(post.post_id, currentPetId);
       });
     }
   }, [feedData, currentPetId, isFocused]);
+
 
 
   const navigateToLikerList = (postId) => {
@@ -276,7 +277,7 @@ const FeedScreen = ({ route }) => {
     <ScrollView contentContainerStyle={styles.container}>
       {postDetails && isUploading && <Progress.Bar indeterminate={true} width={200} />}
       {postSuccess && <Text>Post successful! {" "}✓</Text>}
-      {feedData.map((post, index) => (
+      {Array.isArray(feedData) && feedData.map((post, index) => (
         <View key={index} style={styles.postContainer}>
           <View style={styles.profileHeader}>
             <TouchableOpacity onPress={() => handlePetProfileClick(post.pet_id)} style={styles.profileInfoContainer}>
