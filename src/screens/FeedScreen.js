@@ -330,7 +330,6 @@ const FeedScreen = ({ route }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {isGlobalLoading && <ActivityIndicator size="large" color="#0000ff" />}
       {postDetails && isUploading && <Progress.Bar indeterminate={true} width={200} />}
       {postSuccess && <Text>Post successful! {" "}✓</Text>}
       {Array.isArray(feedData) && feedData.map((post, index) => (
@@ -355,6 +354,11 @@ const FeedScreen = ({ route }) => {
       <TouchableOpacity onPress={loadMore} style={styles.loadMoreContainer}>
         <Text style={styles.loadMoreText}>Load More</Text>
       </TouchableOpacity>
+      {isGlobalLoading && (
+        <View style={styles.overlay}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -363,6 +367,15 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     // justifyContent and alignItems removed for better scrolling
+  },
+  overlay: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2, // Ensure it's above other content
   },
   loadMoreContainer: {
     padding: 10,
