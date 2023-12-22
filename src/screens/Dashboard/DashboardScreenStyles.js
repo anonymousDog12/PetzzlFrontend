@@ -123,12 +123,12 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   petProfile: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 10,
     marginVertical: 8,
     backgroundColor: "lightgrey",
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
     height: 120,
   },
   profilePicContainer: {
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   petId: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   petName: {
     fontSize: 16,
