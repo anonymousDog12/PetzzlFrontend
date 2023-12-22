@@ -254,7 +254,7 @@ const PostDetailScreen = ({ route }) => {
       </View>
     );
   }
-  
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.profileHeader}>

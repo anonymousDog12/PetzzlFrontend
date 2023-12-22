@@ -262,7 +262,6 @@ const styles = StyleSheet.create({
     transform: [{ translateX: -15 }, { translateY: -15 }], // Adjust size of the icon if needed
   },
   nextButton: {
-    // Style for your "Next" button
     padding: 10,
   },
   nextButtonText: {
