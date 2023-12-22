@@ -22,7 +22,11 @@ export default function(state = initialState, action) {
       if (action.page === 1) {
         return { ...state, feed: action.payload };
       } else {
-        return { ...state, feed: [...state.feed, ...action.payload] };
+        // Ensure that we are not appending the same data
+        if (state.feed[state.feed.length - 1].post_id !== action.payload[0].post_id) {
+          return { ...state, feed: [...state.feed, ...action.payload] };
+        }
+        return state;
       }
     case ADD_POST:
       return {

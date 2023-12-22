@@ -25,6 +25,30 @@ const FeedScreen = ({ route }) => {
   const currentPetId = useSelector(state => state.petProfile.currentPetId);
   const [likeStatuses, setLikeStatuses] = useState({});
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoadingPage, setIsLoadingPage] = useState(false);
+
+
+  useEffect(() => {
+    // Fetch the first page when the component mounts
+    dispatch(fetchFeed(1));
+  }, [dispatch]);
+
+  const loadMore = () => {
+    if (!isLoadingPage && feedData.length > 0) {
+      setIsLoadingPage(true);
+      dispatch(fetchFeed(currentPage));
+    }
+  };
+
+  useEffect(() => {
+    if (feedData.length > 0 && isLoadingPage) {
+      // Set the next page number when new data is loaded
+      setCurrentPage(currentPage + 1);
+      setIsLoadingPage(false);
+    }
+  }, [feedData, isLoadingPage, currentPage]);
+
   const navigation = useNavigation();
 
   const handlePetProfileClick = (petId) => {
@@ -178,11 +202,6 @@ const FeedScreen = ({ route }) => {
 
   const isFocused = useIsFocused();
 
-  useEffect(() => {
-    if (isFocused) {
-      dispatch(fetchFeed());
-    }
-  }, [dispatch, isFocused]);
 
   useEffect(() => {
     if (isFocused && Array.isArray(feedData)) {
@@ -194,12 +213,6 @@ const FeedScreen = ({ route }) => {
     }
   }, [feedData, currentPetId, isFocused]);
 
-
-
-  const loadMore = () => {
-    console.log("loading more");
-    // Future implementation to load more posts
-  };
 
 
   const navigateToLikerList = (postId) => {
