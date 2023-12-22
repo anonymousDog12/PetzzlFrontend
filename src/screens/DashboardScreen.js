@@ -1,13 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Animated,
+  Dimensions,
   FlatList,
   Image,
   LogBox,
   Modal,
-  StyleSheet,
+  PanResponder,
   Text,
   TouchableOpacity,
   View,
@@ -19,6 +21,7 @@ import { CONFIG } from "../../config";
 import ImageCropper from "../imageHandling/ImageCropper";
 import { fetchPosts } from "../redux/actions/dashboard";
 import { setCurrentPetId, setNewPetProfile } from "../redux/actions/petProfile";
+import styles from "./DashboardScreenStyles";
 
 
 LogBox.ignoreLogs(["Sending `onAnimatedValueUpdate` with no listeners registered."]);
@@ -88,6 +91,42 @@ const DashboardScreen = () => {
 
     getStoredPetId();
   }, [dispatch]);
+
+
+  const modalY = useRef(new Animated.Value(0)).current;
+  const screenHeight = Dimensions.get("window").height;
+
+  // Reset modalY to 0 when dropdownVisible becomes true
+  useEffect(() => {
+    if (dropdownVisible) {
+      modalY.setValue(0);
+    }
+  }, [dropdownVisible]);
+
+  const panResponder = useRef(PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onPanResponderMove: (event, gestureState) => {
+      const newY = Math.max(-5, gestureState.dy);
+      modalY.setValue(newY);
+    },
+    onPanResponderRelease: (e, { dy }) => {
+      if (dy > 50) {
+        Animated.spring(modalY, {
+          toValue: screenHeight, // Corrected to use the screenHeight variable
+          useNativeDriver: true,
+          bounciness: 5,
+          speed: 12,
+        }).start(() => setDropdownVisible(false));
+      } else {
+        Animated.spring(modalY, {
+          toValue: 0,
+          useNativeDriver: true,
+          bounciness: 5,
+          speed: 12,
+        }).start();
+      }
+    },
+  })).current;
 
 
   const takePhoto = () => {
@@ -216,18 +255,24 @@ const DashboardScreen = () => {
   }, [user, navigation, dispatch]);
 
 
-  // New function to handle post click
-  // Inside DashboardScreen, where you handle navigation to PostDetailScreen
   const handlePostSelect = (postId, petProfile) => {
     navigation.navigate("PostDetailScreen", { postId: postId, petProfile: petProfile });
   };
+
+  // TODO: move to a util file
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
 
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)}>
+        <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)}
+                          style={{ flexDirection: "row", alignItems: "center" }}>
           <Text style={styles.dropdownButton}>{selectedPetName}</Text>
+          <Icon name="caret-down" size={20} color="#ffc02c" />
         </TouchableOpacity>
       ),
       headerRight: () => (
@@ -240,6 +285,7 @@ const DashboardScreen = () => {
       ),
     });
   }, [navigation, dropdownVisible, selectedPetName]);
+
 
   return (
     <View style={styles.container}>
@@ -259,17 +305,19 @@ const DashboardScreen = () => {
           >
             <TouchableOpacity
               style={styles.fullScreenButton}
-              activeOpacity={1} // Keeps the touchable area visible
-              onPressOut={() => setDropdownVisible(false)} // Closes the dropdown when the area outside is pressed
+              activeOpacity={1}
+              onPressOut={() => setDropdownVisible(false)}
             >
-              <View style={styles.dropdownContainer} onStartShouldSetResponder={() => true}>
+              <Animated.View
+                style={[styles.sliderContainer, { transform: [{ translateY: modalY }] }]} {...panResponder.panHandlers}>
+                <View style={styles.sliderHandle} />
                 {petProfiles.map((pet, index) => (
                   <TouchableOpacity
                     key={index}
                     style={styles.dropdownItem}
                     onPress={() => handleSelectPetProfile(pet.pet_id, pet.pet_name)}
                   >
-                    <Text>{pet.pet_name}</Text>
+                    <Text style={currentPetId === pet.pet_id ? styles.selectedPetName : null}>{pet.pet_name}</Text>
                   </TouchableOpacity>
                 ))}
                 <TouchableOpacity
@@ -278,35 +326,34 @@ const DashboardScreen = () => {
                 >
                   <Text style={styles.addNewPetText}>Add a New Pet</Text>
                 </TouchableOpacity>
-              </View>
+              </Animated.View>
             </TouchableOpacity>
           </Modal>
 
 
           {currentPetProfile && (
-            <FlatList
-              data={[currentPetProfile]}
-              keyExtractor={item => item.pet_id.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.petProfile}>
-                  <TouchableOpacity onPress={handleProfilePicUpdate}>
-                    {item.profile_pic_thumbnail_small ? (
-                      <Image
-                        source={{ uri: item.profile_pic_thumbnail_small }}
-                        style={styles.profilePic}
-                      />
-                    ) : (
-                      <View style={styles.cameraIconContainer}>
-                        <Icon name="camera" size={50} color="#000" />
-                      </View>
-                    )}
-                  </TouchableOpacity>
-                  <Text>Pet Name: {item.pet_name}</Text>
-                  <Text>Pet Type: {item.pet_type}</Text>
-                </View>
-              )}
-            />
+            <View style={styles.petProfile}>
+              <TouchableOpacity onPress={handleProfilePicUpdate} style={styles.profilePicContainer}>
+                {currentPetProfile.profile_pic_thumbnail_small ? (
+                  <Image
+                    source={{ uri: currentPetProfile.profile_pic_thumbnail_small }}
+                    style={styles.profilePic}
+                  />
+                ) : (
+                  <View style={styles.cameraIconContainer}>
+                    <Icon name="camera" size={50} color="#000" />
+                  </View>
+                )}
+              </TouchableOpacity>
+              <View style={styles.petInfo}>
+                <Text style={styles.petId}>@{currentPetProfile.pet_id}</Text>
+                <Text style={styles.petName}>{currentPetProfile.pet_name}</Text>
+                <Text style={styles.petType}>{capitalizeFirstLetter(currentPetProfile.pet_type)}</Text>
+              </View>
+            </View>
           )}
+
+
 
           <Modal
             animationType="slide"
@@ -368,105 +415,5 @@ const DashboardScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  petProfile: {
-    padding: 10,
-    marginVertical: 8,
-    backgroundColor: "lightgrey",
-    borderRadius: 5,
-  },
-  dropdownButton: {
-    marginLeft: 10,
-    fontSize: 18,
-    color: "blue",
-  },
-  dropdownContainer: {
-    position: "absolute",
-    top: 50, // Adjust this value as needed
-    left: 10,
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 5,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  dropdownItem: {
-    padding: 10,
-  },
-  profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginRight: 10,
-  },
-  cameraIconContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "#A9A9A9", // Dark grey background
-    alignItems: "center", // Center the icon horizontally
-    justifyContent: "center", // Center the icon vertically
-    marginRight: 10,
-  },
-  actionSheetBackground: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  actionSheet: {
-    backgroundColor: "white",
-    padding: 16,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  actionSheetButton: {
-    padding: 16,
-    alignItems: "center",
-  },
-  actionSheetText: {
-    fontSize: 18,
-    color: "blue",
-  },
-  postItem: {
-    flex: 1 / 3, // Each item will take up 1/3 of the container's width
-    aspectRatio: 1, // Keep the aspect ratio of each item to 1:1
-    padding: 2, // Adjust padding as necessary
-  },
-  postThumbnail: {
-    width: "100%", // Take up all available width
-    height: "100%", // Take up all available height
-    borderRadius: 5, // Adjust as necessary
-  },
-  addNewPetButton: {
-    padding: 10,
-    alignItems: "center", // Center the text horizontally
-  },
-  addNewPetText: {
-    color: "blue",
-    fontSize: 16, // Adjust font size as necessary
-  },
-  fullScreenButton: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "transparent", // Ensures that the area outside the dropdown is transparent
-  },
-
-});
 
 export default DashboardScreen;
