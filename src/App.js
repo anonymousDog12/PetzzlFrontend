@@ -31,7 +31,7 @@ const AppInitializer = () => {
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#000000" />
+        <ActivityIndicator size="large" color="#ffc02c" />
       </View>
     );
   }
@@ -51,7 +51,7 @@ const App = () => {
   if (!isAuthChecked) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#000000" />
+        <ActivityIndicator size="large" color="#ffc02c" />
       </View>
     );
   }

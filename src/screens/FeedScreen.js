@@ -359,7 +359,7 @@ const FeedScreen = ({ route }) => {
     </ScrollView>
       {isGlobalLoading && (
         <View style={styles.overlay}>
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color="#ffc02c" />
         </View>
       )}
     </View>
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   loadMoreText: {
-    color: "#0000ff",
+    color: "#ffc02c",
     fontSize: 16,
   },
   boldText: {
