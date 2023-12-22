@@ -17,10 +17,11 @@ import {
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
-import { CONFIG } from "../../config";
-import ImageCropper from "../imageHandling/ImageCropper";
-import { fetchPosts } from "../redux/actions/dashboard";
-import { setCurrentPetId, setNewPetProfile } from "../redux/actions/petProfile";
+import { CONFIG } from "../../../config";
+import ImageCropper from "../../imageHandling/ImageCropper";
+import { fetchPosts } from "../../redux/actions/dashboard";
+import { setCurrentPetId, setNewPetProfile } from "../../redux/actions/petProfile";
+import { capitalizeFirstLetter } from "../../utils/common";
 import styles from "./DashboardScreenStyles";
 
 
@@ -259,12 +260,6 @@ const DashboardScreen = () => {
     navigation.navigate("PostDetailScreen", { postId: postId, petProfile: petProfile });
   };
 
-  // TODO: move to a util file
-  const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  };
-
-
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -352,7 +347,6 @@ const DashboardScreen = () => {
               </View>
             </View>
           )}
-
 
 
           <Modal

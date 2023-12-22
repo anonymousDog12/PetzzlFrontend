@@ -5,7 +5,7 @@ import LoginScreen from "../screens/Authentication/LoginScreen";
 import ResetPasswordScreen from "../screens/Authentication/ResetPasswordScreen";
 import SignUpScreen from "../screens/Authentication/SignUpScreen";
 import LikerListScreen from "../screens/LikerListScreen";
-import OtherUserDashboardScreen from "../screens/OtherUserDashboardScreen";
+import OtherUserDashboardScreen from "../screens/Dashboard/OtherUserDashboardScreen";
 import OtherUserPostDetailScreen from "../screens/OtherUserPostDetailScreen";
 import Step0 from "../screens/PetProfileCreation/Step0";
 import Step1 from "../screens/PetProfileCreation/Step1";

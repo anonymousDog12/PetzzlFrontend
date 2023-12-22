@@ -1,8 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { CONFIG } from "../../config";
-import { DEFAULT_PROFILE_PICS } from "../data/FieldNames"; // Import DEFAULT_PROFILE_PICS
+import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import { CONFIG } from "../../../config";
+import { DEFAULT_PROFILE_PICS } from "../../data/FieldNames";
+import { capitalizeFirstLetter } from "../../utils/common";
+import styles from "./DashboardScreenStyles";
+
 
 const OtherUserDashboardScreen = ({ route }) => {
   const { otherPetId } = route.params;
@@ -41,7 +44,7 @@ const OtherUserDashboardScreen = ({ route }) => {
   const renderPost = ({ item }) => {
     return (
       <TouchableOpacity
-        style={styles.postContainer}
+        style={styles.postItem}
         onPress={() => navigation.navigate("OtherUserPostDetailScreen", {
           postId: item.post_id,
           petId: otherPetProfile.pet_id,
@@ -68,7 +71,11 @@ const OtherUserDashboardScreen = ({ route }) => {
             source={{ uri: getProfilePic(otherPetProfile.profile_pic_thumbnail_small, otherPetProfile.pet_type) }}
             style={styles.profilePic}
           />
-          <Text>{otherPetProfile.pet_name}</Text>
+          <View style={styles.petInfo}>
+            <Text style={styles.petId}>@{otherPetProfile.pet_id}</Text>
+            <Text style={styles.petName}>{otherPetProfile.pet_name}</Text>
+            <Text style={styles.petType}>{capitalizeFirstLetter(otherPetProfile.pet_type)}</Text>
+          </View>
         </View>
       )}
       <FlatList
@@ -80,36 +87,5 @@ const OtherUserDashboardScreen = ({ route }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 40,
-    paddingHorizontal: 20,
-  },
-  petProfile: {
-    padding: 10,
-    marginVertical: 8,
-    backgroundColor: "lightgrey",
-    borderRadius: 5,
-    alignItems: "center",
-  },
-  profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
-  postContainer: {
-    flex: 1 / 3,
-    aspectRatio: 1,
-    padding: 2,
-  },
-  postThumbnail: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 5,
-  },
-  // Add more styles as needed
-});
 
 export default OtherUserDashboardScreen;

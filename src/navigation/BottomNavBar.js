@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import DashboardScreen from "../screens/DashboardScreen";
+import DashboardScreen from "../screens/Dashboard/DashboardScreen";
 import FeedScreen from "../screens/FeedScreen";
 
 
