@@ -36,8 +36,6 @@ const FeedScreen = ({ route }) => {
   }, [dispatch]);
 
   const loadMore = () => {
-    console.log('______')
-    console.log(isLoadingPage)
     if (!isLoadingPage && hasNextPage) {
       setIsLoadingPage(true);
       const nextPage = currentPage + 1;
@@ -53,7 +51,6 @@ const FeedScreen = ({ route }) => {
       setIsLoadingPage(false);
     }
   }, [feedData, currentPage]);
-
 
 
   const navigation = useNavigation();
@@ -221,7 +218,6 @@ const FeedScreen = ({ route }) => {
   }, [feedData, currentPetId, isFocused]);
 
 
-
   const navigateToLikerList = (postId) => {
     navigation.navigate("LikerListScreen", { postId });
   };
@@ -337,14 +333,14 @@ const styles = StyleSheet.create({
   },
   loadMoreContainer: {
     padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f0f0f0',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f0f0f0",
     borderRadius: 5,
     margin: 10,
   },
   loadMoreText: {
-    color: '#0000ff',
+    color: "#0000ff",
     fontSize: 16,
   },
   boldText: {
