@@ -1,6 +1,7 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useLayoutEffect, useState } from "react";
 import { Button, KeyboardAvoidingView, Text, TextInput, TouchableOpacity } from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch } from "react-redux";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
@@ -20,10 +21,16 @@ const Step1 = () => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () =>
-        comingFromDashboard ? <Button onPress={() => dispatch(setNewPetProfile(false))} title="Cancel" /> : null,
+      headerLeft: () =>
+        comingFromDashboard ? (
+          <TouchableOpacity onPress={() => dispatch(setNewPetProfile(false))}>
+            <Icon style={PetProfileCreationStyles.cancelButton} name="close" />
+
+          </TouchableOpacity>
+        ) : null,
     });
   }, [navigation, comingFromDashboard]);
+
 
   const validatePetName = (name) => {
     if (name.length < 2 || name.length > 50) {

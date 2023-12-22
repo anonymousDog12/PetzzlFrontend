@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 import LoginScreen from "../screens/Authentication/LoginScreen";
 import ResetPasswordScreen from "../screens/Authentication/ResetPasswordScreen";
 import SignUpScreen from "../screens/Authentication/SignUpScreen";
-import LikerListScreen from "../screens/LikerListScreen";
 import OtherUserDashboardScreen from "../screens/Dashboard/OtherUserDashboardScreen";
+import LikerListScreen from "../screens/LikerListScreen";
 import OtherUserPostDetailScreen from "../screens/OtherUserPostDetailScreen";
 import Step0 from "../screens/PetProfileCreation/Step0";
 import Step1 from "../screens/PetProfileCreation/Step1";
@@ -57,6 +57,9 @@ const RootNavigator = () => {
       initialRouteName={initialRouteName}
       screenOptions={{
         headerTintColor: "#ffc02c",
+        headerTitleStyle: {
+          color: "#2a2a2c",
+        },
         cardStyleInterpolator: ({ current, layouts }) => {
           return {
             cardStyle: {
@@ -139,13 +142,36 @@ const RootNavigator = () => {
                 children={() => <BottomNavBar initialRouteName={initialRouteName} />}
                 options={{ headerShown: false }}
               />
-              <RootStack.Screen name="Settings" component={SettingsScreen} />
+              <RootStack.Screen name="Settings" component={SettingsScreen}
+                                options={{
+                                  headerShown: true,
+                                  headerBackTitle: "Back",
+                                }}/>
               <RootStack.Screen name="PostDetailScreen" component={PostDetailScreen}
-                                options={{ headerShown: true, headerBackTitle: "Back" }} />
-              <RootStack.Screen name="OtherUserDashboard" component={OtherUserDashboardScreen} />
-              <RootStack.Screen name="OtherUserPostDetailScreen" component={OtherUserPostDetailScreen} />
-              <RootStack.Screen name="LikerListScreen" component={LikerListScreen}
-                                options={{ headerShown: true, headerBackTitle: "Back" }} />
+                                options={{
+                                  headerShown: true,
+                                  headerBackTitle: "Back",
+                                  title: "Detail",
+                                }} />
+              <RootStack.Screen name="OtherUserDashboard"
+                                component={OtherUserDashboardScreen}
+                                options={{
+                                  title: "Dashboard",
+                                  headerShown: true,
+                                  headerBackTitle: "Back"}} />
+              <RootStack.Screen name="OtherUserPostDetailScreen"
+                                component={OtherUserPostDetailScreen}
+                                options={{
+                                  title: "Detail",
+                                  headerShown: true,
+                                  headerBackTitle: "Back",}} />
+              <RootStack.Screen name="LikerListScreen"
+                                component={LikerListScreen}
+                                options={{
+                                  headerShown: true,
+                                  headerBackTitle: "Back",
+                                  title: "Likes",
+                                }} />
             </>
           )}
         </>
@@ -179,7 +205,7 @@ const RootNavigator = () => {
           />
         </>
       )}
-      <RootStack.Screen name="NewPostModal" component={NewPostModalNavigator} />
+      <RootStack.Screen name="NewPostModal" component={NewPostModalNavigator} options={{ headerShown: false }} />
     </RootStack.Navigator>
   );
 };
