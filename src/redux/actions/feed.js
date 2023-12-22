@@ -31,7 +31,13 @@ export const fetchFeed = (page = 1) => async dispatch => {
     }
 
     const data = await response.json();
-    dispatch({ type: FETCH_FEED, payload: data.results, page: page });
+    dispatch({
+      type: FETCH_FEED,
+      payload: data.results,
+      page: page,
+      hasNextPage: !!data.next
+    });
+
   } catch (error) {
     console.error("Error fetching feed:", error);
   }

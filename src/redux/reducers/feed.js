@@ -13,21 +13,33 @@ const initialState = {
   loading: false,
   selectedPhotos: [],
   caption: '',
+  hasNextPage: true, // Add this to track if there are more pages
 };
+
 
 // Feed reducer
 export default function(state = initialState, action) {
   switch (action.type) {
     case FETCH_FEED:
+      // Check if it's the first page or appending data
       if (action.page === 1) {
-        return { ...state, feed: action.payload };
+        return {
+          ...state,
+          feed: action.payload,
+          hasNextPage: action.hasNextPage
+        };
       } else {
         // Ensure that we are not appending the same data
-        if (state.feed[state.feed.length - 1].post_id !== action.payload[0].post_id) {
-          return { ...state, feed: [...state.feed, ...action.payload] };
+        const lastPostId = state.feed[state.feed.length - 1]?.post_id;
+        if (lastPostId !== action.payload[0]?.post_id) {
+          return {
+            ...state,
+            feed: [...state.feed, ...action.payload],
+            hasNextPage: action.hasNextPage
+          };
         }
-        return state;
       }
+      return state;
     case ADD_POST:
       return {
         ...state,

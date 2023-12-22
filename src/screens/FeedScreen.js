@@ -27,6 +27,7 @@ const FeedScreen = ({ route }) => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
+  const hasNextPage = useSelector(state => state.feed.hasNextPage);
 
 
   useEffect(() => {
@@ -37,7 +38,7 @@ const FeedScreen = ({ route }) => {
   const loadMore = () => {
     console.log('______')
     console.log(isLoadingPage)
-    if (!isLoadingPage && feedData.length > 0) {
+    if (!isLoadingPage && hasNextPage) {
       setIsLoadingPage(true);
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
