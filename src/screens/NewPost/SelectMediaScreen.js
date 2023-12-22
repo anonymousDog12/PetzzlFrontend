@@ -144,6 +144,7 @@ const SelectMediaScreen = ({ navigation }) => {
     );
   };
 
+  const isNextButtonEnabled = selectedPhotos.length > 0;
 
   const getMediaType = (uri) => {
     const media = photos.find(p => p.node.image.uri === uri);
@@ -191,9 +192,15 @@ const SelectMediaScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.nextButton}
             onPress={() => {
-              navigation.navigate("AddCaption", { selectedPhotos });
-            }}>
-            <Text style={styles.nextButtonText}>Next</Text>
+              if (isNextButtonEnabled) {
+                navigation.navigate("AddCaption", { selectedPhotos });
+              }
+            }}
+            disabled={!isNextButtonEnabled}
+          >
+            <Text style={[styles.nextButtonText, !isNextButtonEnabled && styles.nextButtonDisabledText]}>
+              Next
+            </Text>
           </TouchableOpacity>
         </View>
         <View style={styles.previewContainer}>
@@ -268,6 +275,9 @@ const styles = StyleSheet.create({
     color: "#ffc02c",
     fontWeight: "bold",
     fontSize: 20,
+  },
+  nextButtonDisabledText: {
+    color: "#ccc", // Change color to indicate disabled state
   },
   previewContainer: {
     height: height / 2, // Half the screen height for the preview
