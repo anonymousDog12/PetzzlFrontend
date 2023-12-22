@@ -19,10 +19,11 @@ const initialState = {
 export default function(state = initialState, action) {
   switch (action.type) {
     case FETCH_FEED:
-      return {
-        ...state,
-        feed: action.payload,
-      };
+      if (action.page === 1) {
+        return { ...state, feed: action.payload };
+      } else {
+        return { ...state, feed: [...state.feed, ...action.payload] };
+      }
     case ADD_POST:
       return {
         ...state,

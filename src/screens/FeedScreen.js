@@ -188,11 +188,18 @@ const FeedScreen = ({ route }) => {
     if (isFocused && Array.isArray(feedData)) {
       feedData.forEach(post => {
         fetchLikeCount(post.post_id);
+        console.log(post.post_id);
         fetchLikeStatus(post.post_id, currentPetId);
       });
     }
   }, [feedData, currentPetId, isFocused]);
 
+
+
+  const loadMore = () => {
+    console.log("loading more");
+    // Future implementation to load more posts
+  };
 
 
   const navigateToLikerList = (postId) => {
@@ -296,6 +303,9 @@ const FeedScreen = ({ route }) => {
           <Text>{post.caption}</Text>
         </View>
       ))}
+      <TouchableOpacity onPress={loadMore} style={styles.loadMoreContainer}>
+        <Text style={styles.loadMoreText}>Load More</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -304,6 +314,18 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     // justifyContent and alignItems removed for better scrolling
+  },
+  loadMoreContainer: {
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+    margin: 10,
+  },
+  loadMoreText: {
+    color: '#0000ff',
+    fontSize: 16,
   },
   boldText: {
     fontWeight: "bold",

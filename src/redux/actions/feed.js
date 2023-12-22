@@ -10,7 +10,7 @@ import {
 } from "../types";
 
 
-export const fetchFeed = () => async dispatch => {
+export const fetchFeed = (page = 1) => async dispatch => {
   dispatch({ type: SET_FEED_LOADING, payload: true });
 
   const accessToken = await SecureStorage.getItem("access");
@@ -20,7 +20,7 @@ export const fetchFeed = () => async dispatch => {
   }
 
   try {
-    const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/feed/`, {
+    const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/feed/?page=${page}`, {
       method: "GET",
       headers: { "Authorization": `JWT ${accessToken}` },
     });
@@ -31,7 +31,7 @@ export const fetchFeed = () => async dispatch => {
     }
 
     const data = await response.json();
-    dispatch({ type: FETCH_FEED, payload: data.results });
+    dispatch({ type: FETCH_FEED, payload: data.results, page: page });
   } catch (error) {
     console.error("Error fetching feed:", error);
   }
