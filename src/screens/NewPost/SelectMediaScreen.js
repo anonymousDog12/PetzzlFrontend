@@ -205,13 +205,11 @@ const SelectMediaScreen = ({ navigation }) => {
         <View style={styles.previewContainer}>
           {selectedPhotos.length === 0 && lastDeselectedPhoto ? (
             <React.Fragment>
-              {console.log('Media type:', getMediaType(lastDeselectedPhoto))}
               {renderPreview(lastDeselectedPhoto)}
             </React.Fragment>
           ) : (
             selectedPhotos.length > 0 && (
               <React.Fragment>
-                {console.log('Media type:', getMediaType(selectedPhotos[selectedPhotos.length - 1].uri))}
                 {renderPreview(selectedPhotos[selectedPhotos.length - 1].uri)}
               </React.Fragment>
             )
@@ -274,8 +272,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   nextButtonText: {
-    // Style for the text inside your "Next" button
-    color: "#007bff", // iOS blue color
+    color: "#ffc02c",
     fontWeight: "bold",
     fontSize: 20,
   },

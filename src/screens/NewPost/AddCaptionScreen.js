@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   },
   postButton: {
     padding: 8,
-    backgroundColor: "#007bff", // iOS blue color
+    backgroundColor: "#ffc02c", 
     borderRadius: 5,
   },
   postButtonText: {
