@@ -57,6 +57,9 @@ const RootNavigator = () => {
       initialRouteName={initialRouteName}
       screenOptions={{
         headerTintColor: "#ffc02c",
+        headerTitleStyle: {
+          color: "#2a2a2c",
+        },
         cardStyleInterpolator: ({ current, layouts }) => {
           return {
             cardStyle: {
