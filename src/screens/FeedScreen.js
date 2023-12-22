@@ -1,6 +1,15 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import * as Progress from "react-native-progress";
 import SecureStorage from "react-native-secure-storage";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
@@ -28,6 +37,8 @@ const FeedScreen = ({ route }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
   const hasNextPage = useSelector(state => state.feed.hasNextPage);
+
+  const [isGlobalLoading, setIsGlobalLoading] = useState(false);
 
 
   useEffect(() => {
@@ -208,13 +219,35 @@ const FeedScreen = ({ route }) => {
 
 
   useEffect(() => {
-    if (isFocused && Array.isArray(feedData)) {
-      feedData.forEach(post => {
-        fetchLikeCount(post.post_id);
-        fetchLikeStatus(post.post_id, currentPetId);
-      });
-    }
+    let active = true;
+
+    const fetchData = async () => {
+      if (isFocused && Array.isArray(feedData)) {
+        setIsGlobalLoading(true);
+        const fetchPromises = feedData.flatMap(post => [
+          fetchLikeCount(post.post_id),
+          fetchLikeStatus(post.post_id, currentPetId)
+        ]);
+
+        try {
+          await Promise.all(fetchPromises);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          if (active) {
+            setIsGlobalLoading(false);
+          }
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      active = false; // Prevents setting state on unmounted component
+    };
   }, [feedData, currentPetId, isFocused]);
+
 
 
   const navigateToLikerList = (postId) => {
@@ -297,6 +330,7 @@ const FeedScreen = ({ route }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {isGlobalLoading && <ActivityIndicator size="large" color="#0000ff" />}
       {postDetails && isUploading && <Progress.Bar indeterminate={true} width={200} />}
       {postSuccess && <Text>Post successful! {" "}✓</Text>}
       {Array.isArray(feedData) && feedData.map((post, index) => (
