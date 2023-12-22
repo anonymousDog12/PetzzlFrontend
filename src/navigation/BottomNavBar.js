@@ -30,7 +30,7 @@ const BottomNavBar = ({ initialRouteName }) => {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "black",
+        tabBarActiveTintColor: "#ffc02c",
         tabBarInactiveTintColor: "gray",
         tabBarStyle: [
           {

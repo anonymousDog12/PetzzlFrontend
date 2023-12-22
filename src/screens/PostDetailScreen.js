@@ -91,15 +91,14 @@ const PostDetailScreen = ({ route }) => {
 
   const panResponder = useRef(PanResponder.create({
     onStartShouldSetPanResponder: () => true,
-    onPanResponderMove: Animated.event(
-      [null, { dy: modalY }],
-      { useNativeDriver: false },
-    ),
+    onPanResponderMove: (event, gestureState) => {
+      const newY = Math.max(-5, gestureState.dy);
+      modalY.setValue(newY);
+    },
     onPanResponderRelease: (e, { dy }) => {
-      if (dy > 50) { // Threshold to close the modal
-        toggleModal();
+      if (dy > 50) {
+        setModalVisible(false);
       } else {
-        // Reset position
         Animated.spring(modalY, {
           toValue: 0,
           useNativeDriver: false,
@@ -111,7 +110,7 @@ const PostDetailScreen = ({ route }) => {
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
-    modalY.setValue(0); // Reset position when modal is closed or opened
+    modalY.setValue(0);
   };
 
   useEffect(() => {
