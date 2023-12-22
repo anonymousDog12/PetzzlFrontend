@@ -152,10 +152,16 @@ const RootNavigator = () => {
                                 }} />
               <RootStack.Screen name="OtherUserDashboard"
                                 component={OtherUserDashboardScreen}
-                                options={{ title: "Dashboard" }} />
+                                options={{
+                                  title: "Dashboard",
+                                  headerShown: true,
+                                  headerBackTitle: "Back"}} />
               <RootStack.Screen name="OtherUserPostDetailScreen"
                                 component={OtherUserPostDetailScreen}
-                                options={{ title: "Detail" }} />
+                                options={{
+                                  title: "Detail",
+                                  headerShown: true,
+                                  headerBackTitle: "Back",}} />
               <RootStack.Screen name="LikerListScreen"
                                 component={LikerListScreen}
                                 options={{
