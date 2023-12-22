@@ -1,10 +1,10 @@
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import React, { useEffect, useState } from "react";
 import { Dimensions, FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
 import Video from "react-native-video";
 import { useDispatch, useSelector } from "react-redux";
 import { RESET_POST_STATE, UPDATE_SELECTED_PHOTOS } from "../../redux/types";
-import Icon from "react-native-vector-icons/Ionicons";
 
 
 const { width, height } = Dimensions.get("window");
@@ -38,7 +38,7 @@ const SelectMediaScreen = ({ navigation }) => {
               uri: lastMedia.uri,
               mimeType,
               extension,
-              order: 1
+              order: 1,
             }],
           });
         }
@@ -55,9 +55,8 @@ const SelectMediaScreen = ({ navigation }) => {
   }, [dispatch]);
 
 
-
   const toggleSelectPhoto = (uri) => {
-    if ((selectedPhotos.some(photo => photo.mimeType.startsWith('video')) && !selectedPhotos.some(p => p.uri === uri)) ||
+    if ((selectedPhotos.some(photo => photo.mimeType.startsWith("video")) && !selectedPhotos.some(p => p.uri === uri)) ||
       (selectedPhotos.length >= 9 && !selectedPhotos.some(p => p.uri === uri))) {
       return;
     }
@@ -94,10 +93,6 @@ const SelectMediaScreen = ({ navigation }) => {
   };
 
 
-
-
-
-
   const getSelectionOrder = (uri) => {
     const selectedPhoto = selectedPhotos.find(p => p.uri === uri);
     return selectedPhoto ? selectedPhoto.order : null;
@@ -110,7 +105,7 @@ const SelectMediaScreen = ({ navigation }) => {
 
     const isSelectable = isVideo ?
       (selectedPhotos.length === 0 || selectionOrder !== null) :
-      (selectedPhotos.length < 9 && !selectedPhotos.some(photo => photo.mimeType.startsWith('video')) || selectionOrder !== null);
+      (selectedPhotos.length < 9 && !selectedPhotos.some(photo => photo.mimeType.startsWith("video")) || selectionOrder !== null);
 
     return (
       <TouchableOpacity
@@ -152,18 +147,18 @@ const SelectMediaScreen = ({ navigation }) => {
 
   const getMediaType = (uri) => {
     const media = photos.find(p => p.node.image.uri === uri);
-    return media && media.node.type === 'video' ? 'video' : 'photo';
+    return media && media.node.type === "video" ? "video" : "photo";
   };
 
   const convertPHtoAssetsUri = (phUri) => {
-    const uriId = phUri.split('/')[2];
+    const uriId = phUri.split("/")[2];
     return `assets-library://asset/asset.mp4?id=${uriId}&ext=mp4`;
   };
 
   const renderPreview = (uri) => {
     const mediaType = getMediaType(uri);
 
-    if (mediaType === 'video') {
+    if (mediaType === "video") {
       const assetUri = convertPHtoAssetsUri(uri);
       return (
         <Video
@@ -182,7 +177,6 @@ const SelectMediaScreen = ({ navigation }) => {
       );
     }
   };
-
 
 
   return (
@@ -256,15 +250,15 @@ const styles = StyleSheet.create({
     paddingRight: 10, // Add padding to the right
   },
   closeButton: {
-    position: 'absolute',
+    position: "absolute",
     left: 10,
     top: 10,
     padding: 10, // Adjust as needed for touchable area
   },
   playIcon: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
     transform: [{ translateX: -15 }, { translateY: -15 }], // Adjust size of the icon if needed
   },
   nextButton: {
