@@ -35,19 +35,25 @@ const FeedScreen = ({ route }) => {
   }, [dispatch]);
 
   const loadMore = () => {
+    console.log('______')
+    console.log(isLoadingPage)
     if (!isLoadingPage && feedData.length > 0) {
       setIsLoadingPage(true);
-      dispatch(fetchFeed(currentPage));
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      dispatch(fetchFeed(nextPage));
     }
   };
 
   useEffect(() => {
-    if (feedData.length > 0 && isLoadingPage) {
-      // Set the next page number when new data is loaded
-      setCurrentPage(currentPage + 1);
+    // Check if new data is loaded by comparing the length of feedData before and after
+    const isDataLoaded = feedData.length > 0 && currentPage > 1;
+    if (isDataLoaded) {
       setIsLoadingPage(false);
     }
-  }, [feedData, isLoadingPage, currentPage]);
+  }, [feedData, currentPage]);
+
+
 
   const navigation = useNavigation();
 
