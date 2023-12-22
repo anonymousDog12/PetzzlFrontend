@@ -10,7 +10,11 @@ const colors = {
 export const PetProfileCreationStyles = StyleSheet.create({
 
   // Common
-
+  cancelButton: {
+    color: "#797979",
+    fontSize: 30,
+    marginLeft: 10,
+  },
   errorText: {
     color: "red",
     marginTop: 10,

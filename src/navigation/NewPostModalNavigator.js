@@ -1,15 +1,22 @@
-import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import SelectMediaScreen from '../screens/NewPost/SelectMediaScreen';
-import AddCaptionScreen from '../screens/NewPost/AddCaptionScreen';
+import { createStackNavigator } from "@react-navigation/stack";
+import React from "react";
+import AddCaptionScreen from "../screens/NewPost/AddCaptionScreen";
+import SelectMediaScreen from "../screens/NewPost/SelectMediaScreen";
+
 
 const NewPostModalStack = createStackNavigator();
 
 const NewPostModalNavigator = () => {
   return (
-    <NewPostModalStack.Navigator screenOptions={{ headerShown: false }}>
-      <NewPostModalStack.Screen name="SelectPhoto" component={SelectMediaScreen} />
-      <NewPostModalStack.Screen name="AddCaption" component={AddCaptionScreen} />
+    <NewPostModalStack.Navigator options={{ headerShown: false }}>
+      <NewPostModalStack.Screen name="SelectPhoto" component={SelectMediaScreen}
+                                options={{
+                                  headerShown: false,
+                                }} />
+      <NewPostModalStack.Screen name="AddCaption" component={AddCaptionScreen}
+                                options={{
+                                  headerShown: false,
+                                }}/>
     </NewPostModalStack.Navigator>
   );
 };
