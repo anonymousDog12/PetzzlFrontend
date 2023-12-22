@@ -211,7 +211,6 @@ const FeedScreen = ({ route }) => {
     if (isFocused && Array.isArray(feedData)) {
       feedData.forEach(post => {
         fetchLikeCount(post.post_id);
-        console.log(post.post_id);
         fetchLikeStatus(post.post_id, currentPetId);
       });
     }
