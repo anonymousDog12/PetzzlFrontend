@@ -20,8 +20,8 @@ const Step3 = ({ navigation }) => {
       [PET_PAGE_CREATION_FIELD_NAMES.PET_TYPE]: petType,
     };
 
-    console.log("posting to database....");
-    console.log("Pet Profile:", updatedProfile);
+    // console.log("posting to database....");
+    // console.log("Pet Profile:", updatedProfile);
 
     // Retrieve JWT token from secure storage
     const token = await SecureStorage.getItem("access");
