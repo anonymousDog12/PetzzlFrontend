@@ -21,12 +21,19 @@ const SelectMediaScreen = ({ navigation }) => {
   const fetchPhotos = async () => {
     if (!hasMore) return;
 
+    // Create an object for the parameters you want to send
+    let params = {
+      first: 20,
+      assetType: 'Photos',
+    };
+
+    // If you have a valid cursor, add the 'after' parameter
+    if (after) {
+      params = { ...params, after };
+    }
+
     try {
-      const result = await CameraRoll.getPhotos({
-        first: 20,
-        assetType: "Photos",
-        after: after, // Use the 'after' cursor for pagination
-      });
+      const result = await CameraRoll.getPhotos(params);
 
       // Append new photos to existing photos
       setPhotos(prevPhotos => [...prevPhotos, ...result.edges]);
@@ -35,12 +42,12 @@ const SelectMediaScreen = ({ navigation }) => {
       setAfter(result.page_info.end_cursor);
       setHasMore(result.page_info.has_next_page);
 
-      // Your existing logic to automatically select the last media
+      // Automatically select the last media in the album and determine its MIME type and extension
       if (result.edges.length > 0) {
         const lastMedia = result.edges[0].node.image;
         const isVideo = lastMedia.playableDuration > 0;
-        const mimeType = isVideo ? `video/${lastMedia.extension}` : `image/${lastMedia.extension}`;
-        const extension = `.${lastMedia.extension}`;
+        const mimeType = isVideo ? `video/${lastMedia.type}` : `image/${lastMedia.type}`;
+        const extension = `.${lastMedia.filename.split('.').pop()}`;
 
         dispatch({
           type: UPDATE_SELECTED_PHOTOS,
@@ -56,6 +63,7 @@ const SelectMediaScreen = ({ navigation }) => {
       console.error("Error fetching photos", error);
     }
   };
+
 
   useEffect(() => {
     fetchPhotos(); // Fetch initial photos
