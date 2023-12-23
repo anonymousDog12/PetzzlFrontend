@@ -187,7 +187,7 @@ const SelectMediaScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.closeButton}
             onPress={() => navigation.goBack()}>
-            <Icon name="close" size={30} color="#000" />
+            <Icon name="close" size={30} color="white" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.nextButton}
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "black",
   },
   container: {
     flex: 1,
@@ -285,6 +285,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 10, // Add some margin if needed
+    backgroundColor: "black",
   },
   previewPhoto: {
     width: width, // Full width
@@ -299,7 +300,7 @@ const styles = StyleSheet.create({
     width: width / 4,
     height: width / 4,
     borderWidth: 0.5,
-    borderColor: "gray",
+    borderColor: "black",
   },
   image: {
     width: "100%",
