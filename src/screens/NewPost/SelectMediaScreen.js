@@ -20,7 +20,7 @@ const SelectMediaScreen = ({ navigation }) => {
     const fetchPhotos = async () => {
       try {
         const result = await CameraRoll.getPhotos({
-          first: 20,
+          first: 5000,
           assetType: "Photos",
         });
         setPhotos(result.edges);
