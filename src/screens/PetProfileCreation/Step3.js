@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../../config";
@@ -20,8 +20,8 @@ const Step3 = ({ navigation }) => {
       [PET_PAGE_CREATION_FIELD_NAMES.PET_TYPE]: petType,
     };
 
-    console.log("posting to database....");
-    console.log("Pet Profile:", updatedProfile);
+    // console.log("posting to database....");
+    // console.log("Pet Profile:", updatedProfile);
 
     // Retrieve JWT token from secure storage
     const token = await SecureStorage.getItem("access");

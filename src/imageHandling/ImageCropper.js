@@ -22,7 +22,7 @@ const ImageCropper = {
             freeStyleCropEnabled: true,
           });
 
-          console.log("Cropped image:", croppedImage);
+          // console.log("Cropped image:", croppedImage);
 
           const formData = new FormData();
           formData.append("file", {

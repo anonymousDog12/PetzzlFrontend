@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 
+
 const colors = {
   logo_grey: "#3d3d3d",
   logo_yellow: "#ffc02c",
@@ -46,12 +47,12 @@ export const PetProfileCreationStyles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginTop: 10,
     borderRadius: 50,
-    width: '50%',
+    width: "50%",
   },
   buttonText: {
     color: colors.logo_grey,
@@ -81,12 +82,12 @@ export const PetProfileCreationStyles = StyleSheet.create({
     color: colors.logo_grey,
   },
   buttonReverse: {
-    backgroundColor: 'black',
+    backgroundColor: "black",
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginTop: 40,
     borderRadius: 50,
-    width: '50%',
+    width: "50%",
   },
   buttonTextReverse: {
     color: colors.lightGray,
@@ -95,7 +96,7 @@ export const PetProfileCreationStyles = StyleSheet.create({
   },
   dropdownContainer: {
     height: 45,
-    width: '80%',
+    width: "80%",
   },
   dropdown: {
     backgroundColor: "#ffffff",
@@ -109,7 +110,7 @@ export const PetProfileCreationStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#cccccc",
     borderRadius: 5,
-    width: '80%',
+    width: "80%",
     marginTop: 10,
     padding: 10,
   },
