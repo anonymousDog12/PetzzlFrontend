@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../../config";
