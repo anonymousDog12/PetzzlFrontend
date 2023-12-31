@@ -1,6 +1,16 @@
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import React, { useEffect, useState } from "react";
-import { Dimensions, FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import Video from "react-native-video";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,7 +34,7 @@ const SelectMediaScreen = ({ navigation }) => {
     // Create an object for the parameters you want to send
     let params = {
       first: 20,
-      assetType: 'Photos',
+      assetType: "Photos",
     };
 
     // If you have a valid cursor, add the 'after' parameter
@@ -34,31 +44,9 @@ const SelectMediaScreen = ({ navigation }) => {
 
     try {
       const result = await CameraRoll.getPhotos(params);
-
-      // Append new photos to existing photos
       setPhotos(prevPhotos => [...prevPhotos, ...result.edges]);
-
-      // Update pagination state
       setAfter(result.page_info.end_cursor);
       setHasMore(result.page_info.has_next_page);
-
-      // Automatically select the last media in the album and determine its MIME type and extension
-      if (result.edges.length > 0) {
-        const lastMedia = result.edges[0].node.image;
-        const isVideo = lastMedia.playableDuration > 0;
-        const mimeType = isVideo ? `video/${lastMedia.type}` : `image/${lastMedia.type}`;
-        const extension = `.${lastMedia.filename.split('.').pop()}`;
-
-        dispatch({
-          type: UPDATE_SELECTED_PHOTOS,
-          payload: [{
-            uri: lastMedia.uri,
-            mimeType,
-            extension,
-            order: 1,
-          }],
-        });
-      }
     } catch (error) {
       console.error("Error fetching photos", error);
     }
@@ -198,6 +186,16 @@ const SelectMediaScreen = ({ navigation }) => {
     }
   };
 
+  const renderFooter = () => {
+    return (
+      hasMore && (
+        <View style={styles.footer}>
+          <ActivityIndicator size="large" color="#ffc02c" />
+        </View>
+      )
+    );
+  };
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -242,12 +240,11 @@ const SelectMediaScreen = ({ navigation }) => {
           keyExtractor={(item, index) => index.toString()}
           numColumns={4}
           style={styles.photoList}
+          onEndReached={fetchPhotos} // Trigger fetching more photos when the end is reached
+          onEndReachedThreshold={0.5} // Threshold - 0.5 means when 50% of the last item is visible
+          ListFooterComponent={hasMore && renderFooter} // Optional: Render a footer to show a loading indicator
         />
-        {hasMore && (
-          <TouchableOpacity style={styles.loadMoreButton} onPress={fetchPhotos}>
-            <Text style={styles.loadMoreButtonText}>Load More Photos</Text>
-          </TouchableOpacity>
-        )}
+
       </View>
     </SafeAreaView>
   );
@@ -255,18 +252,6 @@ const SelectMediaScreen = ({ navigation }) => {
 
 
 const styles = StyleSheet.create({
-  loadMoreButton: {
-    padding: 10,
-    backgroundColor: '#007bff', // Feel free to choose your own color
-    borderRadius: 5,
-    margin: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadMoreButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
   previewPhotoImage: {
     width: width, // Full width
     height: "100%", // Full height of the preview container
