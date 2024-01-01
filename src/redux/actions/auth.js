@@ -69,6 +69,35 @@ export const login = (email, password) => async dispatch => {
   }
 };
 
+let isRefreshingToken = false;
+
+export const refreshToken = () => async dispatch => {
+
+
+  if (isRefreshingToken) return;
+  isRefreshingToken = true;
+
+  const refresh = await SecureStorage.getItem("refresh");
+  if (refresh) {
+    try {
+      const res = await axios.post(`${CONFIG.BACKEND_URL}/auth/jwt/refresh/`, { refresh });
+      await SecureStorage.setItem("access", res.data.access);
+      await SecureStorage.setItem("refresh", res.data.refresh);
+      dispatch({ type: AUTHENTICATED_SUCCESS });
+    } catch (error) {
+      console.error("Failed to refresh token", error);
+      dispatch({ type: AUTHENTICATED_FAIL });
+      // Additional logic for error handling
+    } finally {
+      isRefreshingToken = false;
+    }
+  } else {
+    dispatch({ type: AUTHENTICATED_FAIL });
+    isRefreshingToken = false;
+  }
+};
+
+
 export const load_user = () => async dispatch => {
   const access = await SecureStorage.getItem("access");
   if (access) {
@@ -101,9 +130,10 @@ export const load_user = () => async dispatch => {
       // Check if the error is due to an expired token
       if (err.response && err.response.data.code === "token_not_valid") {
         // Token is invalid or expired
+        await SecureStorage.removeItem("access");
+        await SecureStorage.removeItem("refresh");
         dispatch({ type: AUTHENTICATED_FAIL });
-        SecureStorage.removeItem("access");
-        SecureStorage.removeItem("refresh");
+        dispatch(refreshToken());
       } else {
         // Handle other errors
         dispatch({ type: USER_LOADED_FAIL });
