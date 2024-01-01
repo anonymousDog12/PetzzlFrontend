@@ -7,9 +7,10 @@ import { enableScreens } from "react-native-screens";
 import { Provider } from "react-redux";
 import { PetProfileProvider } from "./contexts/PetProfileContext";
 import RootNavigator from "./navigation/RootNavigator";
-import { loadTokens } from "./redux/actions/auth";
+import { loadTokens, refreshToken } from "./redux/actions/auth";
 import { setCurrentPetId } from "./redux/actions/petProfile";
 import store from "./redux/store";
+
 
 enableScreens();
 
@@ -46,6 +47,13 @@ const App = () => {
     store.dispatch(loadTokens())
       .then(() => setIsAuthChecked(true))
       .catch((error) => console.error("Error during authentication check:", error));
+
+    // Set up a timer to refresh the token periodically
+    const tokenRefreshInterval = setInterval(() => {
+      store.dispatch(refreshToken());
+    }, 82800000);
+
+    return () => clearInterval(tokenRefreshInterval); // Clear interval on component unmount
   }, []);
 
   if (!isAuthChecked) {
