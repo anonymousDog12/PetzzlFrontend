@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   SafeAreaView,
   Text,
@@ -110,12 +111,25 @@ export default function SignUpScreen({ navigation }) {
         <TouchableOpacity onPress={handleSignUp} style={authStyles.button}>
           <Text style={authStyles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
+
         <Text style={authStyles.footer}>
           Already have an account? &nbsp;
           <Text style={authStyles.footerLink} onPress={() => navigation.navigate("Login")}>
             Login
           </Text>
         </Text>
+
+        <View style={authStyles.termsContainer}>
+          <Text style={authStyles.termsText}>
+            By signing up, you agree to our&nbsp;
+            <Text
+              style={authStyles.termsLink}
+              onPress={() => Linking.openURL("https://petzzl.app/terms-of-service")}>
+              Terms of Service
+            </Text>.
+          </Text>
+        </View>
+
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

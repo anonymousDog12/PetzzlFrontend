@@ -20,8 +20,8 @@ export const authStyles = StyleSheet.create({
     marginVertical: 20,
   },
   logoContainer: {
-    flexDirection: 'row', // ensures the children (logo) are laid out in a row
-    justifyContent: 'flex-end', // aligns children to the end of the main axis (right side)
+    flexDirection: "row",
+    justifyContent: "flex-end",
     marginTop: 0,
     marginRight: 10,
     height: 40,
@@ -73,5 +73,19 @@ export const authStyles = StyleSheet.create({
     color: "green",
     textAlign: "center",
     marginBottom: 10,
+  },
+  termsContainer: {
+    marginTop: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  termsText: {
+    color: "#646464",
+    fontSize: 14,
+    textAlign: "center",
+  },
+  termsLink: {
+    color: "#797979",
+    textDecorationLine: "underline",
   },
 });
