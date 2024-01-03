@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import React, { useEffect, useState } from "react";
 import {
@@ -15,6 +16,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import Video from "react-native-video";
 import { useDispatch, useSelector } from "react-redux";
 import { RESET_POST_STATE, UPDATE_SELECTED_PHOTOS } from "../../redux/types";
+import GuidelinesModal from "./GuidelinesModal";
 
 
 const { width, height } = Dimensions.get("window");
@@ -27,6 +29,26 @@ const SelectMediaScreen = ({ navigation }) => {
 
   const [after, setAfter] = useState(null); // Cursor for pagination
   const [hasMore, setHasMore] = useState(true); // Whether more photos are available
+
+
+  const [isGuidelinesModalVisible, setIsGuidelinesModalVisible] = useState(false);
+
+  useEffect(() => {
+    const checkGuidelines = async () => {
+      const hasSeenGuidelines = await AsyncStorage.getItem('hasSeenPostGuidelines');
+
+      if (!hasSeenGuidelines || hasSeenGuidelines === 'false') {
+        setIsGuidelinesModalVisible(true);
+      }
+    };
+
+    checkGuidelines();
+  }, []);
+
+  const handleDismissGuidelines = async () => {
+    setIsGuidelinesModalVisible(false);
+    await AsyncStorage.setItem('hasSeenPostGuidelines', 'true');
+  };
 
   const fetchPhotos = async () => {
     if (!hasMore) return;
@@ -199,6 +221,10 @@ const SelectMediaScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <GuidelinesModal
+        visible={isGuidelinesModalVisible}
+        onClose={handleDismissGuidelines}
+      />
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity
