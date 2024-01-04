@@ -1,7 +1,7 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
+  ActivityIndicator, Alert,
   Dimensions,
   Image,
   ScrollView,
@@ -125,7 +125,17 @@ const FeedScreen = ({ route }) => {
         setPostSuccess(true);
         dispatch(fetchFeed()); // Fetch the updated feed
       } else {
-        console.error(`HTTP error! status: ${response.status}`);
+        const errorResponse = await response.json();
+        if (errorResponse.error_type === 'inappropriate_content') {
+          Alert.alert(
+            "Quick Check Needed", // This is the title of the alert
+            errorResponse.message, // This is the body of the alert
+            [{ text: "OK" }] // Array of buttons
+          );
+        } else {
+          // Handle other types of errors
+          console.error(`HTTP error! status: ${response.status}`);
+        }
       }
     } catch (error) {
       console.error("Error creating post:", error);
