@@ -13,7 +13,6 @@ import {
   View,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import Video from "react-native-video";
 import { useDispatch, useSelector } from "react-redux";
 import { RESET_POST_STATE, UPDATE_SELECTED_PHOTOS } from "../../redux/types";
 import GuidelinesModal from "./GuidelinesModal";
@@ -30,14 +29,16 @@ const SelectMediaScreen = ({ navigation }) => {
   const [after, setAfter] = useState(null); // Cursor for pagination
   const [hasMore, setHasMore] = useState(true); // Whether more photos are available
 
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const [isGuidelinesModalVisible, setIsGuidelinesModalVisible] = useState(false);
 
   useEffect(() => {
     const checkGuidelines = async () => {
-      const hasSeenGuidelines = await AsyncStorage.getItem('hasSeenPostGuidelines');
+      const hasSeenGuidelines = await AsyncStorage.getItem("hasSeenPostGuidelines");
 
-      if (!hasSeenGuidelines || hasSeenGuidelines === 'false') {
+      if (!hasSeenGuidelines || hasSeenGuidelines === "false") {
         setIsGuidelinesModalVisible(true);
       }
     };
@@ -47,11 +48,13 @@ const SelectMediaScreen = ({ navigation }) => {
 
   const handleDismissGuidelines = async () => {
     setIsGuidelinesModalVisible(false);
-    await AsyncStorage.setItem('hasSeenPostGuidelines', 'true');
+    await AsyncStorage.setItem("hasSeenPostGuidelines", "true");
   };
 
   const fetchPhotos = async () => {
-    if (!hasMore) return;
+    if (!hasMore || isLoading) return;
+
+    setIsLoading(true);
 
     // Create an object for the parameters you want to send
     let params = {
@@ -72,6 +75,7 @@ const SelectMediaScreen = ({ navigation }) => {
     } catch (error) {
       console.error("Error fetching photos", error);
     }
+    setIsLoading(false);
   };
 
 
@@ -85,8 +89,7 @@ const SelectMediaScreen = ({ navigation }) => {
 
 
   const toggleSelectPhoto = (uri) => {
-    if ((selectedPhotos.some(photo => photo.mimeType.startsWith("video")) && !selectedPhotos.some(p => p.uri === uri)) ||
-      (selectedPhotos.length >= 9 && !selectedPhotos.some(p => p.uri === uri))) {
+    if (selectedPhotos.length >= 9 && !selectedPhotos.some(p => p.uri === uri)) {
       return;
     }
 
@@ -94,20 +97,19 @@ const SelectMediaScreen = ({ navigation }) => {
     const selectedIndex = selectedPhotos.findIndex(p => p.uri === uri);
 
     if (selectedIndex !== -1) {
-      // Deselecting a photo/video
+      // Deselecting a photo
       newSelectedPhotos = selectedPhotos.filter(p => p.uri !== uri);
       newSelectedPhotos = newSelectedPhotos.map((photo, index) => ({ ...photo, order: index + 1 }));
       if (newSelectedPhotos.length === 0) {
         setLastDeselectedPhoto(uri);
       }
     } else {
-      // Selecting a new photo/video
+      // Selecting a new photo
       const mediaItem = photos.find(p => p.node.image.uri === uri).node.image;
-      const mimeType = mediaItem.playableDuration > 0 ? `video/${mediaItem.extension}` : `image/${mediaItem.extension}`;
+      const mimeType = `image/${mediaItem.extension}`;
       const extension = `.${mediaItem.extension}`;
 
       if (mediaItem.playableDuration > 0 && selectedPhotos.length > 0) {
-        // If selecting a video and there are already selected items, do not proceed.
         return;
       }
 
@@ -129,12 +131,9 @@ const SelectMediaScreen = ({ navigation }) => {
 
   const renderItem = ({ item }) => {
     const media = item.node.image;
-    const isVideo = media.playableDuration > 0;
     const selectionOrder = getSelectionOrder(media.uri);
 
-    const isSelectable = isVideo ?
-      (selectedPhotos.length === 0 || selectionOrder !== null) :
-      (selectedPhotos.length < 9 && !selectedPhotos.some(photo => photo.mimeType.startsWith("video")) || selectionOrder !== null);
+    const isSelectable = selectedPhotos.length < 9 || selectionOrder !== null;
 
     return (
       <TouchableOpacity
@@ -142,20 +141,11 @@ const SelectMediaScreen = ({ navigation }) => {
         disabled={!isSelectable}
       >
         <View style={styles.imageContainer}>
-          {isVideo ? (
-            <View>
-              <Image
-                style={[styles.image, !isSelectable && styles.imageNotSelectable]}
-                source={{ uri: media.uri }}
-              />
-              <Icon name="play-circle" size={30} color="#FFF" style={styles.playIcon} />
-            </View>
-          ) : (
-            <Image
-              style={[styles.image, !isSelectable && styles.imageNotSelectable]}
-              source={{ uri: media.uri }}
-            />
-          )}
+          <Image
+            style={[styles.image, !isSelectable && styles.imageNotSelectable]}
+            source={{ uri: media.uri }}
+          />
+
           {isSelectable && (
             <View
               style={[
@@ -175,37 +165,15 @@ const SelectMediaScreen = ({ navigation }) => {
 
   const isNextButtonEnabled = selectedPhotos.length > 0;
 
-  const getMediaType = (uri) => {
-    const media = photos.find(p => p.node.image.uri === uri);
-    return media && media.node.type === "video" ? "video" : "photo";
-  };
-
-  const convertPHtoAssetsUri = (phUri) => {
-    const uriId = phUri.split("/")[2];
-    return `assets-library://asset/asset.mp4?id=${uriId}&ext=mp4`;
-  };
 
   const renderPreview = (uri) => {
-    const mediaType = getMediaType(uri);
+    return (
+      <Image
+        source={{ uri: uri }}
+        style={styles.previewPhotoImage}
+      />
+    );
 
-    if (mediaType === "video") {
-      const assetUri = convertPHtoAssetsUri(uri);
-      return (
-        <Video
-          source={{ uri: assetUri }}
-          style={styles.previewPhotoVideo}
-          controls
-          resizeMode="contain"
-        />
-      );
-    } else {
-      return (
-        <Image
-          source={{ uri: uri }}
-          style={styles.previewPhotoImage}
-        />
-      );
-    }
   };
 
   const renderFooter = () => {
@@ -282,11 +250,6 @@ const styles = StyleSheet.create({
     width: width, // Full width
     height: "100%", // Full height of the preview container
     resizeMode: "contain", // Contain the aspect ratio within the preview container
-  },
-  previewPhotoVideo: {
-    width: width, // Full width
-    height: "100%", // Full height of the preview container
-    // Add other styles specific to video if needed
   },
   safeArea: {
     flex: 1,
