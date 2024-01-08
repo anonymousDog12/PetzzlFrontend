@@ -1,10 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { RESET_POST_STATE, UPDATE_CAPTION } from "../../redux/types";
-import Icon from "react-native-vector-icons/Ionicons";
-
 
 
 const AddCaptionScreen = ({ route }) => {
@@ -66,7 +65,7 @@ const AddCaptionScreen = ({ route }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff', // or any background color you prefer
+    backgroundColor: "#fff", // or any background color you prefer
   },
   container: {
     flex: 1,

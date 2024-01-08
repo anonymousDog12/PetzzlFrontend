@@ -1,7 +1,8 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator, Alert,
+  ActivityIndicator,
+  Alert,
   Dimensions,
   Image,
   ScrollView,
@@ -27,6 +28,7 @@ const imageContainerHeight = 300;
 const FeedScreen = ({ route }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [postSuccess, setPostSuccess] = useState(false);
+  const isFocused = useIsFocused();
   const feedData = useSelector(state => state.feed.feed);
   const dispatch = useDispatch();
   const { postDetails } = route.params || {};
@@ -64,6 +66,45 @@ const FeedScreen = ({ route }) => {
   }, [feedData, currentPage]);
 
 
+  useEffect(() => {
+    let active = true;
+
+    const fetchData = async () => {
+      if (isFocused && Array.isArray(feedData)) {
+        setIsGlobalLoading(true);
+        const fetchPromises = feedData.flatMap(post => [
+          fetchLikeCount(post.post_id),
+          fetchLikeStatus(post.post_id, currentPetId),
+        ]);
+
+        try {
+          await Promise.all(fetchPromises);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          if (active) {
+            setIsGlobalLoading(false);
+          }
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      active = false; // Prevents setting state on unmounted component
+    };
+  }, [feedData, currentPetId, isFocused]);
+
+
+  // If there are post details, upload the post
+  useEffect(() => {
+    if (postDetails) {
+      handlePostUpload(postDetails);
+    }
+  }, [postDetails]);
+
+
   const navigation = useNavigation();
 
   const handlePetProfileClick = (petId) => {
@@ -73,11 +114,6 @@ const FeedScreen = ({ route }) => {
       navigation.navigate("OtherUserDashboard", { otherPetId: petId }); // Navigate to Other Pet's Dashboard
     }
   };
-
-
-  useEffect(() => {
-    dispatch(fetchFeed());
-  }, [dispatch]);
 
   const getProfilePic = (petProfilePic, petType) => {
     return petProfilePic || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS["other"];
@@ -126,11 +162,11 @@ const FeedScreen = ({ route }) => {
         dispatch(fetchFeed()); // Fetch the updated feed
       } else {
         const errorResponse = await response.json();
-        if (errorResponse.error_type === 'inappropriate_content') {
+        if (errorResponse.error_type === "inappropriate_content") {
           Alert.alert(
             "Quick Check Needed", // This is the title of the alert
             errorResponse.message, // This is the body of the alert
-            [{ text: "OK" }] // Array of buttons
+            [{ text: "OK" }], // Array of buttons
           );
         } else {
           // Handle other types of errors
@@ -225,41 +261,6 @@ const FeedScreen = ({ route }) => {
   };
 
 
-  const isFocused = useIsFocused();
-
-
-  useEffect(() => {
-    let active = true;
-
-    const fetchData = async () => {
-      if (isFocused && Array.isArray(feedData)) {
-        setIsGlobalLoading(true);
-        const fetchPromises = feedData.flatMap(post => [
-          fetchLikeCount(post.post_id),
-          fetchLikeStatus(post.post_id, currentPetId)
-        ]);
-
-        try {
-          await Promise.all(fetchPromises);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        } finally {
-          if (active) {
-            setIsGlobalLoading(false);
-          }
-        }
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      active = false; // Prevents setting state on unmounted component
-    };
-  }, [feedData, currentPetId, isFocused]);
-
-
-
   const navigateToLikerList = (postId) => {
     navigation.navigate("LikerListScreen", { postId });
   };
@@ -299,13 +300,6 @@ const FeedScreen = ({ route }) => {
   };
 
 
-  // If there are post details, upload the post
-  useEffect(() => {
-    if (postDetails) {
-      handlePostUpload(postDetails);
-    }
-  }, [postDetails]);
-
   const renderMedia = (mediaItems) => {
     if (!mediaItems || mediaItems.length === 0) {
       // Return some fallback UI or null
@@ -341,32 +335,32 @@ const FeedScreen = ({ route }) => {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
-      {postDetails && isUploading && <Progress.Bar indeterminate={true} width={200} />}
-      {postSuccess && <Text>Post successful! {" "}✓</Text>}
-      {Array.isArray(feedData) && feedData.map((post, index) => (
-        <View key={index} style={styles.postContainer}>
-          <View style={styles.profileHeader}>
-            <TouchableOpacity onPress={() => handlePetProfileClick(post.pet_id)} style={styles.profileInfoContainer}>
-              <Image
-                source={{ uri: getProfilePic(post.pet_profile_pic, post.pet_type) }}
-                style={styles.profilePic}
-              />
-              <View style={styles.petInfo}>
-                <Text style={styles.petIdText}>{post.pet_id}</Text>
-                <Text style={styles.postDateText}>{post.posted_date}</Text>
-              </View>
-            </TouchableOpacity>
+        {postDetails && isUploading && <Progress.Bar indeterminate={true} width={200} />}
+        {postSuccess && <Text>Post successful! {" "}✓</Text>}
+        {Array.isArray(feedData) && feedData.map((post, index) => (
+          <View key={index} style={styles.postContainer}>
+            <View style={styles.profileHeader}>
+              <TouchableOpacity onPress={() => handlePetProfileClick(post.pet_id)} style={styles.profileInfoContainer}>
+                <Image
+                  source={{ uri: getProfilePic(post.pet_profile_pic, post.pet_type) }}
+                  style={styles.profilePic}
+                />
+                <View style={styles.petInfo}>
+                  <Text style={styles.petIdText}>{post.pet_id}</Text>
+                  <Text style={styles.postDateText}>{post.posted_date}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            {renderMedia(post.media)}
+            {renderLikeIcon(post.post_id)}
+            <Text>{post.caption}</Text>
           </View>
-          {renderMedia(post.media)}
-          {renderLikeIcon(post.post_id)}
-          <Text>{post.caption}</Text>
-        </View>
-      ))}
-      <TouchableOpacity onPress={loadMore} style={styles.loadMoreContainer}>
-        <Text style={styles.loadMoreText}>Load More</Text>
-      </TouchableOpacity>
+        ))}
+        <TouchableOpacity onPress={loadMore} style={styles.loadMoreContainer}>
+          <Text style={styles.loadMoreText}>Load More</Text>
+        </TouchableOpacity>
 
-    </ScrollView>
+      </ScrollView>
       {isGlobalLoading && (
         <View style={styles.overlay}>
           <ActivityIndicator size="large" color="#ffc02c" />
@@ -379,17 +373,16 @@ const FeedScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    // justifyContent and alignItems removed for better scrolling
   },
   overlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 2,
   },
   loadMoreContainer: {
@@ -408,7 +401,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   postContainer: {
-    width: "100%", // Ensure full width
+    width: "100%",
     marginBottom: 20,
   },
   profileHeader: {
@@ -417,20 +410,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   profilePic: {
-    width: 50, // Adjust size as needed
-    height: 50, // Adjust size as needed
-    borderRadius: 25, // Half of width/height to make it circular
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     marginRight: 10,
   },
   paginationStyle: {
     position: "absolute",
-    bottom: 15, // Adjust this value to place the dots just above the bottom of the image container
+    bottom: 15,
     alignSelf: "center",
   },
   paginationStyleItem: {
-    width: 8, // Set the width of the dots
-    height: 8, // Set the height of the dots
-    borderRadius: 4, // Half of either width or height will ensure a circular shape
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   imageStyle: {
     width: "100%",
@@ -441,29 +434,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     marginTop: 5,
-    marginLeft: 10, // Adjust as needed
+    marginLeft: 10,
   },
   profileInfoContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
-
   petInfo: {
     flexDirection: "column",
     justifyContent: "center",
-    marginLeft: 10, // Adjust spacing between profile picture and text
+    marginLeft: 10,
   },
-
   petIdText: {
     fontSize: 16,
-    fontWeight: "bold", // Adjust as needed
+    fontWeight: "bold",
   },
-
   postDateText: {
-    fontSize: 14, // Adjust as needed
+    fontSize: 14,
     color: "gray",
   },
-
 });
 
 export default FeedScreen;
