@@ -1,23 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Animated,
-  Dimensions,
-  FlatList,
-  Image,
-  LogBox,
-  Modal,
-  PanResponder,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, Image, LogBox, Text, TouchableOpacity, View } from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../../config";
+import SliderModal from "../../components/SliderModal";
 import ImageCropper from "../../imageHandling/ImageCropper";
 import { fetchPosts } from "../../redux/actions/dashboard";
 import { setCurrentPetId, setNewPetProfile } from "../../redux/actions/petProfile";
@@ -92,42 +81,6 @@ const DashboardScreen = () => {
 
     getStoredPetId();
   }, [dispatch]);
-
-
-  const modalY = useRef(new Animated.Value(0)).current;
-  const screenHeight = Dimensions.get("window").height;
-
-  // Reset modalY to 0 when dropdownVisible becomes true
-  useEffect(() => {
-    if (dropdownVisible) {
-      modalY.setValue(0);
-    }
-  }, [dropdownVisible]);
-
-  const panResponder = useRef(PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onPanResponderMove: (event, gestureState) => {
-      const newY = Math.max(-5, gestureState.dy);
-      modalY.setValue(newY);
-    },
-    onPanResponderRelease: (e, { dy }) => {
-      if (dy > 50) {
-        Animated.spring(modalY, {
-          toValue: screenHeight, // Corrected to use the screenHeight variable
-          useNativeDriver: true,
-          bounciness: 5,
-          speed: 12,
-        }).start(() => setDropdownVisible(false));
-      } else {
-        Animated.spring(modalY, {
-          toValue: 0,
-          useNativeDriver: true,
-          bounciness: 5,
-          speed: 12,
-        }).start();
-      }
-    },
-  })).current;
 
 
   const takePhoto = () => {
@@ -292,39 +245,29 @@ const DashboardScreen = () => {
         </View>
       ) : (
         <>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={dropdownVisible}
-            onRequestClose={() => setDropdownVisible(!dropdownVisible)}
+          <SliderModal
+            dropdownVisible={dropdownVisible}
+            setDropdownVisible={setDropdownVisible}
           >
+            {/* Contents of the dropdown modal */}
+            {petProfiles.map((pet, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.dropdownItem}
+                onPress={() => handleSelectPetProfile(pet.pet_id, pet.pet_name)}
+              >
+                <Text style={currentPetId === pet.pet_id ? styles.selectedPetName : null}>
+                  {pet.pet_name}
+                </Text>
+              </TouchableOpacity>
+            ))}
             <TouchableOpacity
-              style={styles.fullScreenButton}
-              activeOpacity={1}
-              onPressOut={() => setDropdownVisible(false)}
+              onPress={handleAddNewPet}
+              style={styles.addNewPetButton}
             >
-              <Animated.View
-                style={[styles.sliderContainer, { transform: [{ translateY: modalY }] }]} {...panResponder.panHandlers}>
-                <View style={styles.sliderHandle} />
-                {petProfiles.map((pet, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.dropdownItem}
-                    onPress={() => handleSelectPetProfile(pet.pet_id, pet.pet_name)}
-                  >
-                    <Text style={currentPetId === pet.pet_id ? styles.selectedPetName : null}>{pet.pet_name}</Text>
-                  </TouchableOpacity>
-                ))}
-                <TouchableOpacity
-                  onPress={handleAddNewPet}
-                  style={styles.addNewPetButton}
-                >
-                  <Text style={styles.addNewPetText}>Add a New Pet</Text>
-                </TouchableOpacity>
-              </Animated.View>
+              <Text style={styles.addNewPetText}>Add a New Pet</Text>
             </TouchableOpacity>
-          </Modal>
-
+          </SliderModal>
 
           {currentPetProfile && (
             <View style={styles.petProfile}>
@@ -349,45 +292,36 @@ const DashboardScreen = () => {
           )}
 
 
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={showActionSheet}
-            onRequestClose={() => setShowActionSheet(false)}
+          <SliderModal
+            dropdownVisible={showActionSheet}
+            setDropdownVisible={setShowActionSheet}
           >
+            {/* Contents of the action sheet modal */}
             <TouchableOpacity
-              style={styles.actionSheetBackground}
+              style={styles.actionSheetButton}
+              onPress={() => {
+                setShowActionSheet(false);
+                takePhoto();
+              }}
+            >
+              <Text style={styles.actionSheetText}>Take Photo...</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionSheetButton}
+              onPress={() => {
+                setShowActionSheet(false);
+                chooseFromLibrary();
+              }}
+            >
+              <Text style={styles.actionSheetText}>Choose from Library...</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionSheetButton}
               onPress={() => setShowActionSheet(false)}
             >
-              <View style={styles.actionSheet}>
-                {/* Action sheet options here */}
-                <TouchableOpacity
-                  style={styles.actionSheetButton}
-                  onPress={() => {
-                    setShowActionSheet(false);
-                    takePhoto();
-                  }}
-                >
-                  <Text style={styles.actionSheetText}>Take Photo...</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.actionSheetButton}
-                  onPress={() => {
-                    setShowActionSheet(false);
-                    chooseFromLibrary();
-                  }}
-                >
-                  <Text style={styles.actionSheetText}>Choose from Library...</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.actionSheetButton}
-                  onPress={() => setShowActionSheet(false)}
-                >
-                  <Text style={styles.actionSheetText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
+              <Text style={styles.actionSheetText}>Cancel</Text>
             </TouchableOpacity>
-          </Modal>
+          </SliderModal>
           <FlatList
             data={posts}
             numColumns={3} // Set the number of columns
