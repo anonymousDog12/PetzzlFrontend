@@ -17,6 +17,7 @@ import { SwiperFlatList } from "react-native-swiper-flatlist";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../config";
+import SliderModal from "../components/SliderModal";
 import { DEFAULT_PROFILE_PICS } from "../data/FieldNames";
 import { addPost, fetchFeed } from "../redux/actions/feed";
 
@@ -42,20 +43,15 @@ const FeedScreen = ({ route }) => {
 
   const [isGlobalLoading, setIsGlobalLoading] = useState(false);
 
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const navigation = useNavigation();
+
 
   useEffect(() => {
     // Fetch the first page when the component mounts
     dispatch(fetchFeed(1));
   }, [dispatch]);
-
-  const loadMore = () => {
-    if (!isLoadingPage && hasNextPage) {
-      setIsLoadingPage(true);
-      const nextPage = currentPage + 1;
-      setCurrentPage(nextPage);
-      dispatch(fetchFeed(nextPage));
-    }
-  };
 
   useEffect(() => {
     // Check if new data is loaded by comparing the length of feedData before and after
@@ -105,7 +101,14 @@ const FeedScreen = ({ route }) => {
   }, [postDetails]);
 
 
-  const navigation = useNavigation();
+  const loadMore = () => {
+    if (!isLoadingPage && hasNextPage) {
+      setIsLoadingPage(true);
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      dispatch(fetchFeed(nextPage));
+    }
+  };
 
   const handlePetProfileClick = (petId) => {
     if (petId === currentPetId) {
@@ -118,7 +121,6 @@ const FeedScreen = ({ route }) => {
   const getProfilePic = (petProfilePic, petType) => {
     return petProfilePic || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS["other"];
   };
-
 
   const handlePostUpload = async ({ selectedPhotos, caption, petId }) => {
     setIsUploading(true);
@@ -142,7 +144,6 @@ const FeedScreen = ({ route }) => {
         uri: media.uri,
       });
     });
-
 
     try {
       const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/create_post/`, {
@@ -260,6 +261,11 @@ const FeedScreen = ({ route }) => {
     }
   };
 
+  const handleBlockUser = () => {
+    console.log("Handle block user");
+    setModalVisible(false);
+  };
+
 
   const navigateToLikerList = (postId) => {
     navigation.navigate("LikerListScreen", { postId });
@@ -350,17 +356,26 @@ const FeedScreen = ({ route }) => {
                   <Text style={styles.postDateText}>{post.posted_date}</Text>
                 </View>
               </TouchableOpacity>
+              <TouchableOpacity onPress={() => setModalVisible(!modalVisible)} style={styles.threeDotsIcon}>
+                <Ionicons name="ellipsis-horizontal" size={24} color="black" />
+              </TouchableOpacity>
             </View>
             {renderMedia(post.media)}
             {renderLikeIcon(post.post_id)}
             <Text>{post.caption}</Text>
           </View>
+
         ))}
         <TouchableOpacity onPress={loadMore} style={styles.loadMoreContainer}>
           <Text style={styles.loadMoreText}>Load More</Text>
         </TouchableOpacity>
 
       </ScrollView>
+      <SliderModal dropdownVisible={modalVisible} setDropdownVisible={setModalVisible}>
+        <TouchableOpacity onPress={handleBlockUser}>
+          <Text style={{ color: 'red', fontSize: 18, padding: 10 }}>Block User</Text>
+        </TouchableOpacity>
+      </SliderModal>
       {isGlobalLoading && (
         <View style={styles.overlay}>
           <ActivityIndicator size="large" color="#ffc02c" />
@@ -452,6 +467,11 @@ const styles = StyleSheet.create({
   postDateText: {
     fontSize: 14,
     color: "gray",
+  },
+  threeDotsIcon: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
   },
 });
 

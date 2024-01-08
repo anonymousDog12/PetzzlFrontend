@@ -1,13 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Animated,
   Dimensions,
   Image,
-  Modal,
-  PanResponder,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -19,6 +16,7 @@ import { SwiperFlatList } from "react-native-swiper-flatlist";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../config";
+import SliderModal from "../components/SliderModal";
 import { deletePostSuccess } from "../redux/actions/dashboard";
 
 
@@ -40,8 +38,6 @@ const PostDetailScreen = ({ route }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-
-  const modalY = useRef(new Animated.Value(0)).current;
 
   const deletePost = async () => {
     setIsDeleting(true);
@@ -86,31 +82,6 @@ const PostDetailScreen = ({ route }) => {
       ],
       { cancelable: false },
     );
-  };
-
-
-  const panResponder = useRef(PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onPanResponderMove: (event, gestureState) => {
-      const newY = Math.max(-5, gestureState.dy);
-      modalY.setValue(newY);
-    },
-    onPanResponderRelease: (e, { dy }) => {
-      if (dy > 50) {
-        setModalVisible(false);
-      } else {
-        Animated.spring(modalY, {
-          toValue: 0,
-          useNativeDriver: false,
-        }).start();
-      }
-    },
-  })).current;
-
-
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-    modalY.setValue(0);
   };
 
   useEffect(() => {
@@ -249,12 +220,12 @@ const PostDetailScreen = ({ route }) => {
   if (isDeleting) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#ffc02c" />
         <Text>Deleting...</Text>
       </View>
     );
   }
-  
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.profileHeader}>
@@ -266,32 +237,18 @@ const PostDetailScreen = ({ route }) => {
           <Text style={styles.username}>{petProfile.pet_name}</Text>
           <Text style={styles.postDateText}>{postDetails.posted_date}</Text>
         </View>
-        <TouchableOpacity style={styles.menuButton} onPress={toggleModal}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => setModalVisible(!modalVisible)}>
           <Ionicons name="ellipsis-horizontal" size={20} color="black" />
         </TouchableOpacity>
       </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={toggleModal}
+      <SliderModal
+        dropdownVisible={modalVisible}
+        setDropdownVisible={setModalVisible}
       >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPressOut={toggleModal}
-        >
-          <Animated.View
-            style={[styles.modalView, { transform: [{ translateY: modalY }] }]}
-            {...panResponder.panHandlers}
-          >
-            <View style={styles.sliderHandle} />
-            <TouchableOpacity onPress={showDeleteConfirmation}>
-              <Text style={styles.modalTextDelete}>Delete</Text>
-            </TouchableOpacity>
-          </Animated.View>
+        <TouchableOpacity onPress={showDeleteConfirmation}>
+          <Text style={styles.modalTextDelete}>Delete</Text>
         </TouchableOpacity>
-      </Modal>
+      </SliderModal>
       <View style={{ height: imageContainerHeight }}>
         <SwiperFlatList
           index={0}
