@@ -44,6 +44,8 @@ const FeedScreen = ({ route }) => {
   const [isGlobalLoading, setIsGlobalLoading] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedPetIdForBlock, setSelectedPetIdForBlock] = useState(null);
+
 
   const navigation = useNavigation();
 
@@ -157,17 +159,17 @@ const FeedScreen = ({ route }) => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log("Post created successfully:", result);
+        // console.log("Post created successfully:", result);
         dispatch(addPost(result));
         setPostSuccess(true);
-        dispatch(fetchFeed()); // Fetch the updated feed
+        dispatch(fetchFeed());
       } else {
         const errorResponse = await response.json();
         if (errorResponse.error_type === "inappropriate_content") {
           Alert.alert(
-            "Quick Check Needed", // This is the title of the alert
-            errorResponse.message, // This is the body of the alert
-            [{ text: "OK" }], // Array of buttons
+            "Quick Check Needed",
+            errorResponse.message,
+            [{ text: "OK" }],
           );
         } else {
           // Handle other types of errors
@@ -261,11 +263,56 @@ const FeedScreen = ({ route }) => {
     }
   };
 
-  const handleBlockUser = () => {
-    console.log("Handle block user");
-    setModalVisible(false);
+  const handleBlockOptionClick = (petId) => {
+    setSelectedPetIdForBlock(petId);
+    setModalVisible(true);
   };
 
+  const handleBlockUser = async () => {
+    setModalVisible(false);
+    Alert.alert(
+      "Block User",
+      "Are you sure you want to block this user? This will also block all other pet profiles associated with them.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Block User",
+          onPress: () => performBlockUser(),
+          style: "destructive",
+        },
+      ],
+      { cancelable: false },
+    );
+  };
+
+  const performBlockUser = async () => {
+    try {
+      const accessToken = await SecureStorage.getItem("access");
+      const response = await fetch(`${CONFIG.BACKEND_URL}/api/userblocking/block/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `JWT ${accessToken}`,
+        },
+        body: JSON.stringify({ pet_id: selectedPetIdForBlock }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Success", data.message, [{ text: "OK" }]);
+        dispatch(fetchFeed(currentPage));
+      } else {
+        Alert.alert("Error", data.error || "Failed to block user", [{ text: "OK" }]);
+      }
+    } catch (error) {
+      Alert.alert("Error", "An error occurred while blocking the user. Please try again later.", [{ text: "OK" }]);
+    }
+    setModalVisible(false);
+  };
 
   const navigateToLikerList = (postId) => {
     navigation.navigate("LikerListScreen", { postId });
@@ -356,9 +403,16 @@ const FeedScreen = ({ route }) => {
                   <Text style={styles.postDateText}>{post.posted_date}</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setModalVisible(!modalVisible)} style={styles.threeDotsIcon}>
+              <TouchableOpacity onPress={() => handleBlockOptionClick(post.pet_id)} style={styles.threeDotsIcon}>
                 <Ionicons name="ellipsis-horizontal" size={24} color="black" />
               </TouchableOpacity>
+
+              <SliderModal dropdownVisible={modalVisible} setDropdownVisible={setModalVisible}>
+                <TouchableOpacity onPress={handleBlockUser}>
+                  <Text style={styles.blockUserText}>Block User</Text>
+                </TouchableOpacity>
+              </SliderModal>
+
             </View>
             {renderMedia(post.media)}
             {renderLikeIcon(post.post_id)}
@@ -371,11 +425,6 @@ const FeedScreen = ({ route }) => {
         </TouchableOpacity>
 
       </ScrollView>
-      <SliderModal dropdownVisible={modalVisible} setDropdownVisible={setModalVisible}>
-        <TouchableOpacity onPress={handleBlockUser}>
-          <Text style={{ color: 'red', fontSize: 18, padding: 10 }}>Block User</Text>
-        </TouchableOpacity>
-      </SliderModal>
       {isGlobalLoading && (
         <View style={styles.overlay}>
           <ActivityIndicator size="large" color="#ffc02c" />
@@ -388,6 +437,11 @@ const FeedScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
+  },
+  blockUserText: {
+    color: "red",
+    fontSize: 18,
+    padding: 10,
   },
   overlay: {
     position: "absolute",
@@ -469,7 +523,7 @@ const styles = StyleSheet.create({
     color: "gray",
   },
   threeDotsIcon: {
-    position: 'absolute',
+    position: "absolute",
     right: 10,
     top: 10,
   },
