@@ -204,7 +204,11 @@ const FeedScreen = ({ route }) => {
     }
   };
 
-
+  // TODO: try to use usePostLike hook and get rid of the repeated logic
+  // One challenge is, if I use it like it is, the hook will be inside a loop
+  // nested loop will report errors
+  // but I also don't want to move the use post like in the PostSection component
+  // because that would break the logic in post detail screens
   const handleToggleLike = async (postId, petId) => {
     const accessToken = await SecureStorage.getItem("access");
     if (!accessToken) {
