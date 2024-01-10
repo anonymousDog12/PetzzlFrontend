@@ -319,37 +319,6 @@ const FeedScreen = ({ route }) => {
   };
 
 
-  const renderMedia = (mediaItems) => {
-    if (!mediaItems || mediaItems.length === 0) {
-      // Return some fallback UI or null
-      return null;
-    }
-
-    // Use SwiperFlatList for multiple images or a single image with the same style
-    return (
-      <View style={{ height: imageContainerHeight }}>
-        <SwiperFlatList
-          index={0}
-          showPagination
-          paginationStyle={styles.paginationStyle}
-          paginationDefaultColor="gray"
-          paginationActiveColor="white"
-          paginationStyleItem={styles.paginationStyleItem}
-        >
-          {mediaItems.map((item, index) => (
-            // Even if it's one image, it's rendered the same way as multiple
-            <View key={`media-item-${index}`} style={{ width, height: imageContainerHeight }}>
-              <Image source={{ uri: item.full_size_url }}
-                     style={styles.imageStyle}
-                     resizeMode="contain" // This will keep the aspect ratio
-              />
-            </View>
-          ))}
-        </SwiperFlatList>
-      </View>
-    );
-  };
-
   const renderPost = (post) => {
     const postProps = {
       petProfile: {
@@ -366,6 +335,7 @@ const FeedScreen = ({ route }) => {
       showEllipsis: true,
       isLiked: likeStatuses[post.post_id],
       likeCount: likeCounts[post.post_id],
+      navigateToLikerList: () => navigateToLikerList(post.post_id),
       handleLikePress: () => {
         if (likeStatuses[post.post_id]) {
           handleUnlike(post.post_id, currentPetId);
@@ -447,12 +417,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
-  },
-  profilePic: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
   },
   paginationStyle: {
     position: "absolute",

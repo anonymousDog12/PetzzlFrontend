@@ -15,6 +15,7 @@ const PostSection = ({
                        isLiked,
                        likeCount,
                        handleLikePress,
+                       navigateToLikerList,
                        handlePetProfileClick,
                      }) => {
 
@@ -25,7 +26,13 @@ const PostSection = ({
 
     let likeTextComponent;
     if (likeCount > 0) {
-      likeTextComponent = <Text style={[styles.likeCountText, styles.boldText]}>{likeCount === 1 ? "1 like" : `${likeCount} likes`}</Text>;
+      likeTextComponent = (
+        <TouchableOpacity onPress={navigateToLikerList}>
+          <Text style={[styles.likeCountText, styles.boldText]}>
+            {likeCount === 1 ? "1 like" : `${likeCount} likes`}
+          </Text>
+        </TouchableOpacity>
+      );
     } else {
       likeTextComponent = <Text style={styles.likeCountText}>Be the first to like this post</Text>;
     }
