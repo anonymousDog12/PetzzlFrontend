@@ -14,7 +14,6 @@ import {
 import * as Progress from "react-native-progress";
 import SecureStorage from "react-native-secure-storage";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../config";
 import PostSection from "../components/PostSection";
@@ -43,7 +42,6 @@ const FeedScreen = ({ route }) => {
   const hasNextPage = useSelector(state => state.feed.hasNextPage);
 
   const [isGlobalLoading, setIsGlobalLoading] = useState(false);
-
 
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -321,40 +319,6 @@ const FeedScreen = ({ route }) => {
   };
 
 
-  const renderLikeIcon = (postId) => {
-    const iconName = likeStatuses[postId] ? "heart" : "heart-outline";
-    const iconColor = likeStatuses[postId] ? "red" : "black";
-    const likeCount = likeCounts[postId] || 0;
-
-    let likeTextComponent;
-    if (likeCount > 0) {
-      likeTextComponent = (
-        <TouchableOpacity onPress={() => navigateToLikerList(postId)}>
-          <Text
-            style={[styles.likeCountText, styles.boldText]}>{likeCount === 1 ? "1 like" : `${likeCount} likes`}</Text>
-        </TouchableOpacity>
-      );
-    } else {
-      likeTextComponent = <Text style={styles.likeCountText}>Be the first to like this post</Text>;
-    }
-
-    const onPressLikeIcon = () => {
-      if (likeStatuses[postId]) {
-        handleUnlike(postId, currentPetId);
-      } else {
-        handleLike(postId, currentPetId);
-      }
-    };
-
-    return (
-      <View style={styles.likeIconContainer}>
-        <Ionicons name={iconName} size={24} color={iconColor} onPress={onPressLikeIcon} />
-        {likeTextComponent}
-      </View>
-    );
-  };
-
-
   const renderMedia = (mediaItems) => {
     if (!mediaItems || mediaItems.length === 0) {
       // Return some fallback UI or null
@@ -390,7 +354,7 @@ const FeedScreen = ({ route }) => {
     const postProps = {
       petProfile: {
         profile_pic_thumbnail_small: getProfilePic(post.pet_profile_pic, post.pet_type),
-        pet_name: post.pet_id, // Replace with correct pet name if available
+        pet_name: post.pet_id,
       },
       postDetails: {
         posted_date: post.posted_date,
@@ -398,6 +362,7 @@ const FeedScreen = ({ route }) => {
         caption: post.caption,
       },
       onEllipsisPress: () => handleBlockOptionClick(post.pet_id),
+      handlePetProfileClick: () => handlePetProfileClick(post.pet_id),
       showEllipsis: true,
       isLiked: likeStatuses[post.post_id],
       likeCount: likeCounts[post.post_id],
@@ -410,7 +375,8 @@ const FeedScreen = ({ route }) => {
       },
     };
 
-    return <PostSection key={post.post_id} onEllipsisPress={() => handleBlockOptionClick(post.pet_id)} {...postProps} />;
+    return <PostSection key={post.post_id}
+                        onEllipsisPress={() => handleBlockOptionClick(post.pet_id)} {...postProps} />;
   };
 
   return (

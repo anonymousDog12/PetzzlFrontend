@@ -15,6 +15,7 @@ const PostSection = ({
                        isLiked,
                        likeCount,
                        handleLikePress,
+                       handlePetProfileClick,
                      }) => {
 
 
@@ -52,10 +53,12 @@ const PostSection = ({
   return (
     <View>
       <View style={styles.profileHeader}>
-        <Image
-          source={{ uri: petProfile.profile_pic_thumbnail_small }}
-          style={styles.profilePic}
-        />
+        <TouchableOpacity onPress={handlePetProfileClick} disabled={!handlePetProfileClick}>
+          <Image
+            source={{ uri: petProfile.profile_pic_thumbnail_small }}
+            style={styles.profilePic}
+          />
+        </TouchableOpacity>
         <View style={styles.petInfo}>
           <Text style={styles.username}>{petProfile.pet_name}</Text>
           <Text style={styles.postDateText}>{postDetails.posted_date}</Text>
