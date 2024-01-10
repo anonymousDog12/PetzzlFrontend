@@ -4,7 +4,6 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,7 +12,6 @@ import {
 } from "react-native";
 import * as Progress from "react-native-progress";
 import SecureStorage from "react-native-secure-storage";
-import { SwiperFlatList } from "react-native-swiper-flatlist";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../config";
 import PostSection from "../components/PostSection";
