@@ -329,13 +329,13 @@ const FeedScreen = ({ route }) => {
         posted_date: post.posted_date,
         media: post.media,
         caption: post.caption,
+        post_id: post.post_id,
       },
       onEllipsisPress: () => handleBlockOptionClick(post.pet_id),
       handlePetProfileClick: () => handlePetProfileClick(post.pet_id),
       showEllipsis: true,
       isLiked: likeStatuses[post.post_id],
       likeCount: likeCounts[post.post_id],
-      navigateToLikerList: () => navigateToLikerList(post.post_id),
       handleLikePress: () => {
         if (likeStatuses[post.post_id]) {
           handleUnlike(post.post_id, currentPetId);

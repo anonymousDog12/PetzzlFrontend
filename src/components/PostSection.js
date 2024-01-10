@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
@@ -15,10 +16,15 @@ const PostSection = ({
                        isLiked,
                        likeCount,
                        handleLikePress,
-                       navigateToLikerList,
                        handlePetProfileClick,
                      }) => {
 
+
+  const navigation = useNavigation();
+
+  const navigateToLikerList = () => {
+    navigation.navigate("LikerListScreen", { postId: postDetails.post_id });
+  };
 
   const renderLikeIcon = () => {
     const iconName = isLiked ? "heart" : "heart-outline";
