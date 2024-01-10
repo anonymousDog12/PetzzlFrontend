@@ -17,6 +17,7 @@ import { SwiperFlatList } from "react-native-swiper-flatlist";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../config";
+import PostSection from "../components/PostSection";
 import SliderModal from "../components/SliderModal";
 import { DEFAULT_PROFILE_PICS } from "../data/FieldNames";
 import { addPost, fetchFeed } from "../redux/actions/feed";
@@ -43,9 +44,15 @@ const FeedScreen = ({ route }) => {
 
   const [isGlobalLoading, setIsGlobalLoading] = useState(false);
 
+
+
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPetIdForBlock, setSelectedPetIdForBlock] = useState(null);
 
+  const handleBlockOptionClick = (petId) => {
+    setSelectedPetIdForBlock(petId);
+    setModalVisible(true);
+  };
 
   const navigation = useNavigation();
 
@@ -263,11 +270,6 @@ const FeedScreen = ({ route }) => {
     }
   };
 
-  const handleBlockOptionClick = (petId) => {
-    setSelectedPetIdForBlock(petId);
-    setModalVisible(true);
-  };
-
   const handleBlockUser = async () => {
     setModalVisible(false);
     Alert.alert(
@@ -384,47 +386,49 @@ const FeedScreen = ({ route }) => {
     );
   };
 
+  const renderPost = (post) => {
+    const postProps = {
+      petProfile: {
+        profile_pic_thumbnail_small: getProfilePic(post.pet_profile_pic, post.pet_type),
+        pet_name: post.pet_id, // Replace with correct pet name if available
+      },
+      postDetails: {
+        posted_date: post.posted_date,
+        media: post.media,
+        caption: post.caption,
+      },
+      onEllipsisPress: () => handleBlockOptionClick(post.pet_id),
+      showEllipsis: true,
+      isLiked: likeStatuses[post.post_id],
+      likeCount: likeCounts[post.post_id],
+      handleLikePress: () => {
+        if (likeStatuses[post.post_id]) {
+          handleUnlike(post.post_id, currentPetId);
+        } else {
+          handleLike(post.post_id, currentPetId);
+        }
+      },
+    };
+
+    return <PostSection key={post.post_id} onEllipsisPress={() => handleBlockOptionClick(post.pet_id)} {...postProps} />;
+  };
 
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
         {postDetails && isUploading && <Progress.Bar indeterminate={true} width={200} />}
         {postSuccess && <Text>Post successful! {" "}✓</Text>}
-        {Array.isArray(feedData) && feedData.map((post, index) => (
-          <View key={index} style={styles.postContainer}>
-            <View style={styles.profileHeader}>
-              <TouchableOpacity onPress={() => handlePetProfileClick(post.pet_id)} style={styles.profileInfoContainer}>
-                <Image
-                  source={{ uri: getProfilePic(post.pet_profile_pic, post.pet_type) }}
-                  style={styles.profilePic}
-                />
-                <View style={styles.petInfo}>
-                  <Text style={styles.petIdText}>{post.pet_id}</Text>
-                  <Text style={styles.postDateText}>{post.posted_date}</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleBlockOptionClick(post.pet_id)} style={styles.threeDotsIcon}>
-                <Ionicons name="ellipsis-horizontal" size={24} color="black" />
-              </TouchableOpacity>
-
-              <SliderModal dropdownVisible={modalVisible} setDropdownVisible={setModalVisible}>
-                <TouchableOpacity onPress={handleBlockUser}>
-                  <Text style={styles.blockUserText}>Block User</Text>
-                </TouchableOpacity>
-              </SliderModal>
-
-            </View>
-            {renderMedia(post.media)}
-            {renderLikeIcon(post.post_id)}
-            <Text>{post.caption}</Text>
-          </View>
-
-        ))}
+        {Array.isArray(feedData) && feedData.map(renderPost)}
         <TouchableOpacity onPress={loadMore} style={styles.loadMoreContainer}>
           <Text style={styles.loadMoreText}>Load More</Text>
         </TouchableOpacity>
 
       </ScrollView>
+      <SliderModal dropdownVisible={modalVisible} setDropdownVisible={setModalVisible}>
+        <TouchableOpacity onPress={handleBlockUser}>
+          <Text style={styles.blockUserText}>Block User</Text>
+        </TouchableOpacity>
+      </SliderModal>
       {isGlobalLoading && (
         <View style={styles.overlay}>
           <ActivityIndicator size="large" color="#ffc02c" />
