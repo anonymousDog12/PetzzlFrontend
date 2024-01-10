@@ -20,6 +20,9 @@ const FeedScreen = ({ route }) => {
   const { postDetails } = route.params || {};
   const [likeCounts, setLikeCounts] = useState({});
   const currentPetId = useSelector(state => state.petProfile.currentPetId);
+  const ownedPetIds = useSelector(state => state.petProfile.ownedPetIds);
+  const [isPostOwnedByCurrentUser, setIsPostOwnedByCurrentUser] = useState(false);
+
   const [likeStatuses, setLikeStatuses] = useState({});
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,10 +35,13 @@ const FeedScreen = ({ route }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPetIdForBlock, setSelectedPetIdForBlock] = useState(null);
 
-  const handleBlockOptionClick = (petId) => {
+  const handleEllipsisOptionClick = (petId) => {
+    setIsPostOwnedByCurrentUser(!!ownedPetIds[petId]);
+
     setSelectedPetIdForBlock(petId);
     setModalVisible(true);
   };
+
 
   const navigation = useNavigation();
 
@@ -299,7 +305,7 @@ const FeedScreen = ({ route }) => {
         caption: post.caption,
         post_id: post.post_id,
       },
-      onEllipsisPress: () => handleBlockOptionClick(post.pet_id),
+      onEllipsisPress: () => handleEllipsisOptionClick(post.pet_id),
       handlePetProfileClick: () => handlePetProfileClick(post.pet_id),
       showEllipsis: true,
       isLiked: likeStatuses[post.post_id],
@@ -308,7 +314,7 @@ const FeedScreen = ({ route }) => {
     };
 
     return <PostSection key={post.post_id}
-                        onEllipsisPress={() => handleBlockOptionClick(post.pet_id)} {...postProps} />;
+                        onEllipsisPress={() => handleEllipsisOptionClick(post.pet_id)} {...postProps} />;
   };
 
   return (
@@ -323,9 +329,15 @@ const FeedScreen = ({ route }) => {
 
       </ScrollView>
       <SliderModal dropdownVisible={modalVisible} setDropdownVisible={setModalVisible}>
-        <TouchableOpacity onPress={handleBlockUser}>
-          <Text style={styles.blockUserText}>Block User</Text>
-        </TouchableOpacity>
+        {isPostOwnedByCurrentUser ? (
+          <TouchableOpacity >
+            <Text style={styles.blockUserText}>Delete Post</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={handleBlockUser}>
+            <Text style={styles.blockUserText}>Block User</Text>
+          </TouchableOpacity>
+        )}
       </SliderModal>
       {isGlobalLoading && (
         <View style={styles.overlay}>

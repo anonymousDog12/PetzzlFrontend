@@ -1,4 +1,4 @@
-import { CURRENT_PET_ID, SET_NEW_PET_PROFILE, USER_HAS_PETS } from "../types";
+import { CURRENT_PET_ID, SET_NEW_PET_PROFILE, SET_USER_PET_IDS, USER_HAS_PETS } from "../types";
 
 // Existing setHasPets action creator
 export const setHasPets = (hasPets) => {
@@ -31,3 +31,9 @@ export const setCurrentPetId = (petId) => {
     payload: petId,
   };
 };
+
+// List of pet ids owned by the current user
+export const setUserPetIds = (petIds) => ({
+  type: SET_USER_PET_IDS,
+  payload: petIds,
+});

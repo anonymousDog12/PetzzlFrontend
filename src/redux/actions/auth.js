@@ -17,7 +17,7 @@ import {
   USER_LOADED_FAIL,
   USER_LOADED_SUCCESS,
 } from "../types";
-import { setCurrentPetId, setHasPets, setNewPetProfile } from "./petProfile";
+import { setCurrentPetId, setHasPets, setNewPetProfile, setUserPetIds } from "./petProfile";
 
 
 export const loadTokens = () => async dispatch => {
@@ -97,7 +97,6 @@ export const refreshToken = () => async dispatch => {
   }
 };
 
-
 export const load_user = () => async dispatch => {
   const access = await SecureStorage.getItem("access");
   if (access) {
@@ -111,40 +110,41 @@ export const load_user = () => async dispatch => {
 
     try {
       const res = await axios.get(`${CONFIG.BACKEND_URL}/auth/users/me/`, config);
-      dispatch({
-        type: USER_LOADED_SUCCESS,
-        payload: res.data,
-      });
+      dispatch({ type: USER_LOADED_SUCCESS, payload: res.data });
 
-      // Check if the user has pets and set the current pet ID
-      const petRes = await axios.get(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${res.data.id}/`, config);
-      const userHasPets = petRes.data && Array.isArray(petRes.data) && petRes.data.length > 0;
-      dispatch(setHasPets(userHasPets));
-      dispatch(setNewPetProfile(!userHasPets));
+      try {
+        const petRes = await axios.get(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${res.data.id}/`, config);
+        // Converting to map for easier lookups
+        const petIdMap = petRes.data.reduce((map, petProfile) => {
+          map[petProfile.pet_id] = true;
+          return map;
+        }, {});
+        dispatch(setUserPetIds(petIdMap));
 
-      if (userHasPets) {
-        // Set the first pet's ID as the current pet ID
-        dispatch(setCurrentPetId(petRes.data[0].pet_id));
+        const petIds = Object.keys(petIdMap); // Get pet IDs from the map
+        if (petIds.length > 0) {
+          dispatch(setCurrentPetId(petIds[0]));
+        }
+        dispatch(setHasPets(petIds.length > 0));
+        dispatch(setNewPetProfile(petIds.length === 0));
+      } catch (error) {
+        console.error("Error fetching user's pet profiles", error);
       }
     } catch (err) {
-      // Check if the error is due to an expired token
       if (err.response && err.response.data.code === "token_not_valid") {
-        // Token is invalid or expired
-        await SecureStorage.removeItem("access");
-        await SecureStorage.removeItem("refresh");
         dispatch({ type: AUTHENTICATED_FAIL });
         dispatch(refreshToken());
       } else {
-        // Handle other errors
         dispatch({ type: USER_LOADED_FAIL });
       }
     }
   } else {
-    // Handle no access token found
     dispatch({ type: USER_LOADED_FAIL });
     dispatch({ type: AUTHENTICATED_FAIL });
   }
 };
+
+
 
 
 export const reset_password = (email) => async dispatch => {
