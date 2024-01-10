@@ -1,15 +1,6 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Progress from "react-native-progress";
 import SecureStorage from "react-native-secure-storage";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,10 +9,6 @@ import PostSection from "../components/PostSection";
 import SliderModal from "../components/SliderModal";
 import { DEFAULT_PROFILE_PICS } from "../data/FieldNames";
 import { addPost, fetchFeed } from "../redux/actions/feed";
-
-
-const { width } = Dimensions.get("window");
-const imageContainerHeight = 300;
 
 
 const FeedScreen = ({ route }) => {
@@ -312,11 +299,6 @@ const FeedScreen = ({ route }) => {
     setModalVisible(false);
   };
 
-  const navigateToLikerList = (postId) => {
-    navigation.navigate("LikerListScreen", { postId });
-  };
-
-
   const renderPost = (post) => {
     const postProps = {
       petProfile: {
@@ -403,61 +385,6 @@ const styles = StyleSheet.create({
   loadMoreText: {
     color: "#ffc02c",
     fontSize: 16,
-  },
-  boldText: {
-    fontWeight: "bold",
-  },
-  postContainer: {
-    width: "100%",
-    marginBottom: 20,
-  },
-  profileHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  paginationStyle: {
-    position: "absolute",
-    bottom: 15,
-    alignSelf: "center",
-  },
-  paginationStyleItem: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  imageStyle: {
-    width: "100%",
-    height: "100%",
-  },
-  likeIconContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    marginTop: 5,
-    marginLeft: 10,
-  },
-  profileInfoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  petInfo: {
-    flexDirection: "column",
-    justifyContent: "center",
-    marginLeft: 10,
-  },
-  petIdText: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  postDateText: {
-    fontSize: 14,
-    color: "gray",
-  },
-  threeDotsIcon: {
-    position: "absolute",
-    right: 10,
-    top: 10,
   },
 });
 
