@@ -8,6 +8,7 @@ import { CONFIG } from "../../config";
 import PostSection from "../components/PostSection";
 import SliderModal from "../components/SliderModal";
 import { DEFAULT_PROFILE_PICS } from "../data/FieldNames";
+import { deletePostSuccess } from "../redux/actions/dashboard";
 import { addPost, fetchFeed } from "../redux/actions/feed";
 
 
@@ -34,11 +35,14 @@ const FeedScreen = ({ route }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPetIdForBlock, setSelectedPetIdForBlock] = useState(null);
+  const [selectedPostIdForDeletion, setSelectedPostIdForDeletion] = useState(null);
 
-  const handleEllipsisOptionClick = (petId) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleEllipsisOptionClick = (petId, postId) => {
     setIsPostOwnedByCurrentUser(!!ownedPetIds[petId]);
-
     setSelectedPetIdForBlock(petId);
+    setSelectedPostIdForDeletion(postId);
     setModalVisible(true);
   };
 
@@ -246,6 +250,61 @@ const FeedScreen = ({ route }) => {
     }
   };
 
+  // Not using use delete post hook to avoid nested hook error
+
+  const deletePost = async (postId) => {
+    Alert.alert(
+      "Delete Post",
+      "Are you sure you want to delete this post? This action cannot be undone.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: () => performDeletePost(postId),
+          style: "destructive",
+        },
+      ],
+      { cancelable: false },
+    );
+  };
+
+  const performDeletePost = async (postId) => {
+    setIsDeleting(true); // Start the deletion process
+
+    const accessToken = await SecureStorage.getItem("access");
+    if (!accessToken) {
+      console.error("JWT token not found");
+      setIsDeleting(false); // Reset the deletion status on error
+      return;
+    }
+
+    try {
+      const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/delete_post/${postId}/`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `JWT ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.error("Failed to delete the post");
+        setIsDeleting(false);
+        return;
+      }
+
+      dispatch(deletePostSuccess(postId));
+      setModalVisible(false);
+    } catch (error) {
+      console.error("Deletion error:", error);
+      setIsDeleting(false);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
 
   const handleBlockUser = async () => {
     setModalVisible(false);
@@ -305,7 +364,7 @@ const FeedScreen = ({ route }) => {
         caption: post.caption,
         post_id: post.post_id,
       },
-      onEllipsisPress: () => handleEllipsisOptionClick(post.pet_id),
+      onEllipsisPress: () => handleEllipsisOptionClick(post.pet_id, post.post_id),
       handlePetProfileClick: () => handlePetProfileClick(post.pet_id),
       showEllipsis: true,
       isLiked: likeStatuses[post.post_id],
@@ -313,9 +372,17 @@ const FeedScreen = ({ route }) => {
       handleLikePress: () => handleToggleLike(post.post_id, currentPetId),
     };
 
-    return <PostSection key={post.post_id}
-                        onEllipsisPress={() => handleEllipsisOptionClick(post.pet_id)} {...postProps} />;
+    return <PostSection key={post.post_id} {...postProps} />;
   };
+
+  if (isDeleting) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#ffc02c" />
+        <Text>Deleting...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -330,7 +397,7 @@ const FeedScreen = ({ route }) => {
       </ScrollView>
       <SliderModal dropdownVisible={modalVisible} setDropdownVisible={setModalVisible}>
         {isPostOwnedByCurrentUser ? (
-          <TouchableOpacity >
+          <TouchableOpacity onPress={() => deletePost(selectedPostIdForDeletion)}>
             <Text style={styles.blockUserText}>Delete Post</Text>
           </TouchableOpacity>
         ) : (
@@ -339,6 +406,7 @@ const FeedScreen = ({ route }) => {
           </TouchableOpacity>
         )}
       </SliderModal>
+
       {isGlobalLoading && (
         <View style={styles.overlay}>
           <ActivityIndicator size="large" color="#ffc02c" />
@@ -379,6 +447,11 @@ const styles = StyleSheet.create({
   loadMoreText: {
     color: "#ffc02c",
     fontSize: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

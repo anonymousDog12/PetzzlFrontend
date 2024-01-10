@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../config";
+
 
 export const usePostLike = (postId, currentPetId) => {
   const [isLiked, setIsLiked] = useState(false);
@@ -45,11 +46,11 @@ export const usePostLike = (postId, currentPetId) => {
     const accessToken = await SecureStorage.getItem("access");
     if (!accessToken || !currentPetId) return;
 
-    const url = `${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/${isLiked ? 'unlike' : 'like'}/${currentPetId}/`;
+    const url = `${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/${isLiked ? "unlike" : "like"}/${currentPetId}/`;
     try {
       const response = await fetch(url, {
         method: "POST",
-        headers: { "Authorization": `JWT ${accessToken}` }
+        headers: { "Authorization": `JWT ${accessToken}` },
       });
 
       if (response.ok) {

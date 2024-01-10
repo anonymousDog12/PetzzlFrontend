@@ -1,13 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import SecureStorage from "react-native-secure-storage";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { CONFIG } from "../../config";
 import PostSection from "../components/PostSection";
 import SliderModal from "../components/SliderModal";
+import { useDeletePost } from "../hooks/useDeletePost";
 import { usePostLike } from "../hooks/usePostLike";
-import { deletePostSuccess } from "../redux/actions/dashboard";
 
 
 const PostDetailScreen = ({ route }) => {
@@ -18,56 +18,11 @@ const PostDetailScreen = ({ route }) => {
   const { isLiked, likeCount, toggleLike } = usePostLike(postId, currentPetId);
   const [modalVisible, setModalVisible] = useState(false);
 
+
   const [isDeleting, setIsDeleting] = useState(false);
-
   const navigation = useNavigation();
-  const dispatch = useDispatch();
+  const showDeleteConfirmation = useDeletePost(navigation, setIsDeleting);
 
-
-  const deletePost = async () => {
-    setIsDeleting(true);
-    const accessToken = await SecureStorage.getItem("access"); // Retrieve the access token
-
-    if (accessToken) {
-      try {
-        const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/delete_post/${postId}/`, {
-          method: "DELETE",
-          headers: {
-            "Authorization": `JWT ${accessToken}`,
-          },
-        });
-
-        if (!response.ok) {
-          console.error("Failed to delete the post");
-        }
-
-        dispatch(deletePostSuccess(postId));
-        navigation.goBack();
-      } catch (error) {
-        console.error("Deletion error:", error);
-      }
-    }
-    setIsDeleting(false);
-  };
-
-  const showDeleteConfirmation = () => {
-    Alert.alert(
-      "Delete Post",
-      "Are you sure you want to delete this post? This action cannot be undone.",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          onPress: deletePost,
-          style: "destructive",
-        },
-      ],
-      { cancelable: false },
-    );
-  };
 
   useEffect(() => {
     const fetchPostDetails = async () => {
@@ -126,8 +81,8 @@ const PostDetailScreen = ({ route }) => {
         dropdownVisible={modalVisible}
         setDropdownVisible={setModalVisible}
       >
-        <TouchableOpacity onPress={showDeleteConfirmation}>
-          <Text style={styles.modalTextDelete}>Delete</Text>
+        <TouchableOpacity onPress={() => showDeleteConfirmation(postId)}>
+          <Text style={styles.modalTextRed}>Delete Post</Text>
         </TouchableOpacity>
       </SliderModal>
     </SafeAreaView>
@@ -140,7 +95,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  modalTextDelete: {
+  modalTextRed: {
     marginBottom: 15,
     color: "red",
     textAlign: "center",
