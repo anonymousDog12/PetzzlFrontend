@@ -205,53 +205,37 @@ const FeedScreen = ({ route }) => {
   };
 
 
-  const handleLike = async (postId, petId) => {
+  const handleToggleLike = async (postId, petId) => {
     const accessToken = await SecureStorage.getItem("access");
-    if (accessToken) {
-      try {
-        const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/like/${petId}/`, {
-          method: "POST",
-          headers: {
-            "Authorization": `JWT ${accessToken}`,
-          },
-        });
+    if (!accessToken) {
+      console.error("JWT token not found");
+      return;
+    }
 
-        if (response.ok) {
-          // Update like status and count
-          setLikeStatuses(prevStatuses => ({ ...prevStatuses, [postId]: true }));
-          setLikeCounts(prevCounts => ({ ...prevCounts, [postId]: (prevCounts[postId] || 0) + 1 }));
-        } else {
-          console.error("Failed to like the post");
-        }
-      } catch (error) {
-        console.error("Error liking post:", error);
+    const isCurrentlyLiked = likeStatuses[postId];
+    const method = isCurrentlyLiked ? "unlike" : "like";
+
+    try {
+      const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/${method}/${petId}/`, {
+        method: "POST",
+        headers: { "Authorization": `JWT ${accessToken}` },
+      });
+
+      if (response.ok) {
+        // Update like status and count
+        setLikeStatuses(prevStatuses => ({ ...prevStatuses, [postId]: !isCurrentlyLiked }));
+        setLikeCounts(prevCounts => {
+          const currentCount = prevCounts[postId] || 0;
+          return { ...prevCounts, [postId]: isCurrentlyLiked ? Math.max(currentCount - 1, 0) : currentCount + 1 };
+        });
+      } else {
+        console.error(`Failed to ${method} the post`);
       }
+    } catch (error) {
+      console.error(`Error ${method}ing post:`, error);
     }
   };
 
-  const handleUnlike = async (postId, petId) => {
-    const accessToken = await SecureStorage.getItem("access");
-    if (accessToken) {
-      try {
-        const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/unlike/${petId}/`, {
-          method: "POST",
-          headers: {
-            "Authorization": `JWT ${accessToken}`,
-          },
-        });
-
-        if (response.ok) {
-          // Update like status and count
-          setLikeStatuses(prevStatuses => ({ ...prevStatuses, [postId]: false }));
-          setLikeCounts(prevCounts => ({ ...prevCounts, [postId]: Math.max((prevCounts[postId] || 1) - 1, 0) }));
-        } else {
-          console.error("Failed to unlike the post");
-        }
-      } catch (error) {
-        console.error("Error unliking post:", error);
-      }
-    }
-  };
 
   const handleBlockUser = async () => {
     setModalVisible(false);
@@ -316,13 +300,7 @@ const FeedScreen = ({ route }) => {
       showEllipsis: true,
       isLiked: likeStatuses[post.post_id],
       likeCount: likeCounts[post.post_id],
-      handleLikePress: () => {
-        if (likeStatuses[post.post_id]) {
-          handleUnlike(post.post_id, currentPetId);
-        } else {
-          handleLike(post.post_id, currentPetId);
-        }
-      },
+      handleLikePress: () => handleToggleLike(post.post_id, currentPetId),
     };
 
     return <PostSection key={post.post_id}
