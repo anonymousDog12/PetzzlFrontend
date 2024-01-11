@@ -12,6 +12,9 @@ import { deletePostSuccess } from "../redux/actions/dashboard";
 import { addPost, fetchFeed } from "../redux/actions/feed";
 
 
+// TODO: only display block user option after reporting
+// https://soulecho.atlassian.net/browse/PA-248
+
 const FeedScreen = ({ route }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [postSuccess, setPostSuccess] = useState(false);
@@ -383,6 +386,9 @@ const FeedScreen = ({ route }) => {
       </View>
     );
   }
+
+  // TODO - Refactor slider modal
+  // https://soulecho.atlassian.net/browse/PA-242
 
   return (
     <View style={{ flex: 1 }}>
