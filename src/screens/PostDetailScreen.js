@@ -66,6 +66,9 @@ const PostDetailScreen = ({ route }) => {
   }
 
   return (
+    // TODO - Refactor slider modal
+    // https://soulecho.atlassian.net/browse/PA-242
+
     <SafeAreaView style={{ flex: 1 }}>
       <PostSection
         petProfile={petProfile}
@@ -76,7 +79,6 @@ const PostDetailScreen = ({ route }) => {
         likeCount={likeCount}
         handleLikePress={toggleLike}
       />
-
       <SliderModal
         dropdownVisible={modalVisible}
         setDropdownVisible={setModalVisible}
