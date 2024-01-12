@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../config";
 
@@ -57,9 +56,6 @@ export const usePostLike = (postId, currentPetId) => {
       if (response.ok) {
         setIsLiked(!isLiked);
         setLikeCount(prevCount => isLiked ? Math.max(prevCount - 1, 0) : prevCount + 1);
-      } else if (response.status === 403) {
-        const responseData = await response.json();
-        Alert.alert("Notice", responseData.message || "This action can't be completed at the moment.");
       } else {
         console.error("Failed to toggle like status");
       }
@@ -67,7 +63,6 @@ export const usePostLike = (postId, currentPetId) => {
       console.error("Error toggling like status:", error);
     }
   };
-
 
   return { isLiked, likeCount, toggleLike };
 };
