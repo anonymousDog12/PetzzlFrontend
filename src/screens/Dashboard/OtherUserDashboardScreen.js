@@ -69,8 +69,8 @@ const OtherUserDashboardScreen = ({ route }) => {
   const handleBlockUser = async () => {
     setModalVisible(false);
     Alert.alert(
-      "Block User",
-      "Are you sure you want to block this user? This will also block all other pet profiles associated with them.",
+      `Block ${otherPetId}?`,
+      "Blocking will also hide all their associated pet profiles from you. They won't be notified, and neither you nor they will be able to see each other's posts.",
       [
         {
           text: "Cancel",
