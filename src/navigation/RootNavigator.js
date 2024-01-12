@@ -147,12 +147,14 @@ const RootNavigator = () => {
                                 options={{
                                   headerShown: true,
                                   headerBackTitle: "Back",
+                                  cardStyleInterpolator: rightToLeftInterpolator,
                                 }} />
               <RootStack.Screen name="BlockerList" component={BlockerListScreen}
                                 options={{
                                   title: "Blocked Accounts",
                                   headerShown: true,
                                   headerBackTitle: "Back",
+                                  cardStyleInterpolator: rightToLeftInterpolator,
                                 }}
               />
               <RootStack.Screen name="PostDetailScreen" component={PostDetailScreen}
@@ -160,6 +162,7 @@ const RootNavigator = () => {
                                   headerShown: true,
                                   headerBackTitle: "Back",
                                   title: "Detail",
+                                  cardStyleInterpolator: rightToLeftInterpolator,
                                 }} />
               <RootStack.Screen name="OtherUserDashboard"
                                 component={OtherUserDashboardScreen}
@@ -167,6 +170,7 @@ const RootNavigator = () => {
                                   title: "Dashboard",
                                   headerShown: true,
                                   headerBackTitle: "Back",
+                                  cardStyleInterpolator: rightToLeftInterpolator,
                                 }} />
               <RootStack.Screen name="OtherUserPostDetailScreen"
                                 component={OtherUserPostDetailScreen}
@@ -174,6 +178,7 @@ const RootNavigator = () => {
                                   title: "Detail",
                                   headerShown: true,
                                   headerBackTitle: "Back",
+                                  cardStyleInterpolator: rightToLeftInterpolator,
                                 }} />
               <RootStack.Screen name="LikerListScreen"
                                 component={LikerListScreen}
@@ -181,6 +186,7 @@ const RootNavigator = () => {
                                   headerShown: true,
                                   headerBackTitle: "Back",
                                   title: "Likes",
+                                  cardStyleInterpolator: rightToLeftInterpolator,
                                 }} />
             </>
           )}
