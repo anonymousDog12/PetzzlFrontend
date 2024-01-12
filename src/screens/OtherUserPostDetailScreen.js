@@ -68,9 +68,17 @@ const OtherUserPostDetailScreen = ({ route }) => {
   useEffect(() => {
     const fetchPostDetails = async () => {
       try {
-        const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/post_media/${postId}/full/`);
+        const accessToken = await SecureStorage.getItem("access");
+        const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/post_media/${postId}/full/`, {
+          headers: { "Authorization": `JWT ${accessToken}` },
+        });
         const data = await response.json();
-        setPostDetails(data);
+
+        if (response.ok) {
+          setPostDetails(data);
+        } else if (response.status === 403) {
+          setPostDetails({ accessDenied: true });
+        }
       } catch (error) {
         console.error("Failed to fetch post details", error);
       }
@@ -81,6 +89,16 @@ const OtherUserPostDetailScreen = ({ route }) => {
 
   if (!postDetails) {
     return <Text>Loading...</Text>;
+  }
+
+  if (postDetails.accessDenied) {
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text style={{ textAlign: "center", margin: 20 }}>
+          This content is not available. It might be due to privacy settings of the user.
+        </Text>
+      </SafeAreaView>
+    );
   }
 
   return (
