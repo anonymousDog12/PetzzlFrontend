@@ -5,6 +5,7 @@ import SecureStorage from "react-native-secure-storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch } from "react-redux";
 import { CONFIG } from "../../../config";
+import EmptyDashboardPostList from "../../components/EmptyDashboardPostList";
 import SliderModal from "../../components/SliderModal";
 import { DEFAULT_PROFILE_PICS } from "../../data/FieldNames";
 import { fetchFeed } from "../../redux/actions/feed";
@@ -163,6 +164,7 @@ const OtherUserDashboardScreen = ({ route }) => {
         renderItem={renderPost}
         keyExtractor={item => item.post_id.toString()}
         numColumns={3}
+        ListEmptyComponent={<EmptyDashboardPostList />}
       />
       <SliderModal
         dropdownVisible={modalVisible}

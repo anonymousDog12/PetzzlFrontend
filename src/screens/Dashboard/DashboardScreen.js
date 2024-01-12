@@ -6,6 +6,7 @@ import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../../config";
+import EmptyDashboardPostList from "../../components/EmptyDashboardPostList";
 import SliderModal from "../../components/SliderModal";
 import ImageCropper from "../../imageHandling/ImageCropper";
 import { fetchPosts } from "../../redux/actions/dashboard";
@@ -325,7 +326,7 @@ const DashboardScreen = () => {
           </SliderModal>
           <FlatList
             data={posts}
-            numColumns={3} // Set the number of columns
+            numColumns={3}
             keyExtractor={item => item.post_id.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -338,6 +339,7 @@ const DashboardScreen = () => {
                 />
               </TouchableOpacity>
             )}
+            ListEmptyComponent={<EmptyDashboardPostList />}
           />
         </>
       )}
