@@ -149,7 +149,7 @@ const OtherUserDashboardScreen = ({ route }) => {
       {otherPetProfile && (
         <View style={styles.petProfile}>
           <Image
-            source={{ uri: getProfilePic(otherPetProfile.profile_pic_thumbnail_small, otherPetProfile.pet_type) }}
+            source={{ uri: getProfilePic(otherPetProfile.profile_pic_regular, otherPetProfile.pet_type) }}
             style={styles.profilePic}
           />
           <View style={styles.petInfo}>

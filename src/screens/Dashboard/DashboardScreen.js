@@ -236,7 +236,6 @@ const DashboardScreen = () => {
     });
   }, [navigation, dropdownVisible, selectedPetName]);
 
-
   return (
     <View style={styles.container}>
 
@@ -276,7 +275,7 @@ const DashboardScreen = () => {
               <TouchableOpacity onPress={handleProfilePicUpdate} style={styles.profilePicContainer}>
                 {currentPetProfile.profile_pic_thumbnail_small ? (
                   <Image
-                    source={{ uri: currentPetProfile.profile_pic_thumbnail_small }}
+                    source={{ uri: currentPetProfile.profile_pic_regular }}
                     style={styles.profilePic}
                   />
                 ) : (
