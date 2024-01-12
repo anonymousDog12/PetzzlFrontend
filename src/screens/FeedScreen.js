@@ -308,12 +308,12 @@ const FeedScreen = ({ route }) => {
     }
   };
 
-
+  // TODO: when blocking is moved after report, consider removing this message
   const handleBlockUser = async () => {
     setModalVisible(false);
     Alert.alert(
-      "Block User",
-      "Are you sure you want to block this user? This will also block all other pet profiles associated with them.",
+      `Block ${selectedPetIdForBlock}?`,
+      "Blocking will also hide all their associated pet profiles from you. They won't be notified, and neither you nor they will be able to see each other's posts.",
       [
         {
           text: "Cancel",

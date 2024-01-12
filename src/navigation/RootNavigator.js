@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import LoginScreen from "../screens/Authentication/LoginScreen";
 import ResetPasswordScreen from "../screens/Authentication/ResetPasswordScreen";
 import SignUpScreen from "../screens/Authentication/SignUpScreen";
+import BlockerListScreen from "../screens/BlockerListScreen";
 import OtherUserDashboardScreen from "../screens/Dashboard/OtherUserDashboardScreen";
 import LikerListScreen from "../screens/LikerListScreen";
 import OtherUserPostDetailScreen from "../screens/OtherUserPostDetailScreen";
@@ -146,7 +147,14 @@ const RootNavigator = () => {
                                 options={{
                                   headerShown: true,
                                   headerBackTitle: "Back",
-                                }}/>
+                                }} />
+              <RootStack.Screen name="BlockerList" component={BlockerListScreen}
+                                options={{
+                                  title: "Blocked Accounts",
+                                  headerShown: true,
+                                  headerBackTitle: "Back",
+                                }}
+              />
               <RootStack.Screen name="PostDetailScreen" component={PostDetailScreen}
                                 options={{
                                   headerShown: true,
@@ -158,13 +166,15 @@ const RootNavigator = () => {
                                 options={{
                                   title: "Dashboard",
                                   headerShown: true,
-                                  headerBackTitle: "Back"}} />
+                                  headerBackTitle: "Back",
+                                }} />
               <RootStack.Screen name="OtherUserPostDetailScreen"
                                 component={OtherUserPostDetailScreen}
                                 options={{
                                   title: "Detail",
                                   headerShown: true,
-                                  headerBackTitle: "Back",}} />
+                                  headerBackTitle: "Back",
+                                }} />
               <RootStack.Screen name="LikerListScreen"
                                 component={LikerListScreen}
                                 options={{
