@@ -147,6 +147,11 @@ const styles = StyleSheet.create({
   petType: {
     fontSize: 15,
   },
+  modalTextRed: {
+    marginBottom: 15,
+    color: "red",
+    textAlign: "center",
+  },
 });
 
 export default styles;

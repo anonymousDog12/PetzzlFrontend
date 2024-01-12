@@ -1,8 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import SecureStorage from "react-native-secure-storage";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useDispatch } from "react-redux";
 import { CONFIG } from "../../../config";
+import SliderModal from "../../components/SliderModal";
 import { DEFAULT_PROFILE_PICS } from "../../data/FieldNames";
+import { fetchFeed } from "../../redux/actions/feed";
 import { capitalizeFirstLetter } from "../../utils/common";
 import styles from "./DashboardScreenStyles";
 
@@ -12,6 +17,19 @@ const OtherUserDashboardScreen = ({ route }) => {
   const [otherPetProfile, setOtherPetProfile] = useState(null);
   const [posts, setPosts] = useState([]);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Ionicons name="ellipsis-horizontal" size={20} color="black" style={{ marginRight: 10 }}/>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   // Function to fetch other pet's profile
   const fetchOtherPetProfile = async () => {
@@ -27,7 +45,13 @@ const OtherUserDashboardScreen = ({ route }) => {
   // Function to fetch posts associated with other pet
   const fetchPostsForOtherPet = async () => {
     try {
-      const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/pet_posts/${otherPetId}/`);
+      // TODO: maybe use redux, like actions/dashboard.js
+      const accessToken = await SecureStorage.getItem("access");
+      const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/pet_posts/${otherPetId}/`, {
+        headers: {
+          "Authorization": `JWT ${accessToken}`
+        }
+      });
       const data = await response.json();
       setPosts(data);
     } catch (error) {
@@ -39,6 +63,61 @@ const OtherUserDashboardScreen = ({ route }) => {
     fetchOtherPetProfile();
     fetchPostsForOtherPet();
   }, [otherPetId]);
+
+
+  const handleBlockUser = async () => {
+    setModalVisible(false);
+    Alert.alert(
+      "Block User",
+      "Are you sure you want to block this user? This will also block all other pet profiles associated with them.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Block User",
+          onPress: () => performBlockUser(),
+          style: "destructive",
+        },
+      ],
+      { cancelable: false },
+    );
+  };
+
+  const performBlockUser = async () => {
+    setPosts([]);
+
+    try {
+      const accessToken = await SecureStorage.getItem("access");
+      const response = await fetch(`${CONFIG.BACKEND_URL}/api/userblocking/block/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `JWT ${accessToken}`,
+        },
+        body: JSON.stringify({ pet_id: otherPetId }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Success", data.message, [{ text: "OK" }]);
+        // The posts are already cleared optimistically, no need to refetch
+        dispatch(fetchFeed());
+      } else {
+        // If the block failed, refetch the posts to ensure the UI is correct
+        fetchPostsForOtherPet();
+        Alert.alert("Error", data.error || "Failed to block user", [{ text: "OK" }]);
+      }
+    } catch (error) {
+      // If there's an error, refetch the posts
+      fetchPostsForOtherPet();
+      Alert.alert("Error", "An error occurred while blocking the user. Please try again later.", [{ text: "OK" }]);
+    }
+    setModalVisible(false);
+  };
+
 
   // Function to render each post
   const renderPost = ({ item }) => {
@@ -84,6 +163,14 @@ const OtherUserDashboardScreen = ({ route }) => {
         keyExtractor={item => item.post_id.toString()}
         numColumns={3}
       />
+      <SliderModal
+        dropdownVisible={modalVisible}
+        setDropdownVisible={setModalVisible}
+      >
+        <TouchableOpacity onPress={handleBlockUser}>
+          <Text style={styles.modalTextRed}>Block User</Text>
+        </TouchableOpacity>
+      </SliderModal>
     </View>
   );
 };
