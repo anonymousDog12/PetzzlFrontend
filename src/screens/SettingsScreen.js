@@ -1,15 +1,15 @@
-import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux'; // Import useDispatch
-import { logout } from '../redux/actions/auth'; // Adjust the path as needed
+import React from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/actions/auth";
+
 
 const SettingsScreen = () => {
   const dispatch = useDispatch();
-  const user = useSelector(state => state.auth.user);
 
   // Function to handle log out
   const handleLogout = () => {
-    console.log('logging out');
+    console.log("logging out");
     dispatch(logout());
   };
 
@@ -24,8 +24,8 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
 });
