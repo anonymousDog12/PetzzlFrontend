@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import SecureStorage from "react-native-secure-storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch } from "react-redux";
@@ -25,7 +25,7 @@ const OtherUserDashboardScreen = ({ route }) => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Ionicons name="ellipsis-horizontal" size={20} color="black" style={{ marginRight: 10 }}/>
+          <Ionicons name="ellipsis-horizontal" size={20} color="black" style={{ marginRight: 10 }} />
         </TouchableOpacity>
       ),
     });
@@ -45,12 +45,13 @@ const OtherUserDashboardScreen = ({ route }) => {
   // Function to fetch posts associated with other pet
   const fetchPostsForOtherPet = async () => {
     try {
-      // TODO: maybe use redux, like actions/dashboard.js
+      // Since the posts being fetched is local only
+      // I am not moving this function to redux
       const accessToken = await SecureStorage.getItem("access");
       const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/pet_posts/${otherPetId}/`, {
         headers: {
-          "Authorization": `JWT ${accessToken}`
-        }
+          "Authorization": `JWT ${accessToken}`,
+        },
       });
       const data = await response.json();
       setPosts(data);

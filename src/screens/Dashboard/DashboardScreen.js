@@ -16,6 +16,7 @@ import styles from "./DashboardScreenStyles";
 
 LogBox.ignoreLogs(["Sending `onAnimatedValueUpdate` with no listeners registered."]);
 
+// TODO: Considering refactor to redux further
 
 const DashboardScreen = () => {
   const user = useSelector(state => state.auth.user);
