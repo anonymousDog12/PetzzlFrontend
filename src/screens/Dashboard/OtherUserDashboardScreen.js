@@ -3,7 +3,7 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Alert, FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import SecureStorage from "react-native-secure-storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../../config";
 import EmptyDashboardPostList from "../../components/EmptyDashboardPostList";
 import SliderModal from "../../components/SliderModal";
@@ -15,6 +15,8 @@ import styles from "./DashboardScreenStyles";
 
 const OtherUserDashboardScreen = ({ route }) => {
   const { otherPetId } = route.params;
+  const ownedPetIds = useSelector(state => state.petProfile.ownedPetIds);
+  const isOwnedPet = !!ownedPetIds[otherPetId];
   const [otherPetProfile, setOtherPetProfile] = useState(null);
   const [posts, setPosts] = useState([]);
   const navigation = useNavigation();
@@ -23,14 +25,20 @@ const OtherUserDashboardScreen = ({ route }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Ionicons name="ellipsis-horizontal" size={20} color="black" style={{ marginRight: 10 }} />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
+    if (!isOwnedPet) {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Ionicons name="ellipsis-horizontal" size={20} color="black" style={{ marginRight: 10 }} />
+          </TouchableOpacity>
+        ),
+      });
+    } else {
+      // If the pet is owned by the current user, do not display the ellipsis icon
+      navigation.setOptions({ headerRight: () => null });
+    }
+  }, [navigation, isOwnedPet]);
+
 
   // Function to fetch other pet's profile
   const fetchOtherPetProfile = async () => {
@@ -129,20 +137,35 @@ const OtherUserDashboardScreen = ({ route }) => {
 
   // Function to render each post
   const renderPost = ({ item }) => {
-    return (
-      <TouchableOpacity
-        style={styles.postItem}
-        onPress={() => navigation.navigate("OtherUserPostDetailScreen", {
-          postId: item.post_id,
-          petId: otherPetProfile.pet_id,
-          petName: otherPetProfile.pet_name,
-          // TODO: refactor the get profile pic into a common variable
-          petProfilePic: getProfilePic(otherPetProfile.profile_pic_thumbnail_small, otherPetProfile.pet_type),
-        })}
-      >
-        <Image source={{ uri: item.thumbnail_url }} style={styles.postThumbnail} />
-      </TouchableOpacity>
-    );
+
+    if (isOwnedPet) {
+      return (
+        <TouchableOpacity
+          style={styles.postItem}
+          onPress={() => navigation.navigate("PostDetailScreen", {
+            postId: item.post_id,
+            petProfile: otherPetProfile,
+          })}
+        >
+          <Image source={{ uri: item.thumbnail_url }} style={styles.postThumbnail} />
+        </TouchableOpacity>
+      );
+    } else {
+      return (
+        <TouchableOpacity
+          style={styles.postItem}
+          onPress={() => navigation.navigate("OtherUserPostDetailScreen", {
+            postId: item.post_id,
+            petId: otherPetProfile.pet_id,
+            petName: otherPetProfile.pet_name,
+            // TODO: refactor the get profile pic into a common variable
+            petProfilePic: getProfilePic(otherPetProfile.profile_pic_thumbnail_small, otherPetProfile.pet_type),
+          })}
+        >
+          <Image source={{ uri: item.thumbnail_url }} style={styles.postThumbnail} />
+        </TouchableOpacity>
+      );
+    }
   };
 
 
