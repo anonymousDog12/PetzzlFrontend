@@ -103,9 +103,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalTextRed: {
-    marginBottom: 15,
     color: "red",
-    textAlign: "center",
+    fontSize: 18,
+    padding: 10,
   },
 });
 
