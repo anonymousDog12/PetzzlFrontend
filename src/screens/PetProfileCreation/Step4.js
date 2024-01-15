@@ -3,7 +3,7 @@ import React from "react";
 import { Button, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch } from "react-redux";
 import { usePetProfile } from "../../contexts/PetProfileContext";
-import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
+import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/AppContants";
 import { setHasPetsAndNavigate } from "../../redux/actions/petProfile";
 import PetProfileCreationStyles from "./PetProfileCreationStyles";
 

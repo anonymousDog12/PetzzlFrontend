@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity } from "react-native";
 import { CONFIG } from "../../../config";
 import { usePetProfile } from "../../contexts/PetProfileContext";
-import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
+import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/AppContants";
 import PetProfileCreationStyles from "./PetProfileCreationStyles";
 
 const Step2 = ({ navigation }) => {

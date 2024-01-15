@@ -44,3 +44,16 @@ export const DEFAULT_PROFILE_PICS = {
   [PET_TYPES.TURTLE]: "https://petzzl.sfo3.cdn.digitaloceanspaces.com/default-profile-pics/turtle.png",
   [PET_TYPES.OTHER]: "https://petzzl.sfo3.cdn.digitaloceanspaces.com/default-profile-pics/other.png",
 };
+
+
+// Report reasons (matching backend data schema)
+export const REPORT_REASONS = {
+  DL: 'I Just Don\'t Like It',
+  NP: 'Not a Pet Photo',
+  SP: 'Self Promotion',
+  IC: 'Inappropriate Content',
+  IP: 'Intellectual Property Violation',
+  VD: 'Violence or Dangerous Organizations',
+  NS: 'Nudity or Sexual Activity',
+  OT: 'Other',
+};

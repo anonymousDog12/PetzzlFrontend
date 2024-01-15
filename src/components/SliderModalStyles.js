@@ -19,7 +19,9 @@ export const SliderModalStyles = StyleSheet.create({
     backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -42,6 +44,19 @@ export const SliderModalStyles = StyleSheet.create({
     marginTop: 1,
     marginBottom: 15,
   },
+  defaultTextStyle: {
+    textAlign: "left",
+    width: "100%",
+  },
+  modalRow: {
+    minHeight: 50,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1e1e1",
+    paddingVertical: 10,
+  },
+  modalOuterRow: {
+    width: "100%",
+  }
 });
 
 export default SliderModalStyles;

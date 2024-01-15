@@ -1,9 +1,15 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 import { Animated, Modal, PanResponder, TouchableOpacity, View } from 'react-native';
 import styles from './SliderModalStyles';
 
 const SliderModal = ({ dropdownVisible, setDropdownVisible, children }) => {
   const modalY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!dropdownVisible) {
+      modalY.setValue(0);
+    }
+  }, [dropdownVisible, modalY]);
 
   const panResponder = useRef(PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -40,7 +46,9 @@ const SliderModal = ({ dropdownVisible, setDropdownVisible, children }) => {
           {...panResponder.panHandlers}
         >
           <View style={styles.sliderHandle} />
-          {children}
+          {React.Children.map(children, child => (
+            <View style={styles.modalOuterRow}>{child}</View>
+          ))}
         </Animated.View>
       </TouchableOpacity>
     </Modal>

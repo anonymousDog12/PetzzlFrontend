@@ -4,7 +4,7 @@ import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react
 import SecureStorage from "react-native-secure-storage";
 import { useSelector } from "react-redux";
 import { CONFIG } from "../../config";
-import { DEFAULT_PROFILE_PICS, PET_TYPES } from "../data/FieldNames";
+import { DEFAULT_PROFILE_PICS, PET_TYPES } from "../data/AppContants";
 
 
 const LikerListScreen = ({ route }) => {

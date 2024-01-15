@@ -14,7 +14,7 @@ import SecureStorage from "react-native-secure-storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch } from "react-redux";
 import { CONFIG } from "../../config";
-import { DEFAULT_PROFILE_PICS, PET_TYPES } from "../data/FieldNames";
+import { DEFAULT_PROFILE_PICS, PET_TYPES } from "../data/AppContants";
 import { fetchFeed } from "../redux/actions/feed";
 
 

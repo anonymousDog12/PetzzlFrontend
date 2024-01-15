@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Progress from "react-native-progress";
 import SecureStorage from "react-native-secure-storage";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../config";
 import PostSection from "../components/PostSection";
 import SliderModal from "../components/SliderModal";
-import { DEFAULT_PROFILE_PICS } from "../data/FieldNames";
+import SliderModalStyles from "../components/SliderModalStyles";
+import { DEFAULT_PROFILE_PICS, REPORT_REASONS } from "../data/AppContants";
 import { deletePostSuccess } from "../redux/actions/dashboard";
 import { addPost, fetchFeed } from "../redux/actions/feed";
 
@@ -38,14 +40,21 @@ const FeedScreen = ({ route }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPetIdForBlock, setSelectedPetIdForBlock] = useState(null);
-  const [selectedPostIdForDeletion, setSelectedPostIdForDeletion] = useState(null);
+  const [selectedPostId, setSelectedPostId] = useState(null);
 
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [reportModalVisible, setReportModalVisible] = useState(false);
+
+  const [reportMessageModalVisible, setReportMessageModalVisible] = useState(false);
+  const [reportMessage, setReportMessage] = useState("");
+
+  const [isReportSending, setIsReportSending] = useState(false);
 
   const handleEllipsisOptionClick = (petId, postId) => {
     setIsPostOwnedByCurrentUser(!!ownedPetIds[petId]);
     setSelectedPetIdForBlock(petId);
-    setSelectedPostIdForDeletion(postId);
+    setSelectedPostId(postId);
     setModalVisible(true);
   };
 
@@ -308,9 +317,61 @@ const FeedScreen = ({ route }) => {
     }
   };
 
+  const handleReportContent = () => {
+    setModalVisible(false);
+    setReportModalVisible(true);
+  };
+
+  const handleReportReasonSelect = async (reasonCode) => {
+    setIsReportSending(true);
+
+    const accessToken = await SecureStorage.getItem("access");
+    if (!accessToken) {
+      console.error("JWT token not found");
+      setIsReportSending(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${CONFIG.BACKEND_URL}/api/contentreporting/report_post/`, {
+        method: "POST",
+        headers: {
+          "Authorization": `JWT ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body:
+          JSON.stringify({
+            post_id: selectedPostId,
+            reason: reasonCode,
+            details: "",
+          }),
+      });
+
+      if (response.ok) {
+        setReportMessage("Thank you for letting us know!");
+      } else {
+        setReportMessage("Failed to report the post. Please try again.");
+      }
+    } catch (error) {
+      setReportMessage("An error occurred while reporting the post. Please try again.");
+    } finally {
+      setIsReportSending(false);
+      setReportModalVisible(false);
+      setReportMessageModalVisible(true);
+    }
+
+  };
+
+
+  const handleCloseReportMessageModal = () => {
+    setReportMessageModalVisible(false);
+    setReportMessage(""); // Resetting the message for next use
+  };
+
+
   // TODO: when blocking is moved after report, consider removing this message
   const handleBlockUser = async () => {
-    setModalVisible(false);
+    setReportMessageModalVisible(false);
     Alert.alert(
       `Block ${selectedPetIdForBlock}?`,
       "Blocking will also hide all their associated pet profiles from you. They won't be notified, and neither you nor they will be able to see each other's posts.",
@@ -403,15 +464,61 @@ const FeedScreen = ({ route }) => {
       </ScrollView>
       <SliderModal dropdownVisible={modalVisible} setDropdownVisible={setModalVisible}>
         {isPostOwnedByCurrentUser ? (
-          <TouchableOpacity onPress={() => deletePost(selectedPostIdForDeletion)}>
-            <Text style={styles.blockUserText}>Delete Post</Text>
+          <TouchableOpacity onPress={() => deletePost(selectedPostId)}>
+            <Text style={styles.modalTextRed}>Delete Post</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={handleBlockUser}>
-            <Text style={styles.blockUserText}>Block User</Text>
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity onPress={handleReportContent}>
+              <Text style={styles.modalTextRed}>Report Content</Text>
+            </TouchableOpacity>
+          </>
         )}
       </SliderModal>
+
+      <SliderModal dropdownVisible={reportModalVisible} setDropdownVisible={setReportModalVisible}>
+        {isReportSending ? (
+          <View style={styles.activityIndicatorModal}>
+            <ActivityIndicator size="large" color="#ffc02c" />
+          </View>
+        ) : (
+          <>
+            <View>
+              <Text style={styles.modalTitle}>Report Post</Text>
+            </View>
+            <View>
+              <Text style={styles.modalQuestion}>Why are you reporting this post?</Text>
+            </View>
+            {Object.entries(REPORT_REASONS).map(([code, reason]) => (
+              <View style={SliderModalStyles.modalRow} key={code}>
+                <TouchableOpacity onPress={() => handleReportReasonSelect(code)}>
+                  <Text style={styles.modalTextReportReasons}>{reason}</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </>
+        )}
+      </SliderModal>
+
+
+      <SliderModal
+        dropdownVisible={reportMessageModalVisible}
+        setDropdownVisible={handleCloseReportMessageModal}
+      >
+
+        <View style={styles.reportMessageContent}>
+          <Ionicons name="checkmark-circle-outline" size={60} color="#ffc02c" />
+          <Text style={styles.reportMessage}>{reportMessage}</Text>
+          <TouchableOpacity style={styles.okButton}>
+            <Text style={styles.okButtonText}>Ok</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.blockUserButton} onPress={handleBlockUser}>
+            <Text style={styles.blockUserButtonText}>Block User</Text>
+          </TouchableOpacity>
+        </View>
+
+      </SliderModal>
+
 
       {isGlobalLoading && (
         <View style={styles.overlay}>
@@ -426,9 +533,26 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
   },
-  blockUserText: {
+  modalTextRed: {
     color: "red",
     fontSize: 18,
+    padding: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "black",
+    textAlign: "center",
+  },
+  modalQuestion: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "black",
+    padding: 10,
+  },
+  modalTextReportReasons: {
+    color: "black",
+    fontSize: 16,
     padding: 10,
   },
   overlay: {
@@ -458,6 +582,50 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  reportMessageContent: {
+    alignItems: "center",
+    padding: 20,
+  },
+  reportMessage: {
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 20,
+  },
+  okButton: {
+    backgroundColor: "#ffc02c",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    width: "100%",
+    marginBottom: 15,
+  },
+  okButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  blockUserButton: {
+    backgroundColor: "white",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#ffc02c",
+    width: "100%",
+
+  },
+  blockUserButtonText: {
+    color: "red",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  activityIndicatorModal: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: 400,
   },
 });
 
