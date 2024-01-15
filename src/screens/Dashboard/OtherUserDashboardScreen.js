@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { CONFIG } from "../../../config";
 import EmptyDashboardPostList from "../../components/EmptyDashboardPostList";
 import SliderModal from "../../components/SliderModal";
-import { DEFAULT_PROFILE_PICS } from "../../data/FieldNames";
+import { DEFAULT_PROFILE_PICS } from "../../data/AppContants";
 import { fetchFeed } from "../../redux/actions/feed";
 import { capitalizeFirstLetter } from "../../utils/common";
 import styles from "./DashboardScreenStyles";

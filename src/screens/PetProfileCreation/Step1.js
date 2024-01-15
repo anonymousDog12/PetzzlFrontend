@@ -4,7 +4,7 @@ import { Button, KeyboardAvoidingView, Text, TextInput, TouchableOpacity } from 
 import Icon from "react-native-vector-icons/Ionicons";
 import { useDispatch } from "react-redux";
 import { usePetProfile } from "../../contexts/PetProfileContext";
-import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/FieldNames";
+import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/AppContants";
 import { setNewPetProfile } from "../../redux/actions/petProfile";
 import PetProfileCreationStyles from "./PetProfileCreationStyles";
 

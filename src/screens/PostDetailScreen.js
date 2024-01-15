@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { CONFIG } from "../../config";
 import PostSection from "../components/PostSection";
 import SliderModal from "../components/SliderModal";
-import { DEFAULT_PROFILE_PICS, PET_TYPES } from "../data/FieldNames";
+import { DEFAULT_PROFILE_PICS, PET_TYPES } from "../data/AppContants";
 import { useDeletePost } from "../hooks/useDeletePost";
 import { usePostLike } from "../hooks/usePostLike";
 
