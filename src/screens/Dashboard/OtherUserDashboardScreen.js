@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Alert, FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import SecureStorage from "react-native-secure-storage";
@@ -65,6 +65,12 @@ const OtherUserDashboardScreen = ({ route }) => {
     fetchOtherPetProfile();
     fetchPostsForOtherPet();
   }, [otherPetId]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchPostsForOtherPet();
+    }, []),
+  );
 
 
   const handleBlockUser = async () => {
