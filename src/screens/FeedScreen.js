@@ -346,6 +346,7 @@ const FeedScreen = ({ route }) => {
 
       if (response.ok) {
         setReportMessage("Thank you for letting us know!");
+        dispatch(fetchFeed(currentPage));
       } else {
         setReportMessage("Failed to report the post. Please try again.");
       }
@@ -366,7 +367,6 @@ const FeedScreen = ({ route }) => {
   };
 
 
-  // TODO: when blocking is moved after report, consider removing this message
   const handleBlockUser = async () => {
     setReportMessageModalVisible(false);
     Alert.alert(
