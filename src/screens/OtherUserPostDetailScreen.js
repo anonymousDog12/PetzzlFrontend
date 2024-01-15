@@ -16,11 +16,6 @@ import { fetchFeed } from "../redux/actions/feed";
 // Consider refactoring this
 
 
-// TODO: only display block user option after reporting
-// https://soulecho.atlassian.net/browse/PA-248
-
-// TODO: Handle app behavior after user is blocked
-
 const OtherUserPostDetailScreen = ({ route }) => {
   const dispatch = useDispatch();
 
@@ -37,7 +32,6 @@ const OtherUserPostDetailScreen = ({ route }) => {
   const [reportMessage, setReportMessage] = useState("");
 
 
-  // TODO: when blocking is moved after report, consider removing this message
   const handleBlockUser = async () => {
     setModalVisible(false);
     setReportMessageModalVisible(false);
@@ -96,7 +90,7 @@ const OtherUserPostDetailScreen = ({ route }) => {
 
   const handleReportReasonSelect = async (reasonCode) => {
     setIsReportSending(true);
-    
+
     const accessToken = await SecureStorage.getItem("access");
     if (!accessToken) {
       console.error("JWT token not found");
@@ -121,6 +115,7 @@ const OtherUserPostDetailScreen = ({ route }) => {
 
       if (response.ok) {
         setReportMessage("Thank you for letting us know!");
+        dispatch(fetchFeed());
       } else {
         setReportMessage("Failed to report the post. Please try again.");
       }
@@ -136,7 +131,8 @@ const OtherUserPostDetailScreen = ({ route }) => {
 
   const handleCloseReportMessageModal = () => {
     setReportMessageModalVisible(false);
-    setReportMessage(""); // Resetting the message for next use
+    setReportMessage("");
+    setPostDetails({ accessDenied: true });
   };
 
 
