@@ -14,9 +14,6 @@ import { deletePostSuccess } from "../redux/actions/dashboard";
 import { addPost, fetchFeed } from "../redux/actions/feed";
 
 
-// TODO: only display block user option after reporting
-// https://soulecho.atlassian.net/browse/PA-248
-
 const FeedScreen = ({ route }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [postSuccess, setPostSuccess] = useState(false);
@@ -509,7 +506,7 @@ const FeedScreen = ({ route }) => {
         <View style={styles.reportMessageContent}>
           <Ionicons name="checkmark-circle-outline" size={60} color="#ffc02c" />
           <Text style={styles.reportMessage}>{reportMessage}</Text>
-          <TouchableOpacity style={styles.okButton}>
+          <TouchableOpacity style={styles.okButton} onPress={handleCloseReportMessageModal}>
             <Text style={styles.okButtonText}>Ok</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.blockUserButton} onPress={handleBlockUser}>
