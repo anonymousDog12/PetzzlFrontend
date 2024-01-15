@@ -4,7 +4,7 @@ import {
   SET_FEED_LOADING,
   RESET_POST_STATE,
   UPDATE_SELECTED_PHOTOS,
-  UPDATE_CAPTION, DELETE_POST_SUCCESS,
+  UPDATE_CAPTION, DELETE_POST_SUCCESS, RESET_STATE,
 } from "../types";
 
 // Initial state of the feed
@@ -71,6 +71,8 @@ export default function(state = initialState, action) {
         ...state,
         feed: state.feed.filter(post => post.post_id !== action.payload),
       };
+    case RESET_STATE:
+      return initialState;
     default:
       return state;
   }

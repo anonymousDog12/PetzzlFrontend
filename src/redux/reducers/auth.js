@@ -14,7 +14,7 @@ import {
   PASSWORD_RESET_SUCCESS,
   RESEND_ACTIVATION_LINK_FAIL,
   RESEND_ACTIVATION_LINK_RESET,
-  RESEND_ACTIVATION_LINK_SUCCESS,
+  RESEND_ACTIVATION_LINK_SUCCESS, RESET_STATE,
   SIGNUP_FAIL,
   SIGNUP_SUCCESS,
   USER_LOADED_FAIL,
@@ -126,6 +126,8 @@ function authReducer(state = initialState, action) {
         resendActivationFail: false,
       };
 
+    case RESET_STATE:
+      return initialState;
     default:
       return state;
   }
