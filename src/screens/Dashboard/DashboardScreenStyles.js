@@ -11,7 +11,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  unSelectedPetName: {
+    fontSize: 18,
+  },
   selectedPetName: {
+    fontSize: 18,
     fontWeight: "bold",
   },
   dropdownButton: {
@@ -37,6 +41,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   dropdownItem: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
   },
   sliderContainer: {
@@ -71,6 +77,12 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginRight: 10,
+  },
+  dropdownProfilePic: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    marginRight: 15,
   },
   cameraIconContainer: {
     width: 100,
@@ -109,12 +121,15 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   addNewPetButton: {
-    padding: 10,
+    flexDirection: "row",
     alignItems: "center",
+    padding: 10,
   },
   addNewPetText: {
     color: "#ffc02c",
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: "bold",
+    marginLeft: 10,
   },
   fullScreenButton: {
     flex: 1,
@@ -135,7 +150,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   petInfo: {
-    flex: 1, // Take the remaining space
+    flex: 1,
   },
   petId: {
     fontSize: 18,
