@@ -95,30 +95,27 @@ const DashboardScreen = () => {
       includeBase64: false,
     };
 
-    // Wait for the modal to close before launching the camera
     requestAnimationFrame(() => {
-      launchCamera(options, response => {
+      launchCamera(options, (response) => {
         if (response.didCancel) {
           console.log("User cancelled camera");
+          // Optionally handle the cancellation case here
         } else if (response.error) {
           console.log("Camera Error: ", response.error);
-        } else if (!response.assets || response.assets.length === 0) {
-          console.log("No photo returned");
         } else {
-          const file = response.assets[0];
-          console.log("Captured file: ", file);
-
+          const file = response.assets && response.assets[0];
           if (file && file.uri) {
             ImageCropper.openCropper(file.uri, currentPetId, () => {
               fetchPetProfile(currentPetId); // Re-fetch the profile data after successful upload
             });
           } else {
-            console.log("Error: Captured file URI is undefined");
+            console.log("Error: No photo returned or URI is undefined");
           }
         }
       });
     });
   };
+
 
   useEffect(() => {
     if (isNewPetProfile) {
@@ -143,18 +140,21 @@ const DashboardScreen = () => {
   const chooseFromLibrary = () => {
     setShowActionSheet(false);
     const options = { mediaType: "photo", quality: 1 };
+
     requestAnimationFrame(() => {
-      launchImageLibrary(options, response => {
+      launchImageLibrary(options, (response) => {
         if (response.didCancel) {
           console.log("User cancelled image picker");
+          // Optionally handle the cancellation case here
         } else if (response.error) {
           console.log("ImagePicker Error: ", response.error);
-        } else if (response.customButton) {
-          console.log("User tapped custom button: ", response.customButton);
         } else {
           const file = response.assets && response.assets[0];
-          console.log("Selected file: ", file);
-          ImageCropper.openCropper(file.uri, currentPetId, () => fetchPetProfile(currentPetId));
+          if (file && file.uri) {
+            ImageCropper.openCropper(file.uri, currentPetId, () => fetchPetProfile(currentPetId));
+          } else {
+            console.log("Error: No photo returned or URI is undefined");
+          }
         }
       });
     });
