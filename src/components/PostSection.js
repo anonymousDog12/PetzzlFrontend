@@ -93,7 +93,7 @@ const PostSection = ({
         />
       </View>
       {renderLikeIcon()}
-      <Text style={{ textAlign: "center", padding: 10 }}>{postDetails.caption}</Text>
+      <Text style={styles.captionText}>{postDetails.caption}</Text>
     </View>
   );
 };
@@ -145,6 +145,16 @@ const styles = StyleSheet.create({
   imageStyle: {
     width: "100%",
     height: "100%",
+  },
+
+  // Caption
+  captionText: {
+    textAlign: "left",
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#333",
+    marginTop: 10,
+    padding: 10,
   },
 
   // Post Reactions

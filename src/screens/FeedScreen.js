@@ -112,6 +112,20 @@ const FeedScreen = ({ route }) => {
   }, [postDetails]);
 
 
+  useEffect(() => {
+    let postSuccessTimeout;
+    if (postSuccess) {
+      // Set a timeout to hide the success message after 3 seconds
+      postSuccessTimeout = setTimeout(() => {
+        setPostSuccess(false);
+      }, 3000);
+    }
+
+    // Clear the timeout if the component unmounts
+    // or if the postSuccess state changes before the timeout is reached
+    return () => clearTimeout(postSuccessTimeout);
+  }, [postSuccess]);
+
   const loadMore = () => {
     if (!isLoadingPage && hasNextPage) {
       setIsLoadingPage(true);
@@ -451,8 +465,25 @@ const FeedScreen = ({ route }) => {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
-        {postDetails && isUploading && <Progress.Bar indeterminate={true} width={200} />}
-        {postSuccess && <Text>Post successful! {" "}✓</Text>}
+        {postDetails && isUploading && (
+          <View style={styles.uploadingContainer}>
+            <Progress.Bar
+              style={styles.progressBar}
+              indeterminate={true}
+              color="#ffc02c"
+              unfilledColor="transparent"
+              borderWidth={0}
+              useNativeDriver={true}
+            />
+            <Text style={styles.uploadingText}>Posting... Please keep the app open</Text>
+          </View>
+        )}
+        {postSuccess &&
+        <View style={styles.postSuccessContainer}>
+          <Ionicons name="checkmark-circle-outline" size={24} color="green" />
+          <Text style={styles.postSuccessText}>Post successful!</Text>
+        </View>
+        }
         {Array.isArray(feedData) && feedData.map(renderPost)}
         <TouchableOpacity onPress={loadMore} style={styles.loadMoreContainer}>
           <Text style={styles.loadMoreText}>Load More</Text>
@@ -527,6 +558,61 @@ const FeedScreen = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+  progressBarContainer: {
+    paddingVertical: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFF",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+    borderRadius: 5,
+  },
+  uploadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: "#FFF",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+    borderRadius: 5,
+  },
+  uploadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#666",
+  },
+  progressBar: {
+    width: "100%",
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#DCDCDC",
+  },
+  postSuccessContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 15,
+    backgroundColor: "#dafed6",
+    borderWidth: 1,
+    borderColor: "#a5d6a7",
+    borderRadius: 5,
+    margin: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+  },
+  postSuccessText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#388e3c",
+    marginLeft: 10,
+  },
   container: {
     flexGrow: 1,
   },
