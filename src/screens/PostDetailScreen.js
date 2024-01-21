@@ -71,7 +71,7 @@ const PostDetailScreen = ({ route }) => {
     // TODO - Refactor slider modal
     // https://soulecho.atlassian.net/browse/PA-242
 
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.postDetailScreenContainer}>
       <PostSection
         petProfile={{
           ...petProfile,
@@ -97,6 +97,10 @@ const PostDetailScreen = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+  postDetailScreenContainer: {
+    backgroundColor: "white",
+    flex: 1,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
