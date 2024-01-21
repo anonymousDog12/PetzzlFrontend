@@ -5,7 +5,7 @@ import { SwiperFlatList } from "react-native-swiper-flatlist";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 
-const imageContainerHeight = 300;
+const imageContainerHeight = Dimensions.get("window").width;
 
 
 const PostSection = ({
@@ -57,14 +57,14 @@ const PostSection = ({
         <Image
           source={{ uri: item.full_size_url }}
           style={styles.imageStyle}
-          resizeMode="contain"
+          resizeMode="cover"
         />
       </View>
     );
   };
 
   return (
-    <View>
+    <View style={styles.postSectionContainer}>
       <View style={styles.profileHeader}>
         <TouchableOpacity onPress={handlePetProfileClick} disabled={!handlePetProfileClick}>
           <Image
@@ -99,6 +99,9 @@ const PostSection = ({
 };
 
 const styles = StyleSheet.create({
+  postSectionContainer: {
+    backgroundColor: "white",
+  },
   profileHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -150,10 +153,10 @@ const styles = StyleSheet.create({
   // Caption
   captionText: {
     textAlign: "left",
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "500",
     color: "#333",
-    marginTop: 10,
+    marginBottom: 10,
     padding: 10,
   },
 

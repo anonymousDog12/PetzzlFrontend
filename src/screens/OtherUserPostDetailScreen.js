@@ -176,8 +176,8 @@ const OtherUserPostDetailScreen = ({ route }) => {
     // TODO - Refactor slider modal
     // https://soulecho.atlassian.net/browse/PA-242
 
-    <SafeAreaView style={{ flex: 1 }}>
-      <PostSection
+    <SafeAreaView style={styles.postDetailScreenContainer}>
+    <PostSection
         petProfile={{ profile_pic_thumbnail_small: petProfilePic, pet_name: petId }}
         postDetails={postDetails}
         showEllipsis={true}
@@ -245,6 +245,10 @@ const OtherUserPostDetailScreen = ({ route }) => {
 
 
 const styles = StyleSheet.create({
+  postDetailScreenContainer: {
+    backgroundColor: "white",
+    flex: 1,
+  },
   modalTextRed: {
     color: "red",
     fontSize: 18,

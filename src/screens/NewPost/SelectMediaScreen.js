@@ -248,8 +248,8 @@ const SelectMediaScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   previewPhotoImage: {
     width: width, // Full width
-    height: "100%", // Full height of the preview container
-    resizeMode: "contain", // Contain the aspect ratio within the preview container
+    height: width, // Full height of the preview container
+    resizeMode: "cover", // Contain the aspect ratio within the preview container
   },
   safeArea: {
     flex: 1,
