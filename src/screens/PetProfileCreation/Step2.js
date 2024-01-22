@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Button, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity } from "react-native";
+import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity } from "react-native";
+import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../../config";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/AppContants";
 import PetProfileCreationStyles from "./PetProfileCreationStyles";
+
 
 const Step2 = ({ navigation }) => {
   const { petProfile, updateProfile } = usePetProfile();
@@ -28,9 +30,42 @@ const Step2 = ({ navigation }) => {
     if (validatePetId(petId)) {
       const isUnique = await checkUniqueId();
       if (isUnique) {
-        setErrorMessage(null); // Clear any previous error messages
-        updateProfile({ [PET_PAGE_CREATION_FIELD_NAMES.PET_ID]: petId });
-        navigation.navigate("PetProfileCreationStep3");
+        setErrorMessage(null);
+
+        const updatedProfile = {
+          ...petProfile,
+          [PET_PAGE_CREATION_FIELD_NAMES.PET_ID]: petId,
+          [PET_PAGE_CREATION_FIELD_NAMES.PET_TYPE]: "dog",
+        };
+
+        // console.log("posting to database....");
+        // console.log("Pet Profile:", updatedProfile);
+
+        // Retrieve JWT token from secure storage
+        const token = await SecureStorage.getItem("access");
+
+        try {
+          // Send POST request to save the pet profile
+          const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `JWT ${token}`,
+            },
+            body: JSON.stringify(updatedProfile),
+          });
+
+          if (response.ok) {
+            const responseData = await response.json();
+            const newPetId = responseData.pet_id;
+            updateProfile({ ...updatedProfile, pet_id: newPetId });
+            navigation.navigate("PetProfileCreationStep3", { newPetId });
+          } else {
+            console.log("Server returned an error:", await response.text());
+          }
+        } catch (error) {
+          console.log("Network error:", error);
+        }
       } else {
         setErrorMessage("Pet ID is already taken. Please choose another.");
       }
@@ -38,7 +73,6 @@ const Step2 = ({ navigation }) => {
       setErrorMessage("Pet ID must be 3-63 characters long and contain only alphanumeric characters or dashes.");
     }
   };
-
   return (
     <KeyboardAvoidingView
       style={PetProfileCreationStyles.containerReverse}

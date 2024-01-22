@@ -9,7 +9,7 @@ import { CONFIG } from "../../config";
 import PostSection from "../components/PostSection";
 import SliderModal from "../components/SliderModal";
 import SliderModalStyles from "../components/SliderModalStyles";
-import { DEFAULT_PROFILE_PICS, REPORT_REASONS } from "../data/AppContants";
+import { DEFAULT_DOG_PROFILE_PIC, REPORT_REASONS } from "../data/AppContants";
 import { deletePostSuccess } from "../redux/actions/dashboard";
 import { addPost, fetchFeed } from "../redux/actions/feed";
 
@@ -141,10 +141,6 @@ const FeedScreen = ({ route }) => {
     } else {
       navigation.navigate("OtherUserDashboard", { otherPetId: petId }); // Navigate to Other Pet's Dashboard
     }
-  };
-
-  const getProfilePic = (petProfilePic, petType) => {
-    return petProfilePic || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS["other"];
   };
 
   const handlePostUpload = async ({ selectedPhotos, caption, petId }) => {
@@ -430,7 +426,7 @@ const FeedScreen = ({ route }) => {
   const renderPost = (post) => {
     const postProps = {
       petProfile: {
-        profile_pic_thumbnail_small: getProfilePic(post.pet_profile_pic, post.pet_type),
+        profile_pic_thumbnail_small: post.pet_profile_pic || DEFAULT_DOG_PROFILE_PIC,
         pet_name: post.pet_id,
       },
       postDetails: {

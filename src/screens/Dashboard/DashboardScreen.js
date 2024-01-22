@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../../config";
 import EmptyDashboardPostList from "../../components/EmptyDashboardPostList";
 import SliderModal from "../../components/SliderModal";
-import { DEFAULT_PROFILE_PICS } from "../../data/AppContants";
+import { DEFAULT_DOG_PROFILE_PIC } from "../../data/AppContants";
 import ImageCropper from "../../imageHandling/ImageCropper";
 import { fetchPosts } from "../../redux/actions/dashboard";
 import { setCurrentPetId, setNewPetProfile } from "../../redux/actions/petProfile";
@@ -258,7 +258,7 @@ const DashboardScreen = () => {
                 onPress={() => handleSelectPetProfile(pet.pet_id, pet.pet_name)}
               >
                 <Image
-                  source={{ uri: pet.profile_pic_regular || DEFAULT_PROFILE_PICS[pet.pet_type] }}
+                  source={{ uri: pet.profile_pic_regular || DEFAULT_DOG_PROFILE_PIC }}
                   style={styles.dropdownProfilePic}
                 />
                 <Text style={currentPetId === pet.pet_id ? styles.selectedPetName : styles.unSelectedPetName}>
