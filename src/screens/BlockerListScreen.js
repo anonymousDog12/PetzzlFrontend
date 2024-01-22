@@ -14,7 +14,7 @@ import SecureStorage from "react-native-secure-storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch } from "react-redux";
 import { CONFIG } from "../../config";
-import { DEFAULT_PROFILE_PICS, PET_TYPES } from "../data/AppContants";
+import { DEFAULT_DOG_PROFILE_PIC } from "../data/AppContants";
 import { fetchFeed } from "../redux/actions/feed";
 
 
@@ -28,10 +28,6 @@ const BlockerListScreen = ({ navigation }) => {
   const [isUnblockingOverlay, setIsUnblockingOverlay] = useState(false);
 
   const dispatch = useDispatch();
-
-  const getProfilePic = (profilePic, petType) => {
-    return profilePic || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS[PET_TYPES.OTHER];
-  };
 
   const fetchBlockedProfiles = useCallback(async () => {
     try {
@@ -139,7 +135,7 @@ const BlockerListScreen = ({ navigation }) => {
 
   const renderBlockedProfile = ({ item }) => (
     <View style={styles.blockedItem}>
-      <Image source={{ uri: getProfilePic(item.profile_pic_thumbnail_small, item.pet_type) }}
+      <Image source={{ uri: item.profile_pic_thumbnail_small || DEFAULT_DOG_PROFILE_PIC }}
              style={styles.profilePic} />
       <View style={styles.profileInfo}>
         <Text style={styles.petIdBold}>{item.pet_id}</Text>

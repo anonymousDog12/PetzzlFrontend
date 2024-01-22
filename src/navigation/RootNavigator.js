@@ -12,7 +12,6 @@ import Step0 from "../screens/PetProfileCreation/Step0";
 import Step1 from "../screens/PetProfileCreation/Step1";
 import Step2 from "../screens/PetProfileCreation/Step2";
 import Step3 from "../screens/PetProfileCreation/Step3";
-import Step4 from "../screens/PetProfileCreation/Step4";
 import PostDetailScreen from "../screens/PostDetailScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import BottomNavBar from "./BottomNavBar";
@@ -79,8 +78,6 @@ const RootNavigator = () => {
     >
       {isAuthenticated ? (
         <>
-
-
           {!hasPets && (
             <RootStack.Screen name="PetProfileCreationStep0" component={Step0}
                               options={{
@@ -97,7 +94,7 @@ const RootNavigator = () => {
             <>
               <RootStack.Screen name="PetProfileCreationStep1" component={Step1}
                                 options={{
-                                  title: "Step 1 of 3",
+                                  title: "Step 1 of 2",
                                   headerTintColor: "#ffc02c",
                                   headerTitleStyle: {
                                     color: "#ffc02c",
@@ -107,7 +104,7 @@ const RootNavigator = () => {
                                 }} />
               <RootStack.Screen name="PetProfileCreationStep2" component={Step2}
                                 options={{
-                                  title: "Step 2 of 3",
+                                  title: "Step 2 of 2",
                                   headerTintColor: "#ffc02c",
                                   headerTitleStyle: {
                                     color: "#ffc02c",
@@ -116,16 +113,6 @@ const RootNavigator = () => {
                                   cardStyleInterpolator: rightToLeftInterpolator,
                                 }} />
               <RootStack.Screen name="PetProfileCreationStep3" component={Step3}
-                                options={{
-                                  title: "Step 3 of 3",
-                                  headerTintColor: "#ffc02c",
-                                  headerTitleStyle: {
-                                    color: "#ffc02c",
-                                  },
-                                  headerTransparent: true,
-                                  cardStyleInterpolator: rightToLeftInterpolator,
-                                }} />
-              <RootStack.Screen name="PetProfileCreationStep4" component={Step4}
                                 options={{
                                   title: " ",
                                   headerTransparent: true,

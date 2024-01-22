@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { CONFIG } from "../../config";
 import PostSection from "../components/PostSection";
 import SliderModal from "../components/SliderModal";
-import { DEFAULT_PROFILE_PICS, PET_TYPES } from "../data/AppContants";
+import { DEFAULT_DOG_PROFILE_PIC } from "../data/AppContants";
 import { useDeletePost } from "../hooks/useDeletePost";
 import { usePostLike } from "../hooks/usePostLike";
 
@@ -14,7 +14,6 @@ import { usePostLike } from "../hooks/usePostLike";
 const PostDetailScreen = ({ route }) => {
   const [postDetails, setPostDetails] = useState(null);
   const { postId, petProfile } = route.params;
-  const defaultProfilePic = DEFAULT_PROFILE_PICS[petProfile.pet_type] || DEFAULT_PROFILE_PICS[PET_TYPES.OTHER];
   const currentPetId = useSelector(state => state.petProfile.currentPetId);
 
   const { isLiked, likeCount, toggleLike } = usePostLike(postId, currentPetId);
@@ -75,7 +74,7 @@ const PostDetailScreen = ({ route }) => {
       <PostSection
         petProfile={{
           ...petProfile,
-          profile_pic_thumbnail_small: petProfile.profile_pic_thumbnail_small || defaultProfilePic,
+          profile_pic_thumbnail_small: petProfile.profile_pic_thumbnail_small || DEFAULT_DOG_PROFILE_PIC,
         }}
         postDetails={postDetails}
         onEllipsisPress={() => setModalVisible(!modalVisible)}

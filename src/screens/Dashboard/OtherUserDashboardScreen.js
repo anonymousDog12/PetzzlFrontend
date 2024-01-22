@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../../config";
 import EmptyDashboardPostList from "../../components/EmptyDashboardPostList";
 import SliderModal from "../../components/SliderModal";
-import { DEFAULT_PROFILE_PICS } from "../../data/AppContants";
+import { DEFAULT_DOG_PROFILE_PIC } from "../../data/AppContants";
 import { fetchFeed } from "../../redux/actions/feed";
 import { capitalizeFirstLetter } from "../../utils/common";
 import styles from "./DashboardScreenStyles";
@@ -159,7 +159,7 @@ const OtherUserDashboardScreen = ({ route }) => {
             petId: otherPetProfile.pet_id,
             petName: otherPetProfile.pet_name,
             // TODO: refactor the get profile pic into a common variable
-            petProfilePic: getProfilePic(otherPetProfile.profile_pic_thumbnail_small, otherPetProfile.pet_type),
+            petProfilePic: otherPetProfile.profile_pic_thumbnail_small || DEFAULT_DOG_PROFILE_PIC,
           })}
         >
           <Image source={{ uri: item.thumbnail_url }} style={styles.postThumbnail} />
@@ -168,17 +168,12 @@ const OtherUserDashboardScreen = ({ route }) => {
     }
   };
 
-
-  const getProfilePic = (profilePic, petType) => {
-    return profilePic || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS["other"];
-  };
-
   return (
     <View style={styles.container}>
       {otherPetProfile && (
         <View style={styles.petProfile}>
           <Image
-            source={{ uri: getProfilePic(otherPetProfile.profile_pic_regular, otherPetProfile.pet_type) }}
+            source={{ uri: otherPetProfile.profile_pic_regular || DEFAULT_DOG_PROFILE_PIC }}
             style={styles.profilePic}
           />
           <View style={styles.petInfo}>
