@@ -17,7 +17,7 @@ import { extractErrorMessages } from "../../utils/auth";
 import { authStyles } from "./AuthenticationStyles";
 
 
-const welcomeMessage = "Join the Petzzl Family!🐾";
+const welcomeMessage = "Welcome to DogDomain! 🐾";
 
 
 export default function SignUpScreen({ navigation }) {
