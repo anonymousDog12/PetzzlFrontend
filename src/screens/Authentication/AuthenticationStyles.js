@@ -24,11 +24,11 @@ export const authStyles = StyleSheet.create({
     justifyContent: "flex-end",
     marginTop: 0,
     marginRight: 10,
-    height: 40,
+    height: 50,
   },
   logo: {
-    height: 40,
-    width: 120,
+    height: 50,
+    width: 150,
     resizeMode: "contain",
   },
   input: {
