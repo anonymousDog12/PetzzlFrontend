@@ -15,7 +15,7 @@ export const DEFAULT_DOG_PROFILE_PIC = "https://petzzl.sfo3.cdn.digitaloceanspac
 // Report reasons (matching backend data schema)
 export const REPORT_REASONS = {
   DL: 'I Just Don\'t Like It',
-  NP: 'Not a Pet Photo',
+  ND: 'Not a Dog Photo',
   SP: 'Self Promotion',
   IC: 'Inappropriate Content',
   IP: 'Intellectual Property Violation',
