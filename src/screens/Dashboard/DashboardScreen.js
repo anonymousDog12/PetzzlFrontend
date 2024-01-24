@@ -3,7 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Image, LogBox, Text, TouchableOpacity, View } from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
-import Icon from "react-native-vector-icons/Ionicons";
+import Ionicon from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../../config";
 import EmptyDashboardPostList from "../../components/EmptyDashboardPostList";
@@ -12,7 +12,6 @@ import { DEFAULT_DOG_PROFILE_PIC } from "../../data/AppContants";
 import ImageCropper from "../../imageHandling/ImageCropper";
 import { fetchPosts } from "../../redux/actions/dashboard";
 import { setCurrentPetId, setNewPetProfile } from "../../redux/actions/petProfile";
-import { capitalizeFirstLetter } from "../../utils/common";
 import styles from "./DashboardScreenStyles";
 
 
@@ -223,16 +222,24 @@ const DashboardScreen = () => {
         <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)}
                           style={{ flexDirection: "row", alignItems: "center" }}>
           <Text style={styles.dropdownButton}>{selectedPetName}</Text>
-          <Icon name="caret-down" size={20} color="#ffc02c" />
+          <Ionicon name="caret-down" size={20} color="#ffc02c" />
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <Icon
-          name="settings-outline"
-          size={30}
-          onPress={() => navigation.navigate("Settings")}
-          style={{ marginRight: 10 }}
-        />
+        <View style={{ flexDirection: "row" }}>
+          <Ionicon
+            name="pencil-outline"
+            size={30}
+            style={{ marginRight: 10 }}
+            onPress={() => navigation.navigate("EditPetProfile", { petId: currentPetId })}
+          />
+          <Ionicon
+            name="settings-outline"
+            size={30}
+            onPress={() => navigation.navigate("Settings")}
+            style={{ marginRight: 10 }}
+          />
+        </View>
       ),
     });
   }, [navigation, dropdownVisible, selectedPetName]);
@@ -270,7 +277,7 @@ const DashboardScreen = () => {
               onPress={handleAddNewPet}
               style={styles.addNewPetButton}
             >
-              <Icon name="add-circle-outline" size={30} color="#ffc02c" />
+              <Ionicon name="add-circle-outline" size={30} color="#ffc02c" />
               <Text style={styles.addNewPetText}>Add a New Pet</Text>
             </TouchableOpacity>
           </SliderModal>
@@ -285,14 +292,13 @@ const DashboardScreen = () => {
                   />
                 ) : (
                   <View style={styles.cameraIconContainer}>
-                    <Icon name="camera" size={50} color="#000" />
+                    <Ionicon name="camera" size={50} color="#000" />
                   </View>
                 )}
               </TouchableOpacity>
               <View style={styles.petInfo}>
                 <Text style={styles.petId}>@{currentPetProfile.pet_id}</Text>
                 <Text style={styles.petName}>{currentPetProfile.pet_name}</Text>
-                <Text style={styles.petType}>{capitalizeFirstLetter(currentPetProfile.pet_type)}</Text>
               </View>
             </View>
           )}
