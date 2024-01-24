@@ -6,6 +6,7 @@ import ResetPasswordScreen from "../screens/Authentication/ResetPasswordScreen";
 import SignUpScreen from "../screens/Authentication/SignUpScreen";
 import BlockerListScreen from "../screens/BlockerListScreen";
 import OtherUserDashboardScreen from "../screens/Dashboard/OtherUserDashboardScreen";
+import EditPetProfileScreen from "../screens/EditPetProfileScreen";
 import LikerListScreen from "../screens/LikerListScreen";
 import OtherUserPostDetailScreen from "../screens/OtherUserPostDetailScreen";
 import Step0 from "../screens/PetProfileCreation/Step0";
@@ -129,6 +130,14 @@ const RootNavigator = () => {
                 name="Tabs"
                 children={() => <BottomNavBar initialRouteName={initialRouteName} />}
                 options={{ headerShown: false }}
+              />
+              <RootStack.Screen name="EditPetProfile" component={EditPetProfileScreen}
+                                options={{
+                                  title: "Edit Profile",
+                                  headerShown: true,
+                                  headerBackTitle: "Back",
+                                  cardStyleInterpolator: rightToLeftInterpolator,
+                                }}
               />
               <RootStack.Screen name="Settings" component={SettingsScreen}
                                 options={{

@@ -179,7 +179,6 @@ const OtherUserDashboardScreen = ({ route }) => {
           <View style={styles.petInfo}>
             <Text style={styles.petId}>@{otherPetProfile.pet_id}</Text>
             <Text style={styles.petName}>{otherPetProfile.pet_name}</Text>
-            <Text style={styles.petType}>{capitalizeFirstLetter(otherPetProfile.pet_type)}</Text>
           </View>
         </View>
       )}

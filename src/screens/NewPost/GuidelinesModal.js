@@ -14,28 +14,28 @@ const GuidelinesModal = ({ visible, onClose }) => {
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>DogDomain Posting Guidelines </Text>
           <Text style={styles.modalText}>
-            <Text style={styles.summary}>🐶 Dog Photos Only:</Text>
+            <Text style={styles.summary}>🐶 Dog Photos Only: </Text>
             Share adorable snapshots of your canine companions {"\n\n"}
 
-            <Text style={styles.summary}>🐾 Pawsitive Vibes:</Text>
+            <Text style={styles.summary}>🐾 Pawsitive Vibes: </Text>
             Let's keep our comments friendly and supportive{"\n\n"}
 
-            <Text style={styles.summary}>🛡️ Privacy Matters:</Text>
+            <Text style={styles.summary}>🛡️ Privacy Matters: </Text>
             Please don't share personal info like addresses or phone numbers.{"\n\n"}
 
-            <Text style={styles.summary}>🚫 No Ads Please:</Text>
+            <Text style={styles.summary}>🚫 No Ads Please: </Text>
             It's all about our furry friends, not ads{"\n\n"}
 
-            <Text style={styles.summary}>🧼 Keep it Clean:</Text>
+            <Text style={styles.summary}>🧼 Keep it Clean: </Text>
             Let's keep everything appropriate and fun{"\n\n"}
 
-            <Text style={styles.summary}>©️ Respect Copyright:</Text>
+            <Text style={styles.summary}>©️ Respect Copyright: </Text>
             Share what's yours or what you're allowed to{"\n\n"}
 
-            <Text style={styles.summary}>🚩 Flag Concerns:</Text>
+            <Text style={styles.summary}>🚩 Flag Concerns: </Text>
             See something that shouldn't be here? Let us know!{"\n\n"}
 
-            <Text style={styles.summary}>🎉 Enjoy the Bark!</Text>
+            <Text style={styles.summary}>🎉 Enjoy the Bark!: </Text>
             Enjoy connecting with fellow dog parents and their adorable companions!
           </Text>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
