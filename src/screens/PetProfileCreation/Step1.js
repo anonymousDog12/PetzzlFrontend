@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { usePetProfile } from "../../contexts/PetProfileContext";
 import { PET_PAGE_CREATION_FIELD_NAMES } from "../../data/AppContants";
 import { setNewPetProfile } from "../../redux/actions/petProfile";
+import { validatePetName } from "../../utils/common";
 import PetProfileCreationStyles from "./PetProfileCreationStyles";
 
 
@@ -31,26 +32,15 @@ const Step1 = () => {
     });
   }, [navigation, comingFromDashboard]);
 
-
-  const validatePetName = (name) => {
-    if (name.length < 2 || name.length > 50) {
-      return "Pet name must be between 2 and 50 characters.";
-    }
-    if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
-      return "Pet name must be alphanumeric and may include spaces.";
-    }
-    return "";
-  };
-
   const handleContinue = () => {
-    const trimmedPetName = petName.trim().replace(/\s+/g, " ");
+    const validationResult = validatePetName(petName);
 
-    const validationError = validatePetName(trimmedPetName);
-    if (validationError) {
-      setError(validationError);
+    if (validationResult.error) {
+      setError(validationResult.error);
       return;
     }
-    updateProfile({ [PET_PAGE_CREATION_FIELD_NAMES.PET_NAME]: trimmedPetName });
+
+    updateProfile({ [PET_PAGE_CREATION_FIELD_NAMES.PET_NAME]: validationResult.validName });
     navigation.navigate("PetProfileCreationStep2");
   };
 

@@ -9,6 +9,7 @@ import { CONFIG } from "../../config";
 import PostSection from "../components/PostSection";
 import SliderModal from "../components/SliderModal";
 import SliderModalStyles from "../components/SliderModalStyles";
+import SuccessMessage from "../components/SuccessMessage";
 import { DEFAULT_DOG_PROFILE_PIC, REPORT_REASONS } from "../data/AppContants";
 import { deletePostSuccess } from "../redux/actions/dashboard";
 import { addPost, fetchFeed } from "../redux/actions/feed";
@@ -474,12 +475,9 @@ const FeedScreen = ({ route }) => {
             <Text style={styles.uploadingText}>Posting... Please keep the app open</Text>
           </View>
         )}
-        {postSuccess &&
-        <View style={styles.postSuccessContainer}>
-          <Ionicons name="checkmark-circle-outline" size={24} color="green" />
-          <Text style={styles.postSuccessText}>Post successful!</Text>
-        </View>
-        }
+        {postSuccess && (
+          <SuccessMessage message="Post successful!" />
+        )}
         {Array.isArray(feedData) && feedData.map(renderPost)}
         <TouchableOpacity onPress={loadMore} style={styles.loadMoreContainer}>
           <Text style={styles.loadMoreText}>Load More</Text>
@@ -586,28 +584,6 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: 3,
     backgroundColor: "#DCDCDC",
-  },
-  postSuccessContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 15,
-    backgroundColor: "#dafed6",
-    borderWidth: 1,
-    borderColor: "#a5d6a7",
-    borderRadius: 5,
-    margin: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-    elevation: 3,
-  },
-  postSuccessText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#388e3c",
-    marginLeft: 10,
   },
   container: {
     flexGrow: 1,

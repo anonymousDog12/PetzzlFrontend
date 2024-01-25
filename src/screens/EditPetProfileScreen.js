@@ -7,7 +7,9 @@ import SecureStorage from "react-native-secure-storage";
 import Ionicon from "react-native-vector-icons/Ionicons";
 import { CONFIG } from "../../config";
 import SliderModal from "../components/SliderModal";
+import SuccessMessage from "../components/SuccessMessage";
 import TemporaryImageCropper from "../imageHandling/TemporaryImageCropper";
+import { validatePetName } from "../utils/common";
 
 
 const EditPetProfileScreen = () => {
@@ -20,6 +22,9 @@ const EditPetProfileScreen = () => {
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
   // Individual useState hooks for each editable field
   const [petName, setPetName] = useState("");
   const [birthday, setBirthday] = useState(null);
@@ -30,6 +35,8 @@ const EditPetProfileScreen = () => {
   const [tempProfilePic, setTempProfilePic] = useState(null);
 
   const [bioCharCount, setBioCharCount] = useState(0);
+
+  const [petNameError, setPetNameError] = useState("");
 
 
   useEffect(() => {
@@ -72,20 +79,32 @@ const EditPetProfileScreen = () => {
   };
 
   const handleSave = async () => {
+    setIsSaving(true);
 
-    // Part 1 - PUT updated profile info
+    // Part 1 - Validate Information
+
+    const validationResult = validatePetName(petName);
+    if (validationResult.error) {
+      setPetNameError(validationResult.error);
+      return;
+    } else {
+      setPetNameError("");
+    }
+
+    // Part 2 - PUT updated profile info
+
     const updatedProfile = {
       pet_name: petName,
       birthday: birthday,
       gender: gender,
-      bio: bio,
+      bio: bio ? bio.trim() : null,
     };
 
     const accessToken = await SecureStorage.getItem("access");
 
 
     try {
-      const response = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/${petId}/`, {
+      const profileResponse = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/${petId}/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -94,19 +113,9 @@ const EditPetProfileScreen = () => {
         body: JSON.stringify(updatedProfile),
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Profile updated successfully:", data);
-      } else {
-        console.error("Failed to update profile:", data);
-      }
-    } catch (error) {
-      console.error("Error while updating profile:", error);
-    }
+      let profileUpdateSuccess = profileResponse.ok;
 
-    // Part 2 - Check if there is a temporary profile picture to upload
-    if (tempProfilePic) {
-      try {
+      if (profileUpdateSuccess && tempProfilePic) {
         let formData = new FormData();
         formData.append("file", {
           uri: tempProfilePic,
@@ -124,16 +133,21 @@ const EditPetProfileScreen = () => {
           body: formData,
         });
 
-        if (imageUploadResponse.ok) {
-          console.log("Profile picture updated successfully");
-          // You might want to update your app state here, depending on how you handle the uploaded image URL
-        } else {
-          console.error("Failed to update profile picture");
-        }
-      } catch (error) {
-        console.error("Error while uploading profile picture:", error);
+        profileUpdateSuccess = imageUploadResponse.ok;
       }
+
+      // Show success message if all updates were successful
+      if (profileUpdateSuccess) {
+        setShowSuccessMessage(true);
+        setTimeout(() => setShowSuccessMessage(false), 3000);
+      } else {
+        console.error("Failed to update profile or profile picture");
+      }
+    } catch (error) {
+      console.error("Error while updating profile:", error);
     }
+
+    setIsSaving(false);
   };
 
   useLayoutEffect(() => {
@@ -210,122 +224,142 @@ const EditPetProfileScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {isLoading && (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#ffc02c" />
-        </View>
+    <>
+      {showSuccessMessage && (
+        <SuccessMessage message="Saving successful" />
       )}
 
-      {!isLoading && isDataLoaded && (
-        <View>
-          <TouchableOpacity onPress={handleProfilePicUpdate} style={styles.profileRow}>
-            {tempProfilePic ? (
-              <Image
-                source={{ uri: tempProfilePic }}
-                style={styles.profilePic}
-              />
-            ) : (
-              profilePic ? (
+
+      <View style={styles.container}>
+        {isLoading && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#ffc02c" />
+          </View>
+        )}
+
+        {isSaving && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#ffc02c" />
+            <Text>Saving...</Text>
+          </View>
+        )}
+
+
+        {!isLoading && isDataLoaded && (
+          <View>
+            <TouchableOpacity onPress={handleProfilePicUpdate} style={styles.profileRow}>
+              {tempProfilePic ? (
                 <Image
-                  source={{ uri: profilePic }}
+                  source={{ uri: tempProfilePic }}
                   style={styles.profilePic}
                 />
               ) : (
-                <View style={styles.cameraIconContainer}>
-                  <Ionicon name="camera" size={50} color="#000" />
-                </View>
-              )
-            )}
-            <Text style={styles.changeProfileText}>Change Profile Picture</Text>
-          </TouchableOpacity>
-
-          <View style={styles.formRow}>
-            <Text style={styles.fieldLabel}>Name:</Text>
-            <TextInput
-              style={styles.textInput}
-              value={petName}
-              placeholder="Pet Name"
-              onChangeText={setPetName}
-            />
-          </View>
-
-
-          <View style={styles.formRow}>
-            <Text style={styles.fieldLabel}>Birthday:</Text>
-            <TouchableOpacity
-              style={styles.birthdayDisplay}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text style={styles.birthdayText}>
-                {birthday || "Select Birthday"}
-              </Text>
+                profilePic ? (
+                  <Image
+                    source={{ uri: profilePic }}
+                    style={styles.profilePic}
+                  />
+                ) : (
+                  <View style={styles.cameraIconContainer}>
+                    <Ionicon name="camera" size={50} color="#000" />
+                  </View>
+                )
+              )}
+              <Text style={styles.changeProfileText}>Change Profile Picture</Text>
             </TouchableOpacity>
-            {showDatePicker && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={birthday ? new Date(birthday + "T00:00:00") : new Date()}
-                mode="date"
-                display="default"
-                onChange={onChange}
-              />
-            )}
 
-          </View>
-
-          <View style={styles.formRow}>
-            <Text style={styles.fieldLabel}>Gender:</Text>
-            <View style={styles.genderSelectionContainer}>
-              <RadioButton
-                label="Male"
-                selected={gender === "m"}
-                onPress={() => handleGenderSelect("m")}
-              />
-              <RadioButton
-                label="Female"
-                selected={gender === "f"}
-                onPress={() => handleGenderSelect("f")}
-              />
-            </View>
-          </View>
-
-          <View style={styles.formRow}>
-            <Text style={styles.fieldLabel}>Bio:</Text>
-            <View style={styles.bioInputContainer}>
+            <View style={styles.formRow}>
+              <Text style={styles.fieldLabel}>Name:</Text>
               <TextInput
-                style={styles.textInputBio}
-                value={bio}
-                placeholder="Bio"
-                onChangeText={handleBioChange}
-                multiline
-                numberOfLines={5}
-                maxLength={500}
+                style={styles.textInput}
+                value={petName}
+                placeholder="Pet Name"
+                onChangeText={text => {
+                  setPetNameError("");
+                  setPetName(text);
+                }}
               />
-              <Text style={styles.charCount}>{bioCharCount}/500</Text>
             </View>
+            {petNameError ? <Text style={styles.errorText}>{petNameError}</Text> : null}
+
+
+            <View style={styles.formRow}>
+              <Text style={styles.fieldLabel}>Birthday:</Text>
+              <TouchableOpacity
+                style={styles.birthdayDisplay}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <Text style={styles.birthdayText}>
+                  {birthday || "Select Birthday"}
+                </Text>
+              </TouchableOpacity>
+              {showDatePicker && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={birthday ? new Date(birthday + "T00:00:00") : new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={onChange}
+                />
+              )}
+
+            </View>
+
+            <View style={styles.formRow}>
+              <Text style={styles.fieldLabel}>Gender:</Text>
+              <View style={styles.genderSelectionContainer}>
+                <RadioButton
+                  label="Male"
+                  selected={gender === "m"}
+                  onPress={() => handleGenderSelect("m")}
+                />
+                <RadioButton
+                  label="Female"
+                  selected={gender === "f"}
+                  onPress={() => handleGenderSelect("f")}
+                />
+              </View>
+            </View>
+
+            <View style={styles.formRow}>
+              <Text style={styles.fieldLabel}>Bio:</Text>
+              <View style={styles.bioInputContainer}>
+                <TextInput
+                  style={styles.textInputBio}
+                  value={bio}
+                  placeholder="Bio"
+                  onChangeText={handleBioChange}
+                  multiline
+                  numberOfLines={5}
+                  maxLength={500}
+                />
+                <Text style={styles.charCount}>{bioCharCount}/500</Text>
+              </View>
+            </View>
+
+
           </View>
+        )}
 
+        <SliderModal
+          dropdownVisible={showActionSheet}
+          setDropdownVisible={setShowActionSheet}
+        >
+          <TouchableOpacity style={styles.actionSheetButton} onPress={takePhoto}>
+            <Text style={styles.actionSheetText}>Take Photo...</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionSheetButton} onPress={chooseFromLibrary}>
+            <Text style={styles.actionSheetText}>Choose from Library...</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionSheetButton}
+                            onPress={() => setShowActionSheet(false)}>
+            <Text style={styles.actionSheetText}>Cancel</Text>
+          </TouchableOpacity>
+        </SliderModal>
 
-        </View>
-      )}
+      </View>
+    </>
 
-      <SliderModal
-        dropdownVisible={showActionSheet}
-        setDropdownVisible={setShowActionSheet}
-      >
-        <TouchableOpacity style={styles.actionSheetButton} onPress={takePhoto}>
-          <Text style={styles.actionSheetText}>Take Photo...</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionSheetButton} onPress={chooseFromLibrary}>
-          <Text style={styles.actionSheetText}>Choose from Library...</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionSheetButton}
-                          onPress={() => setShowActionSheet(false)}>
-          <Text style={styles.actionSheetText}>Cancel</Text>
-        </TouchableOpacity>
-      </SliderModal>
-
-    </View>
   );
 };
 
@@ -335,10 +369,17 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   loadingContainer: {
-    flex: 1,
+    position: "absolute",
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(255,255,255,0.8)",
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 1,
   },
+
   profileRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -380,7 +421,7 @@ const styles = StyleSheet.create({
   formRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 25,
+    marginTop: 25,
   },
   fieldLabel: {
     fontWeight: "bold",
@@ -395,6 +436,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
+
+  // Name
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    marginTop: 5,
+  },
 
   // Birthday
   birthdayDisplay: {
@@ -464,6 +512,8 @@ const styles = StyleSheet.create({
     color: "#797979",
     fontSize: 14,
   },
+
+
 });
 
 export default EditPetProfileScreen;
