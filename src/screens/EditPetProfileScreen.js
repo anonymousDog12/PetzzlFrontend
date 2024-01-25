@@ -1,14 +1,28 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { ActivityIndicator, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import SecureStorage from "react-native-secure-storage";
 import Ionicon from "react-native-vector-icons/Ionicons";
+import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../config";
 import SliderModal from "../components/SliderModal";
 import SuccessMessage from "../components/SuccessMessage";
 import TemporaryImageCropper from "../imageHandling/TemporaryImageCropper";
+import { setCurrentPetId } from "../redux/actions/petProfile";
+import { CURRENT_PET_ID, SET_NEW_PET_PROFILE, USER_HAS_PETS } from "../redux/types";
 import { validatePetName } from "../utils/common";
 
 
@@ -16,9 +30,14 @@ const EditPetProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const petId = route.params?.petId;
+  const user = useSelector(state => state.auth.user);
+
   const [isLoading, setIsLoading] = useState(false);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [showActionSheet, setShowActionSheet] = useState(false);
+
+  const dispatch = useDispatch();
+
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -212,6 +231,7 @@ const EditPetProfileScreen = () => {
     </TouchableOpacity>
   );
 
+  // TODO: rename this!
   const onChange = (event, selectedDate) => {
     setShowDatePicker(Platform.OS === "ios");
     if (selectedDate) {
@@ -222,6 +242,75 @@ const EditPetProfileScreen = () => {
       setBirthday(null);
     }
   };
+
+  const showDeleteConfirmation = () => {
+    Alert.alert(
+      `Permanently Delete ${petId}?`,
+      "This action cannot be undone. It will permanently delete all posts and profiles associated with this pet.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => handleDelete(),
+        },
+      ],
+      { cancelable: false },
+    );
+  };
+
+
+  const handleDelete = async () => {
+    setIsLoading(true);
+    const accessToken = await SecureStorage.getItem("access");
+    try {
+      const deleteResponse = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/${petId}/delete/`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `JWT ${accessToken}`,
+        },
+      });
+
+
+      if (deleteResponse.ok) {
+        // Fetch the remaining pet profiles
+        const remainingProfilesResponse = await fetch(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${user.id}/`, {
+          headers: {
+            "Authorization": `JWT ${accessToken}`,
+          },
+        });
+
+        const remainingProfiles = await remainingProfilesResponse.json();
+
+        if (remainingProfiles.length > 0) {
+          // Set another pet profile as the current one
+          const newCurrentPetId = remainingProfiles[0].pet_id;
+          // TODO: Consider grouping async storage and set current pet id together
+          await AsyncStorage.setItem("selectedPetId", newCurrentPetId);
+          dispatch(setCurrentPetId(newCurrentPetId));
+          navigation.navigate("Dashboard");
+        } else {
+          // No pet profiles left
+          dispatch({ type: USER_HAS_PETS, payload: false });
+          dispatch({ type: SET_NEW_PET_PROFILE, payload: true });
+          dispatch({ type: CURRENT_PET_ID, payload: null });
+          navigation.navigate("PetProfileCreationStep0");
+        }
+      } else {
+        console.error("Failed to delete pet profile");
+        // Handle the error, show an alert or a toast to the user
+      }
+    } catch (error) {
+      console.error("Error while deleting profile:", error);
+      // Handle the error, show an alert or a toast to the user
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   return (
     <>
@@ -336,6 +425,10 @@ const EditPetProfileScreen = () => {
                 <Text style={styles.charCount}>{bioCharCount}/500</Text>
               </View>
             </View>
+
+            <TouchableOpacity style={styles.formRow} onPress={showDeleteConfirmation}>
+              <Text style={styles.deleteText}>Delete Profile</Text>
+            </TouchableOpacity>
 
 
           </View>
@@ -511,6 +604,12 @@ const styles = StyleSheet.create({
     right: 5,
     color: "#797979",
     fontSize: 14,
+  },
+
+
+  deleteText: {
+    fontSize: 16,
+    color: "red",
   },
 
 
