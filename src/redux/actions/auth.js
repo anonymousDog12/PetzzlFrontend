@@ -145,6 +145,42 @@ export const load_user = () => async dispatch => {
 };
 
 
+// New Apple Sign-In action
+export const appleSignIn = (identityToken, firstName, lastName) => async dispatch => {
+  try {
+    const response = await fetch(`${CONFIG.BACKEND_URL}/api/accounts/apple-sign-in/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        identity_token: identityToken,
+        first_name: firstName || "",
+        last_name: lastName || "",
+      }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) console.error("Apple Sign-In failed");
+
+    // Store tokens securely
+    await SecureStorage.setItem('access', data.token.access);
+    await SecureStorage.setItem('refresh', data.token.refresh);
+
+    // Update Redux state
+    dispatch({ type: LOGIN_SUCCESS, payload: data.token });
+
+    console.log("successfully signed in with apple")
+
+    await dispatch(load_user());
+
+  } catch (error) {
+    console.error("Apple Sign-In error:", error);
+    dispatch({ type: LOGIN_FAIL });
+  }
+};
+
+
 
 
 export const reset_password = (email) => async dispatch => {

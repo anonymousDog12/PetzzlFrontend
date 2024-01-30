@@ -55,6 +55,26 @@ export const authStyles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
   },
+  socialButton: {
+    backgroundColor: "transparent",
+    borderRadius: 50,
+    marginVertical: 10,
+    height: 50,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: "#646464",
+  },
+  icon: {
+    marginRight: 5,
+    fontSize: 23,
+  },
+  darkButtonText: {
+    color: "#646464",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
   footer: {
     marginTop: 20,
     textAlign: "center",

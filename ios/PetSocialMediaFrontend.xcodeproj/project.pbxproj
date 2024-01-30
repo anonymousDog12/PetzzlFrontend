@@ -45,6 +45,7 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-PetSocialMediaFrontend.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PetSocialMediaFrontend.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8061ADF12B32DA82002182DC /* launch-screen-logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "launch-screen-logo.png"; path = "../../../../Desktop/Petzzl/logo/launch-screen-logo.png"; sourceTree = "<group>"; };
 		80B427332B31531E00AB3402 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		80DFF9D52B6870E200F1D2FD /* PetSocialMediaFrontend.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PetSocialMediaFrontend.entitlements; path = PetSocialMediaFrontend/PetSocialMediaFrontend.entitlements; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = PetSocialMediaFrontend/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-PetSocialMediaFrontend-PetSocialMediaFrontendTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PetSocialMediaFrontend-PetSocialMediaFrontendTests.release.xcconfig"; path = "Target Support Files/Pods-PetSocialMediaFrontend-PetSocialMediaFrontendTests/Pods-PetSocialMediaFrontend-PetSocialMediaFrontendTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -90,6 +91,7 @@
 		13B07FAE1A68108700A75B9A /* PetSocialMediaFrontend */ = {
 			isa = PBXGroup;
 			children = (
+				80DFF9D52B6870E200F1D2FD /* PetSocialMediaFrontend.entitlements */,
 				80B427332B31531E00AB3402 /* Assets.xcassets */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -493,6 +495,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = PetSocialMediaFrontend/PetSocialMediaFrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -527,6 +530,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = PetSocialMediaFrontend/PetSocialMediaFrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

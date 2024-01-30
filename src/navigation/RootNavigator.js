@@ -1,9 +1,10 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import { useSelector } from "react-redux";
-import LoginScreen from "../screens/Authentication/LoginScreen";
-import ResetPasswordScreen from "../screens/Authentication/ResetPasswordScreen";
-import SignUpScreen from "../screens/Authentication/SignUpScreen";
+import EmailLoginScreen from "../screens/Authentication/EmailLoginScreen";
+import EmailResetPasswordScreen from "../screens/Authentication/EmailResetPasswordScreen";
+import EmailSignUpScreen from "../screens/Authentication/EmailSignUpScreen";
+import SignUpOptionsScreen from "../screens/Authentication/SignupOptions";
 import BlockerListScreen from "../screens/BlockerListScreen";
 import OtherUserDashboardScreen from "../screens/Dashboard/OtherUserDashboardScreen";
 import EditPetProfileScreen from "../screens/EditPetProfileScreen";
@@ -42,7 +43,7 @@ const RootNavigator = () => {
   };
 
   // Redirect logic based on user's pet profile status
-  let initialRouteName = "SignUp";
+  let initialRouteName = "SignUpOptions";
   if (isAuthenticated) {
     if (!hasPets) {
       initialRouteName = "PetProfileCreationStep0";
@@ -190,16 +191,26 @@ const RootNavigator = () => {
       ) : (
         <>
           <RootStack.Screen
-            name="SignUp"
-            component={SignUpScreen}
+            name="SignUpOptions"
+            component={SignUpOptionsScreen}
             options={{
               title: "",
               headerTransparent: true,
             }}
           />
+
+          <RootStack.Screen
+            name="SignUp"
+            component={EmailSignUpScreen}
+            options={{
+              title: "",
+              headerTransparent: true,
+              cardStyleInterpolator: rightToLeftInterpolator,
+            }}
+          />
           <RootStack.Screen
             name="Login"
-            component={LoginScreen}
+            component={EmailLoginScreen}
             options={{
               title: "",
               headerTransparent: true,
@@ -208,7 +219,7 @@ const RootNavigator = () => {
           />
           <RootStack.Screen
             name="ResetPassword"
-            component={ResetPasswordScreen}
+            component={EmailResetPasswordScreen}
             options={{
               title: "",
               headerTransparent: true,
