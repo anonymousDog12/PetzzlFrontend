@@ -16,7 +16,7 @@ import { checkEmailExists } from "../../utils/auth";
 import { authStyles } from "./AuthenticationStyles";
 
 
-export default function ResetPasswordScreen({ navigation }) {
+export default function EmailResetPasswordScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);

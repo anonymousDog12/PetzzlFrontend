@@ -17,7 +17,7 @@ import { checkEmailExists } from "../../utils/auth";
 import { authStyles } from "./AuthenticationStyles";
 
 
-export default function LoginScreen({ navigation }) {
+export default function EmailLoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);

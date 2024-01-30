@@ -20,7 +20,7 @@ import { authStyles } from "./AuthenticationStyles";
 const welcomeMessage = "Welcome to DogDomain! 🐾";
 
 
-export default function SignUpScreen({ navigation }) {
+export default function EmailSignUpScreen({ navigation }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
