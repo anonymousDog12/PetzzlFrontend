@@ -14,3 +14,11 @@ export const validatePetName = (name) => {
   }
   return { validName: trimmedName };
 };
+
+export const getGenderText = (gender) => {
+  switch(gender) {
+    case 'f': return 'Girl';
+    case 'm': return 'Boy';
+    default: return '';
+  }
+};

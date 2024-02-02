@@ -1,4 +1,5 @@
-import { FETCH_POSTS, ADD_POST, DELETE_POST_SUCCESS, RESET_STATE } from "../types";
+import { ADD_POST, DELETE_POST_SUCCESS, FETCH_POSTS, RESET_DASHBOARD_POSTS, RESET_STATE } from "../types";
+
 
 const initialState = {
   posts: [],
@@ -20,6 +21,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         posts: state.posts.filter(post => post.post_id !== action.payload),
+      };
+    case RESET_DASHBOARD_POSTS:
+      return {
+        ...state,
+        posts: [],
       };
     case RESET_STATE:
       return initialState;

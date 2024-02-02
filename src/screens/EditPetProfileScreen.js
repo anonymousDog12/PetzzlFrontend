@@ -398,12 +398,12 @@ const EditPetProfileScreen = () => {
               <Text style={styles.fieldLabel}>Gender:</Text>
               <View style={styles.genderSelectionContainer}>
                 <RadioButton
-                  label="Male"
+                  label="Boy"
                   selected={gender === "m"}
                   onPress={() => handleGenderSelect("m")}
                 />
                 <RadioButton
-                  label="Female"
+                  label="Girl"
                   selected={gender === "f"}
                   onPress={() => handleGenderSelect("f")}
                 />
