@@ -67,7 +67,7 @@ const SettingsScreen = () => {
                 // Navigate to signup or welcome screen with a reset navigation stack
                 navigation.reset({
                   index: 0,
-                  routes: [{ name: "SignUp" }],
+                  routes: [{ name: "SignUpOptions" }],
                 });
               } else {
                 // If the response status is not 204, handle it accordingly
