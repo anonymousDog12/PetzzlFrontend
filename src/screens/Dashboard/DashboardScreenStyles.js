@@ -167,6 +167,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: 10,
   },
+
+  stackIcon: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    fontSize: 24,
+    color: "white",
+  },
 });
 
 export default styles;

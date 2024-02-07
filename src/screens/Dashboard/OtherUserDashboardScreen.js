@@ -137,6 +137,17 @@ const OtherUserDashboardScreen = ({ route }) => {
 
   // Function to render each post
   const renderPost = ({ item }) => {
+    const postContent = (
+      <>
+        <Image source={{ uri: item.thumbnail_url }} style={styles.postThumbnail} />
+        {item.has_multiple_images && (
+          <Ionicons
+            name="copy-outline"
+            style={styles.stackIcon}
+          />
+        )}
+      </>
+    );
 
     if (isOwnedPet) {
       return (
@@ -147,7 +158,7 @@ const OtherUserDashboardScreen = ({ route }) => {
             petProfile: otherPetProfile,
           })}
         >
-          <Image source={{ uri: item.thumbnail_url }} style={styles.postThumbnail} />
+          {postContent}
         </TouchableOpacity>
       );
     } else {
@@ -158,11 +169,10 @@ const OtherUserDashboardScreen = ({ route }) => {
             postId: item.post_id,
             petId: otherPetProfile.pet_id,
             petName: otherPetProfile.pet_name,
-            // TODO: refactor the get profile pic into a common variable
             petProfilePic: otherPetProfile.profile_pic_thumbnail_small || DEFAULT_DOG_PROFILE_PIC,
           })}
         >
-          <Image source={{ uri: item.thumbnail_url }} style={styles.postThumbnail} />
+          {postContent}
         </TouchableOpacity>
       );
     }

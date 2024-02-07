@@ -219,6 +219,26 @@ const DashboardScreen = () => {
     navigation.navigate("PostDetailScreen", { postId: postId, petProfile: petProfile });
   };
 
+  const renderPost = ({ item }) => {
+    return (
+      <TouchableOpacity
+        style={styles.postItem}
+        onPress={() => handlePostSelect(item.post_id, currentPetProfile)}
+      >
+        <Image
+          source={{ uri: item.thumbnail_url || item.thumbnail_small_url }}
+          style={styles.postThumbnail}
+        />
+        {item.has_multiple_images && (
+          <Ionicon
+            name="copy-outline"
+            style={styles.stackIcon}
+          />
+        )}
+      </TouchableOpacity>
+    );
+  };
+
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -343,17 +363,7 @@ const DashboardScreen = () => {
             data={posts}
             numColumns={3}
             keyExtractor={item => item.post_id.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.postItem}
-                onPress={() => handlePostSelect(item.post_id, currentPetProfile)}
-              >
-                <Image
-                  source={{ uri: item.thumbnail_url || item.thumbnail_small_url }}
-                  style={styles.postThumbnail}
-                />
-              </TouchableOpacity>
-            )}
+            renderItem={renderPost}
             ListEmptyComponent={<EmptyDashboardPostList />}
           />
         </>

@@ -23,7 +23,7 @@ const { width, height } = Dimensions.get("window");
 const SelectMediaScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [photos, setPhotos] = useState([]);
-  const [lastDeselectedPhoto, setLastDeselectedPhoto] = useState(null);
+  const [lastTouchedPhoto, setLastTouchedPhoto] = useState(null);
   const selectedPhotos = useSelector(state => state.feed.selectedPhotos);
 
   const [after, setAfter] = useState(null); // Cursor for pagination
@@ -101,7 +101,7 @@ const SelectMediaScreen = ({ navigation }) => {
       newSelectedPhotos = selectedPhotos.filter(p => p.uri !== uri);
       newSelectedPhotos = newSelectedPhotos.map((photo, index) => ({ ...photo, order: index + 1 }));
       if (newSelectedPhotos.length === 0) {
-        setLastDeselectedPhoto(uri);
+        setLastTouchedPhoto(uri);
       }
     } else {
       // Selecting a new photo
@@ -113,7 +113,7 @@ const SelectMediaScreen = ({ navigation }) => {
         return;
       }
 
-      if (selectedPhotos.length === 0 && lastDeselectedPhoto === uri) {
+      if (selectedPhotos.length === 0 && lastTouchedPhoto === uri) {
         newSelectedPhotos = [{ uri, mimeType, extension, order: 1 }];
       } else {
         newSelectedPhotos = [...selectedPhotos, { uri, mimeType, extension, order: selectedPhotos.length + 1 }];
@@ -215,9 +215,9 @@ const SelectMediaScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.previewContainer}>
-          {selectedPhotos.length === 0 && lastDeselectedPhoto ? (
+          {selectedPhotos.length === 0 && lastTouchedPhoto ? (
             <React.Fragment>
-              {renderPreview(lastDeselectedPhoto)}
+              {renderPreview(lastTouchedPhoto)}
             </React.Fragment>
           ) : (
             selectedPhotos.length > 0 && (
@@ -247,9 +247,9 @@ const SelectMediaScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   previewPhotoImage: {
-    width: width, // Full width
-    height: width, // Full height of the preview container
-    resizeMode: "cover", // Contain the aspect ratio within the preview container
+    width: width,
+    height: "100%",
+    resizeMode: "contain",
   },
   safeArea: {
     flex: 1,
