@@ -1,11 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useState } from "react";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
 import Ionicons from "react-native-vector-icons/Ionicons";
-
-
-const imageContainerHeight = Dimensions.get("window").width;
 
 
 const PostSection = ({
@@ -21,6 +18,19 @@ const PostSection = ({
 
 
   const navigation = useNavigation();
+
+  const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
+  const [captionHeight, setCaptionHeight] = useState(0);
+
+  const [firstImageAspectRatio, setFirstImageAspectRatio] = useState(null);
+
+  const lineHeight = 18; // Your caption line height
+  const maxLines = 3;
+  const maxHeight = lineHeight * maxLines;
+
+  const toggleCaptionExpand = () => {
+    setIsCaptionExpanded(!isCaptionExpanded);
+  };
 
   const navigateToLikerList = () => {
     navigation.navigate("LikerListScreen", { postId: postDetails.post_id });
@@ -51,17 +61,41 @@ const PostSection = ({
     );
   };
 
-  const renderMediaItem = ({ item }) => {
+  const renderMediaItem = ({ item, index }) => {
+    // Define onImageLoad here so it has access to `item`
+    const onImageLoad = (e) => {
+      // Only set the aspect ratio if it's the first image
+      if (index === 0) {
+        const { width, height } = e.nativeEvent.source;
+        const aspectRatio = height / width;
+        setFirstImageAspectRatio(aspectRatio);
+      }
+    };
+
+    // Calculate the height based on the aspect ratio of the first image
+    // If the aspect ratio is not yet set, use a default value
+    const imageHeight = firstImageAspectRatio
+      ? Dimensions.get("window").width * firstImageAspectRatio
+      : undefined; // You can provide a fallback value as needed
+
     return (
-      <View style={{ width: Dimensions.get("window").width, height: imageContainerHeight }}>
+      <View style={{ width: Dimensions.get("window").width, height: imageHeight }}>
         <Image
           source={{ uri: item.full_size_url }}
-          style={styles.imageStyle}
-          resizeMode="cover"
+          style={{
+            width: "100%",
+            height: imageHeight || "100%",
+          }}
+          resizeMode="contain"
+          onLoad={onImageLoad}
+          onError={(e) => {
+            console.log("Image loading error:", e.nativeEvent.error);
+          }}
         />
       </View>
     );
   };
+
 
   return (
     <View style={styles.postSectionContainer}>
@@ -82,7 +116,7 @@ const PostSection = ({
           </TouchableOpacity>
         )}
       </View>
-      <View style={{ height: imageContainerHeight }}>
+      <View style={{ width: Dimensions.get("window").width }}>
         <SwiperFlatList
           index={0}
           showPagination
@@ -93,7 +127,23 @@ const PostSection = ({
         />
       </View>
       {renderLikeIcon()}
-      <Text style={styles.captionText}>{postDetails.caption}</Text>
+      <Text
+        numberOfLines={isCaptionExpanded ? undefined : maxLines}
+        style={styles.captionText}
+        onLayout={(event) => {
+          const { height } = event.nativeEvent.layout;
+          setCaptionHeight(height);
+        }}
+      >
+        {postDetails.caption}
+      </Text>
+      {!isCaptionExpanded && captionHeight > maxHeight && (
+        <TouchableOpacity onPress={toggleCaptionExpand}>
+          <Text style={{ color: "#0645AD", paddingLeft: 10 }}>
+            ...more
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -154,7 +204,7 @@ const styles = StyleSheet.create({
   captionText: {
     textAlign: "left",
     fontSize: 15,
-    fontWeight: "500",
+    fontWeight: "300",
     color: "#333",
     marginBottom: 10,
     padding: 10,
