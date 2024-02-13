@@ -144,7 +144,7 @@ const FeedScreen = ({ route }) => {
     }
   };
 
-  const handlePostUpload = async ({ selectedPhotos, caption, petId }) => {
+  const handlePostUpload = async ({ selectedMedias, caption, petId }) => {
     setIsUploading(true);
 
     // TODO: move get accessToken up
@@ -159,10 +159,10 @@ const FeedScreen = ({ route }) => {
     formData.append("pet_id", petId);
     formData.append("caption", caption);
 
-    selectedPhotos.forEach((media, index) => {
+    selectedMedias.forEach((media, index) => {
       formData.append("media_files", {
-        name: `media_${index}${media.extension}`, // Use the original extension
-        type: media.mimeType, // Use the mimeType from Redux state
+        name: `media_${index}${media.extension}`,
+        type: media.mimeType,
         uri: media.uri,
       });
     });

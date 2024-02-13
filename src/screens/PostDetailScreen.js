@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import SecureStorage from "react-native-secure-storage";
 import { useSelector } from "react-redux";
 import { CONFIG } from "../../config";
@@ -70,34 +70,39 @@ const PostDetailScreen = ({ route }) => {
     // TODO - Refactor slider modal
     // https://soulecho.atlassian.net/browse/PA-242
 
-    <SafeAreaView style={styles.postDetailScreenContainer}>
-      <PostSection
-        petProfile={{
-          ...petProfile,
-          profile_pic_thumbnail_small: petProfile.profile_pic_thumbnail_small || DEFAULT_DOG_PROFILE_PIC,
-        }}
-        postDetails={postDetails}
-        onEllipsisPress={() => setModalVisible(!modalVisible)}
-        showEllipsis={true}
-        isLiked={isLiked}
-        likeCount={likeCount}
-        handleLikePress={toggleLike}
-      />
-      <SliderModal
-        dropdownVisible={modalVisible}
-        setDropdownVisible={setModalVisible}
-      >
-        <TouchableOpacity onPress={() => showDeleteConfirmation(postId)}>
-          <Text style={styles.modalTextRed}>Delete Post</Text>
-        </TouchableOpacity>
-      </SliderModal>
+    <SafeAreaView style={styles.fullScreenContainer}>
+      <ScrollView style={styles.scrollViewStyle}>
+        <PostSection
+          petProfile={{
+            ...petProfile,
+            profile_pic_thumbnail_small: petProfile.profile_pic_thumbnail_small || DEFAULT_DOG_PROFILE_PIC,
+          }}
+          postDetails={postDetails}
+          onEllipsisPress={() => setModalVisible(!modalVisible)}
+          showEllipsis={true}
+          isLiked={isLiked}
+          likeCount={likeCount}
+          handleLikePress={toggleLike}
+        />
+        <SliderModal
+          dropdownVisible={modalVisible}
+          setDropdownVisible={setModalVisible}
+        >
+          <TouchableOpacity onPress={() => showDeleteConfirmation(postId)}>
+            <Text style={styles.modalTextRed}>Delete Post</Text>
+          </TouchableOpacity>
+        </SliderModal>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  postDetailScreenContainer: {
+  fullScreenContainer: {
+    flex: 1,
     backgroundColor: "white",
+  },
+  scrollViewStyle: {
     flex: 1,
   },
   loadingContainer: {

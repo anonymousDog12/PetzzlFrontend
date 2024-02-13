@@ -6,6 +6,8 @@ import {
   Dimensions,
   FlatList,
   Image,
+  NativeEventEmitter,
+  NativeModules,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -13,8 +15,11 @@ import {
   View,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import Video from "react-native-video";
+import { isValidVideo, showEditor } from "react-native-video-trim";
 import { useDispatch, useSelector } from "react-redux";
 import { RESET_POST_STATE, UPDATE_SELECTED_PHOTOS } from "../../redux/types";
+import { convertPHtoAssetsUri } from "../../utils/fileHandling";
 import GuidelinesModal from "./GuidelinesModal";
 
 
@@ -24,15 +29,16 @@ const SelectMediaScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [photos, setPhotos] = useState([]);
   const [lastTouchedPhoto, setLastTouchedPhoto] = useState(null);
-  const selectedPhotos = useSelector(state => state.feed.selectedPhotos);
+  const selectedMedias = useSelector(state => state.feed.selectedMedias);
 
   const [after, setAfter] = useState(null); // Cursor for pagination
   const [hasMore, setHasMore] = useState(true); // Whether more photos are available
 
   const [isLoading, setIsLoading] = useState(false);
 
-
   const [isGuidelinesModalVisible, setIsGuidelinesModalVisible] = useState(false);
+
+  const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
 
   useEffect(() => {
     const checkGuidelines = async () => {
@@ -59,7 +65,7 @@ const SelectMediaScreen = ({ navigation }) => {
     // Create an object for the parameters you want to send
     let params = {
       first: 20,
-      assetType: "Photos",
+      assetType: "All",
     };
 
     // If you have a valid cursor, add the 'after' parameter
@@ -89,91 +95,137 @@ const SelectMediaScreen = ({ navigation }) => {
 
 
   const toggleSelectPhoto = (uri) => {
-    if (selectedPhotos.length >= 9 && !selectedPhotos.some(p => p.uri === uri)) {
-      return;
-    }
+    const mediaItem = photos.find(p => p.node.image.uri === uri).node.image;
+    const isVideo = mediaItem.playableDuration > 0;
+    let newSelectedMedias;
 
-    let newSelectedPhotos;
-    const selectedIndex = selectedPhotos.findIndex(p => p.uri === uri);
+    const selectedIndex = selectedMedias.findIndex(p => p.uri === uri);
 
     if (selectedIndex !== -1) {
-      // Deselecting a photo
-      newSelectedPhotos = selectedPhotos.filter(p => p.uri !== uri);
-      newSelectedPhotos = newSelectedPhotos.map((photo, index) => ({ ...photo, order: index + 1 }));
-      if (newSelectedPhotos.length === 0) {
-        setLastTouchedPhoto(uri);
-      }
+      // Deselecting an item
+      newSelectedMedias = selectedMedias.filter(p => p.uri !== uri);
+      // Update the order for remaining items
+      newSelectedMedias = newSelectedMedias.map((photo, index) => ({ ...photo, order: index + 1 }));
     } else {
-      // Selecting a new photo
-      const mediaItem = photos.find(p => p.node.image.uri === uri).node.image;
-      const mimeType = `image/${mediaItem.extension}`;
-      const extension = `.${mediaItem.extension}`;
-
-      if (mediaItem.playableDuration > 0 && selectedPhotos.length > 0) {
+      // Prevent selecting more if a video is already selected or selecting a video if photos are selected
+      if ((isVideo && selectedMedias.length > 0) || (!isVideo && selectedMedias.some(photo => photo.playableDuration > 0))) {
+        return;
+      }
+      // Limit to 9 photos
+      if (!isVideo && selectedMedias.length >= 9) {
         return;
       }
 
-      if (selectedPhotos.length === 0 && lastTouchedPhoto === uri) {
-        newSelectedPhotos = [{ uri, mimeType, extension, order: 1 }];
-      } else {
-        newSelectedPhotos = [...selectedPhotos, { uri, mimeType, extension, order: selectedPhotos.length + 1 }];
-      }
+      const mimeType = `image/${mediaItem.extension}`;
+      const extension = `.${mediaItem.extension}`;
+
+      newSelectedMedias = [...selectedMedias, {
+        uri,
+        mimeType,
+        extension,
+        order: selectedMedias.length + 1,
+        playableDuration: mediaItem.playableDuration,
+      }];
     }
 
-    dispatch({ type: UPDATE_SELECTED_PHOTOS, payload: newSelectedPhotos });
+    dispatch({ type: UPDATE_SELECTED_PHOTOS, payload: newSelectedMedias });
   };
 
 
   const getSelectionOrder = (uri) => {
-    const selectedPhoto = selectedPhotos.find(p => p.uri === uri);
+    const selectedPhoto = selectedMedias.find(p => p.uri === uri);
     return selectedPhoto ? selectedPhoto.order : null;
   };
 
   const renderItem = ({ item }) => {
     const media = item.node.image;
+    const isVideo = item.node.type === "video";
     const selectionOrder = getSelectionOrder(media.uri);
 
-    const isSelectable = selectedPhotos.length < 9 || selectionOrder !== null;
+    // Check if a video is selected
+    const videoSelected = selectedMedias.some(media => media.playableDuration > 0);
+
+    // Apply dark overlay logic
+    let applyDarkOverlay = false;
+    if (videoSelected && !selectionOrder) {
+      // Apply overlay to all other media if a video is selected and the current item is not selected
+      applyDarkOverlay = true;
+    } else if (!isVideo && selectedMedias.length >= 9 && !selectionOrder) {
+      // Apply overlay to other photos if 9 photos are selected and the current item is not selected
+      applyDarkOverlay = true;
+    } else if (!videoSelected && isVideo && selectedMedias.length > 0) {
+      // Apply overlay to videos if any media is selected (and it's not a video)
+      applyDarkOverlay = true;
+    }
+
+    // Determine if the current item is selectable
+    let isSelectable = true;
+    if (isVideo) {
+      // Videos are not selectable if any media is already selected and it's not this video
+      isSelectable = selectedMedias.length === 0 || selectionOrder !== null;
+    } else {
+      // Photos are not selectable if a video is selected or 9 photos are already selected and it's not this photo
+      isSelectable = !videoSelected || selectionOrder !== null;
+    }
 
     return (
-      <TouchableOpacity
-        onPress={() => toggleSelectPhoto(media.uri)}
-        disabled={!isSelectable}
-      >
+      <TouchableOpacity onPress={() => toggleSelectPhoto(media.uri)}>
         <View style={styles.imageContainer}>
-          <Image
-            style={[styles.image, !isSelectable && styles.imageNotSelectable]}
-            source={{ uri: media.uri }}
-          />
-
-          {isSelectable && (
-            <View
-              style={[
-                styles.circle,
-                selectionOrder !== null ? styles.circleSelected : {},
-              ]}
-            >
-              {selectionOrder !== null && (
-                <Text style={styles.circleText}>{selectionOrder}</Text>
-              )}
+          <Image style={styles.image} source={{ uri: media.uri }} />
+          {applyDarkOverlay && <View style={styles.imageOverlay} />}
+          {isVideo && isSelectable && <Icon name="play-circle" size={30} color="white" style={styles.playIcon} />}
+          {selectionOrder !== null && (
+            <View style={[styles.circle, styles.circleSelected]}>
+              <Text style={styles.circleText}>{selectionOrder}</Text>
             </View>
+          )}
+          {!applyDarkOverlay && !selectionOrder && isSelectable && (
+            <View style={styles.circle} />
           )}
         </View>
       </TouchableOpacity>
     );
   };
 
-  const isNextButtonEnabled = selectedPhotos.length > 0;
+  const isNextButtonEnabled = selectedMedias.length > 0;
+
+  const getMediaType = (uri) => {
+    const media = photos.find(p => p.node.image.uri === uri);
+    return media && media.node.type === "video" ? "video" : "photo";
+  };
+
+  useEffect(() => {
+    return navigation.addListener("blur", () => {
+      // Pause the video when the screen loses focus
+      setIsPreviewPlaying(false);
+    });
+  }, [navigation]);
 
 
   const renderPreview = (uri) => {
-    return (
-      <Image
-        source={{ uri: uri }}
-        style={styles.previewPhotoImage}
-      />
-    );
+    const mediaType = getMediaType(uri);
 
+    if (mediaType === "video") {
+      const assetUri = convertPHtoAssetsUri(uri);
+      return (
+        <Video
+          source={{ uri: assetUri }}
+          style={styles.previewPhotoVideo}
+          controls
+          resizeMode="contain"
+          paused={!isPreviewPlaying} // Control playback using the isPreviewPlaying state
+          onLoadStart={() => setIsPreviewPlaying(true)} // Start playing when the video starts loading
+          onEnd={() => setIsPreviewPlaying(false)} // Stop playing when the video ends
+        />
+      );
+    } else {
+      return (
+        <Image
+          source={{ uri: uri }}
+          style={styles.previewPhotoImage}
+        />
+      );
+    }
   };
 
   const renderFooter = () => {
@@ -187,6 +239,65 @@ const SelectMediaScreen = ({ navigation }) => {
   };
 
 
+  const onPressNext = async () => {
+    if (isNextButtonEnabled) {
+      const selectedVideo = selectedMedias.find(photo => photo.playableDuration > 0);
+      if (selectedVideo) {
+        // Convert the PH URI to a file URI
+        try {
+          const fileData = await CameraRoll.iosGetImageDataById(selectedVideo.uri, { convertHeic: true });
+          if (fileData?.node?.image?.filepath) {
+            const fileUri = fileData.node.image.filepath;
+
+            // Check if video duration is more than 15 seconds
+            if (selectedVideo.playableDuration > 15) {
+              // Validate the video file and show the trimmer
+              isValidVideo(fileUri).then(isValid => {
+                if (isValid) {
+                  // Show the trimmer and wait for the trimming to finish
+                  showEditor(fileUri, {
+                    maxDuration: 15,
+                    saveToPhoto: false,
+                    cancelDialogTitle: "Cancel Editing?",
+                    cancelDialogMessage: "All changes will be discarded",
+                    saveDialogTitle: "Save Edits?",
+                    saveDialogMessage: "Your changes will be applied",
+                  });
+                  const eventEmitter = new NativeEventEmitter(NativeModules.VideoTrim);
+                  const subscription = eventEmitter.addListener("VideoTrim", (event) => {
+                    if (event.name === "onFinishTrimming" && event.outputPath) {
+                      navigation.navigate("AddCaption", {
+                        selectedMedias: selectedMedias,
+                        trimmedVideoPath: event.outputPath,
+                      });
+                      subscription.remove(); // Remove the listener to prevent memory leaks
+                    }
+                  });
+                } else {
+                  console.log("Invalid video file");
+                }
+              });
+            } else {
+              // If video is less than or equal to 15 seconds, navigate without trimming
+              navigation.navigate("AddCaption", { selectedMedias });
+            }
+          }
+        } catch (error) {
+          console.error("Error converting PH URI to File URI: ", error);
+        }
+      } else {
+        // If no videos are selected, navigate immediately to AddCaptionScreen with selected photos
+        navigation.navigate("AddCaption", { selectedMedias });
+      }
+    }
+  };
+
+
+  const onPressCancel = () => {
+    navigation.goBack();
+  };
+
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <GuidelinesModal
@@ -196,33 +307,35 @@ const SelectMediaScreen = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => navigation.goBack()}>
-            <Icon name="close" size={30} color="white" />
+            style={styles.cancelButton}
+            onPress={onPressCancel}
+          >
+            <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.nextButton}
-            onPress={() => {
-              if (isNextButtonEnabled) {
-                navigation.navigate("AddCaption", { selectedPhotos });
-              }
-            }}
+            onPress={onPressNext}
             disabled={!isNextButtonEnabled}
           >
-            <Text style={[styles.nextButtonText, !isNextButtonEnabled && styles.nextButtonDisabledText]}>
-              Next
-            </Text>
+            <Text style={[styles.nextButtonText, !isNextButtonEnabled && styles.nextButtonDisabledText]}>Next</Text>
           </TouchableOpacity>
         </View>
+
+
         <View style={styles.previewContainer}>
-          {selectedPhotos.length === 0 && lastTouchedPhoto ? (
+          {selectedMedias.length === 0 && !lastTouchedPhoto ? (
+            <View style={styles.selectMediaMessageContainer}>
+              <Text style={styles.selectMediaText}>SELECT A MEDIA BELOW TO PREVIEW</Text>
+              <Icon name="arrow-down" size={20} color="white" style={styles.arrowIcon} />
+            </View>
+          ) : lastTouchedPhoto ? (
             <React.Fragment>
               {renderPreview(lastTouchedPhoto)}
             </React.Fragment>
           ) : (
-            selectedPhotos.length > 0 && (
+            selectedMedias.length > 0 && (
               <React.Fragment>
-                {renderPreview(selectedPhotos[selectedPhotos.length - 1].uri)}
+                {renderPreview(selectedMedias[selectedMedias.length - 1].uri)}
               </React.Fragment>
             )
           )}
@@ -259,18 +372,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    height: 50, // Set the height for the header
+    height: 50,
     width: "100%",
     justifyContent: "flex-end",
     alignItems: "center",
     flexDirection: "row",
-    paddingRight: 10, // Add padding to the right
   },
-  closeButton: {
-    position: "absolute",
-    left: 10,
-    top: 10,
-    padding: 10, // Adjust as needed for touchable area
+  selectMediaMessageContainer: {
+    alignItems: "center",
+  },
+
+  selectMediaText: {
+    color: "white",
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 10,
   },
   playIcon: {
     position: "absolute",
@@ -280,6 +396,7 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     padding: 10,
+    right: 5,
   },
   nextButtonText: {
     color: "#ffc02c",
@@ -287,20 +404,25 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   nextButtonDisabledText: {
-    color: "#ccc", // Change color to indicate disabled state
+    color: "#ccc",
+  },
+  cancelButton: {
+    position: "absolute",
+    left: 5,
+    padding: 10,
+  },
+  cancelButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 20,
   },
   previewContainer: {
-    height: height / 2, // Half the screen height for the preview
-    width: "100%", // Full width
+    height: height / 2,
+    width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10, // Add some margin if needed
+    marginBottom: 10,
     backgroundColor: "black",
-  },
-  previewPhoto: {
-    width: width, // Full width
-    height: "100%", // Full height of the preview container
-    resizeMode: "contain", // Contain the aspect ratio within the preview container
   },
   photoList: {
     flex: 1,
@@ -324,10 +446,10 @@ const styles = StyleSheet.create({
     height: 25,
     borderRadius: 12.5,
     borderWidth: 2,
-    borderColor: "#c4c4c4", // Changed to a neutral color for unselected photos
+    borderColor: "#c4c4c4",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "transparent", // Ensure the background is transparent for unselected photos
+    backgroundColor: "transparent",
   },
   circleSelected: {
     position: "absolute",
@@ -347,8 +469,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 12,
   },
-  imageNotSelectable: {
-    opacity: 0.5,
+  imageOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+  },
+  previewPhotoVideo: {
+    width: width,
+    height: "100%",
   },
 });
 

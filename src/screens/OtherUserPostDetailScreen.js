@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import SecureStorage from "react-native-secure-storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
@@ -176,69 +185,72 @@ const OtherUserPostDetailScreen = ({ route }) => {
     // TODO - Refactor slider modal
     // https://soulecho.atlassian.net/browse/PA-242
 
-    <SafeAreaView style={styles.postDetailScreenContainer}>
-    <PostSection
-        petProfile={{ profile_pic_thumbnail_small: petProfilePic, pet_name: petId }}
-        postDetails={postDetails}
-        showEllipsis={true}
-        onEllipsisPress={() => setModalVisible(!modalVisible)}
-        isLiked={isLiked}
-        likeCount={likeCount}
-        handleLikePress={toggleLike}
-      />
+    <SafeAreaView style={styles.fullScreenContainer}>
+      <ScrollView style={styles.scrollViewStyle}>
+        <PostSection
+          petProfile={{ profile_pic_thumbnail_small: petProfilePic, pet_name: petId }}
+          postDetails={postDetails}
+          showEllipsis={true}
+          onEllipsisPress={() => setModalVisible(!modalVisible)}
+          isLiked={isLiked}
+          likeCount={likeCount}
+          handleLikePress={toggleLike}
+        />
 
-      <SliderModal
-        dropdownVisible={modalVisible}
-        setDropdownVisible={setModalVisible}
-      >
-        <TouchableOpacity onPress={handleReportContent}>
-          <Text style={styles.modalTextRed}>Report Content</Text>
-        </TouchableOpacity>
-      </SliderModal>
+        <SliderModal
+          dropdownVisible={modalVisible}
+          setDropdownVisible={setModalVisible}
+        >
+          <TouchableOpacity onPress={handleReportContent}>
+            <Text style={styles.modalTextRed}>Report Content</Text>
+          </TouchableOpacity>
+        </SliderModal>
 
 
-      <SliderModal dropdownVisible={reportModalVisible} setDropdownVisible={setReportModalVisible}>
-        {isReportSending ? (
-          <View style={styles.activityIndicatorModal}>
-            <ActivityIndicator size="large" color="#ffc02c" />
-          </View>
-        ) : (
-          <>
-            <View>
-              <Text style={styles.modalTitle}>Report Post</Text>
+        <SliderModal dropdownVisible={reportModalVisible} setDropdownVisible={setReportModalVisible}>
+          {isReportSending ? (
+            <View style={styles.activityIndicatorModal}>
+              <ActivityIndicator size="large" color="#ffc02c" />
             </View>
-            <View>
-              <Text style={styles.modalQuestion}>Why are you reporting this post?</Text>
-            </View>
-            {Object.entries(REPORT_REASONS).map(([code, reason]) => (
-              <View style={SliderModalStyles.modalRow} key={code}>
-                <TouchableOpacity onPress={() => handleReportReasonSelect(code)}>
-                  <Text style={styles.modalTextReportReasons}>{reason}</Text>
-                </TouchableOpacity>
+          ) : (
+            <>
+              <View>
+                <Text style={styles.modalTitle}>Report Post</Text>
               </View>
-            ))}
-          </>
-        )}
-      </SliderModal>
+              <View>
+                <Text style={styles.modalQuestion}>Why are you reporting this post?</Text>
+              </View>
+              {Object.entries(REPORT_REASONS).map(([code, reason]) => (
+                <View style={SliderModalStyles.modalRow} key={code}>
+                  <TouchableOpacity onPress={() => handleReportReasonSelect(code)}>
+                    <Text style={styles.modalTextReportReasons}>{reason}</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </>
+          )}
+        </SliderModal>
 
-      <SliderModal
-        dropdownVisible={reportMessageModalVisible}
-        setDropdownVisible={handleCloseReportMessageModal}
-      >
+        <SliderModal
+          dropdownVisible={reportMessageModalVisible}
+          setDropdownVisible={handleCloseReportMessageModal}
+        >
 
-        <View style={styles.reportMessageContent}>
-          <Ionicons name="checkmark-circle-outline" size={60} color="#ffc02c" />
-          <Text style={styles.reportMessage}>{reportMessage}</Text>
-          <TouchableOpacity style={styles.okButton} onPress={handleCloseReportMessageModal}>
-            <Text style={styles.okButtonText}>Ok</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.blockUserButton} onPress={handleBlockUser}>
-            <Text style={styles.blockUserButtonText}>Block User</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.reportMessageContent}>
+            <Ionicons name="checkmark-circle-outline" size={60} color="#ffc02c" />
+            <Text style={styles.reportMessage}>{reportMessage}</Text>
+            <TouchableOpacity style={styles.okButton} onPress={handleCloseReportMessageModal}>
+              <Text style={styles.okButtonText}>Ok</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.blockUserButton} onPress={handleBlockUser}>
+              <Text style={styles.blockUserButtonText}>Block User</Text>
+            </TouchableOpacity>
+          </View>
 
-      </SliderModal>
+        </SliderModal>
 
+
+      </ScrollView>
     </SafeAreaView>
   );
 };
