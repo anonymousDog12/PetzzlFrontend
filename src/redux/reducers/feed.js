@@ -11,7 +11,7 @@ import {
 const initialState = {
   feed: [],
   loading: false,
-  selectedPhotos: [],
+  selectedMedias: [],
   caption: '',
   hasNextPage: true, // Add this to track if there are more pages
 };
@@ -53,13 +53,13 @@ export default function(state = initialState, action) {
     case RESET_POST_STATE:
       return {
         ...state,
-        selectedPhotos: [],
+        selectedMedias: [],
         caption: '',
       };
     case UPDATE_SELECTED_PHOTOS:
       return {
         ...state,
-        selectedPhotos: action.payload,
+        selectedMedias: action.payload,
       };
     case UPDATE_CAPTION:
       return {

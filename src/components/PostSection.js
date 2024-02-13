@@ -3,7 +3,10 @@ import React, { useState } from "react";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Video from "react-native-video";
 
+
+const screenWidth = Dimensions.get("window").width;
 
 const PostSection = ({
                        petProfile,
@@ -24,13 +27,20 @@ const PostSection = ({
 
   const [firstImageAspectRatio, setFirstImageAspectRatio] = useState(null);
 
-  const lineHeight = 18; // Your caption line height
+  const lineHeight = 18;
   const maxLines = 3;
   const maxHeight = lineHeight * maxLines;
+
+  const [isPaused, setIsPaused] = useState(true);
 
   const toggleCaptionExpand = () => {
     setIsCaptionExpanded(!isCaptionExpanded);
   };
+
+  const togglePlayPause = () => {
+    setIsPaused(!isPaused);
+  };
+
 
   const navigateToLikerList = () => {
     navigation.navigate("LikerListScreen", { postId: postDetails.post_id });
@@ -62,9 +72,7 @@ const PostSection = ({
   };
 
   const renderMediaItem = ({ item, index }) => {
-    // Define onImageLoad here so it has access to `item`
-    const onImageLoad = (e) => {
-      // Only set the aspect ratio if it's the first image
+    const onMediaLoad = (e) => {
       if (index === 0) {
         const { width, height } = e.nativeEvent.source;
         const aspectRatio = height / width;
@@ -72,28 +80,40 @@ const PostSection = ({
       }
     };
 
-    // Calculate the height based on the aspect ratio of the first image
-    // If the aspect ratio is not yet set, use a default value
-    const imageHeight = firstImageAspectRatio
-      ? Dimensions.get("window").width * firstImageAspectRatio
-      : undefined; // You can provide a fallback value as needed
+    const mediaHeight = firstImageAspectRatio
+      ? screenWidth * firstImageAspectRatio
+      : 200; // Provide a default height if the aspect ratio is not set
 
-    return (
-      <View style={{ width: Dimensions.get("window").width, height: imageHeight }}>
-        <Image
-          source={{ uri: item.full_size_url }}
-          style={{
-            width: "100%",
-            height: imageHeight || "100%",
-          }}
-          resizeMode="contain"
-          onLoad={onImageLoad}
-          onError={(e) => {
-            console.log("Image loading error:", e.nativeEvent.error);
-          }}
-        />
-      </View>
-    );
+
+    if (item.media_type === "video") {
+      return (
+        <TouchableOpacity
+          style={{ width: screenWidth, height: mediaHeight }}
+          onPress={togglePlayPause}
+        >
+          <Video
+            source={{ uri: item.full_size_url }}
+            style={styles.mediaStyle}
+            resizeMode="contain"
+            repeat={true}
+            paused={isPaused}
+            onError={(e) => console.log("Video error:", e)}
+          />
+        </TouchableOpacity>
+      );
+    } else {
+      return (
+        <View style={{ width: screenWidth, height: mediaHeight }}>
+          <Image
+            source={{ uri: item.full_size_url }}
+            style={styles.mediaStyle}
+            resizeMode="contain"
+            onLoad={onMediaLoad}
+            onError={(e) => console.log("Image loading error:", e.nativeEvent.error)}
+          />
+        </View>
+      );
+    }
   };
 
 
@@ -116,7 +136,7 @@ const PostSection = ({
           </TouchableOpacity>
         )}
       </View>
-      <View style={{ width: Dimensions.get("window").width }}>
+      <View style={styles.swiperContainer}>
         <SwiperFlatList
           index={0}
           showPagination
@@ -139,7 +159,7 @@ const PostSection = ({
       </Text>
       {!isCaptionExpanded && captionHeight > maxHeight && (
         <TouchableOpacity onPress={toggleCaptionExpand}>
-          <Text style={{ color: "#0645AD", paddingLeft: 10 }}>
+          <Text style={styles.moreText}>
             ...more
           </Text>
         </TouchableOpacity>
@@ -194,8 +214,12 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 
+  swiperContainer: {
+    width: screenWidth,
+  },
+
   // Image
-  imageStyle: {
+  mediaStyle: {
     width: "100%",
     height: "100%",
   },
@@ -223,6 +247,12 @@ const styles = StyleSheet.create({
   },
   boldText: {
     fontWeight: "bold",
+  },
+
+
+  moreText: {
+    color: "#0645AD",
+    paddingLeft: 10,
   },
 });
 

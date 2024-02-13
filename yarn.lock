@@ -5942,6 +5942,11 @@
     "prop-types" "^15.7.2"
     "yargs" "^16.1.1"
 
+"react-native-video-trim@^1.0.13":
+  "integrity" "sha512-wa7tXD4L+f3V0OXiBGT7kqyny68gWrrSs3BwAxj5eb2ph+OzHKRZdGuAABRzsUq7NpuPBhYn7B1L/6abhbBoGw=="
+  "resolved" "https://registry.npmjs.org/react-native-video-trim/-/react-native-video-trim-1.0.13.tgz"
+  "version" "1.0.13"
+
 "react-native-video@^5.2.1":
   "integrity" "sha512-aJlr9MeTuQ0LpZ4n+EC9RvhoKeiPbLtI2Rxy8u7zo/wzGevbRpWHSBj9xZ5YDBXnAVXzuqyNIkGhdw7bfdIBZw=="
   "resolved" "https://registry.npmjs.org/react-native-video/-/react-native-video-5.2.1.tgz"
