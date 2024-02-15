@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -30,7 +30,6 @@ const PostSection = ({
   const maxLines = 3;
   const maxHeight = lineHeight * maxLines;
 
-  const [isPaused, setIsPaused] = useState(true);
 
   const toggleCaptionExpand = () => {
     setIsCaptionExpanded(!isCaptionExpanded);
@@ -39,11 +38,6 @@ const PostSection = ({
   const toggleVideoPlay = (index) => {
     setVideoPlayStates(videoPlayStates.map((state, idx) => (idx === index ? !state : state)));
   };
-
-  const togglePlayPause = () => {
-    setIsPaused(!isPaused);
-  };
-
 
   const navigateToLikerList = () => {
     navigation.navigate("LikerListScreen", { postId: postDetails.post_id });
@@ -74,7 +68,21 @@ const PostSection = ({
     );
   };
 
+  useEffect(() => {
+    // Update videoPlayStates to match the current number of media items
+    setVideoPlayStates(postDetails.media ? postDetails.media.map(() => false) : []);
+  }, [postDetails.media]);
+
+
   const renderMediaItem = ({ item, index }) => {
+    const onMediaLoad = (e) => {
+      if (index === 0) {
+        const { width, height } = e.nativeEvent.source;
+        const aspectRatio = height / width;
+        setFirstImageAspectRatio(aspectRatio);
+      }
+    };
+
     const mediaHeight = firstImageAspectRatio
       ? screenWidth * firstImageAspectRatio
       : 200; // Provide a default height if the aspect ratio is not set
@@ -95,7 +103,8 @@ const PostSection = ({
       ) : (
         // Thumbnail Image component with play icon overlay
         <TouchableOpacity style={{ width: screenWidth, height: mediaHeight }} onPress={() => toggleVideoPlay(index)}>
-          <Image source={{ uri: item.thumbnail_url }} style={styles.mediaStyle} resizeMode="contain" />
+          <Image onLoad={onMediaLoad} source={{ uri: item.thumbnail_url }} style={styles.mediaStyle}
+                 resizeMode="contain" />
           <View style={styles.playIconOverlay}>
             <Ionicons name="play-circle" size={64} color="white" style={styles.playIcon} />
           </View>
@@ -108,6 +117,7 @@ const PostSection = ({
             source={{ uri: item.full_size_url }}
             style={styles.mediaStyle}
             resizeMode="contain"
+            onLoad={onMediaLoad}
             onError={(e) => console.log("Image loading error:", e.nativeEvent.error)}
           />
         </View>
@@ -138,7 +148,7 @@ const PostSection = ({
       <View style={styles.swiperContainer}>
         <SwiperFlatList
           index={0}
-          showPagination
+          showPagination={postDetails.media && postDetails.media.length > 1}
           paginationStyle={styles.paginationStyle}
           paginationStyleItem={styles.paginationStyleItem}
           data={postDetails.media}
@@ -203,13 +213,14 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   paginationStyleItem: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    marginHorizontal: 2,
   },
   paginationStyle: {
     position: "absolute",
-    bottom: 15,
+    bottom: 10,
     alignSelf: "center",
   },
 
@@ -263,7 +274,7 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
   },
 
   playIcon: {
