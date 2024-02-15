@@ -28,17 +28,14 @@ const { width, height } = Dimensions.get("window");
 const SelectMediaScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [photos, setPhotos] = useState([]);
-  const [lastTouchedPhoto, setLastTouchedPhoto] = useState(null);
   const selectedMedias = useSelector(state => state.feed.selectedMedias);
 
   const [after, setAfter] = useState(null); // Cursor for pagination
   const [hasMore, setHasMore] = useState(true); // Whether more photos are available
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState( false);
 
   const [isGuidelinesModalVisible, setIsGuidelinesModalVisible] = useState(false);
-
-  const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
 
   useEffect(() => {
     const checkGuidelines = async () => {
@@ -194,13 +191,6 @@ const SelectMediaScreen = ({ navigation }) => {
     return media && media.node.type === "video" ? "video" : "photo";
   };
 
-  useEffect(() => {
-    return navigation.addListener("blur", () => {
-      // Pause the video when the screen loses focus
-      setIsPreviewPlaying(false);
-    });
-  }, [navigation]);
-
 
   const renderPreview = (uri) => {
     const mediaType = getMediaType(uri);
@@ -213,9 +203,6 @@ const SelectMediaScreen = ({ navigation }) => {
           style={styles.previewPhotoVideo}
           controls
           resizeMode="contain"
-          paused={!isPreviewPlaying} // Control playback using the isPreviewPlaying state
-          onLoadStart={() => setIsPreviewPlaying(true)} // Start playing when the video starts loading
-          onEnd={() => setIsPreviewPlaying(false)} // Stop playing when the video ends
         />
       );
     } else {
@@ -323,14 +310,14 @@ const SelectMediaScreen = ({ navigation }) => {
 
 
         <View style={styles.previewContainer}>
-          {selectedMedias.length === 0 && !lastTouchedPhoto ? (
+          {selectedMedias.length === 0 ? (
             <View style={styles.selectMediaMessageContainer}>
               <Text style={styles.selectMediaText}>SELECT A MEDIA BELOW TO PREVIEW</Text>
               <Icon name="arrow-down" size={20} color="white" style={styles.arrowIcon} />
             </View>
-          ) : lastTouchedPhoto ? (
+          ) : null ? (
             <React.Fragment>
-              {renderPreview(lastTouchedPhoto)}
+              {renderPreview(null)}
             </React.Fragment>
           ) : (
             selectedMedias.length > 0 && (

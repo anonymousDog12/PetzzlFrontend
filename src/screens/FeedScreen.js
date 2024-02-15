@@ -192,12 +192,19 @@ const FeedScreen = ({ route }) => {
             [{ text: "OK" }],
           );
         } else {
-          // Handle other types of errors
           console.error(`HTTP error! status: ${response.status}`);
+          const errorResponse = await response.json();
+          const errorMessage = errorResponse.message || "We're terribly sorry, but something went wrong during your post upload. Please try again. If the problem persists, reach out to us for support.";
+          Alert.alert("Upload Failed", errorMessage, [{ text: "OK" }]);
         }
       }
     } catch (error) {
       console.error("Error creating post:", error);
+      Alert.alert(
+        "Oops, Something Went Wrong",
+        "We're terribly sorry, but something went wrong during your post upload. Please try again. If the problem persists, reach out to us for support.",
+        [{ text: "OK", onPress: () => console.log('OK Pressed') }]
+      );
     } finally {
       setIsUploading(false);
     }
