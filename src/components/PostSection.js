@@ -19,13 +19,12 @@ const PostSection = ({
                        handlePetProfileClick,
                      }) => {
 
-
   const navigation = useNavigation();
-
   const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
   const [captionHeight, setCaptionHeight] = useState(0);
-
   const [firstImageAspectRatio, setFirstImageAspectRatio] = useState(null);
+  const [videoPlayStates, setVideoPlayStates] = useState(postDetails.media ? postDetails.media.map(() => false) : []);
+
 
   const lineHeight = 18;
   const maxLines = 3;
@@ -35,6 +34,10 @@ const PostSection = ({
 
   const toggleCaptionExpand = () => {
     setIsCaptionExpanded(!isCaptionExpanded);
+  };
+
+  const toggleVideoPlay = (index) => {
+    setVideoPlayStates(videoPlayStates.map((state, idx) => (idx === index ? !state : state)));
   };
 
   const togglePlayPause = () => {
@@ -72,33 +75,30 @@ const PostSection = ({
   };
 
   const renderMediaItem = ({ item, index }) => {
-    const onMediaLoad = (e) => {
-      if (index === 0) {
-        const { width, height } = e.nativeEvent.source;
-        const aspectRatio = height / width;
-        setFirstImageAspectRatio(aspectRatio);
-      }
-    };
-
     const mediaHeight = firstImageAspectRatio
       ? screenWidth * firstImageAspectRatio
       : 200; // Provide a default height if the aspect ratio is not set
 
-
     if (item.media_type === "video") {
-      return (
-        <TouchableOpacity
-          style={{ width: screenWidth, height: mediaHeight }}
-          onPress={togglePlayPause}
-        >
+      return videoPlayStates[index] ? (
+        // Video component
+        <TouchableOpacity style={{ width: screenWidth, height: mediaHeight }} onPress={() => toggleVideoPlay(index)}>
           <Video
             source={{ uri: item.full_size_url }}
             style={styles.mediaStyle}
             resizeMode="contain"
             repeat={true}
-            paused={isPaused}
+            paused={!videoPlayStates[index]}
             onError={(e) => console.log("Video error:", e)}
           />
+        </TouchableOpacity>
+      ) : (
+        // Thumbnail Image component with play icon overlay
+        <TouchableOpacity style={{ width: screenWidth, height: mediaHeight }} onPress={() => toggleVideoPlay(index)}>
+          <Image source={{ uri: item.thumbnail_url }} style={styles.mediaStyle} resizeMode="contain" />
+          <View style={styles.playIconOverlay}>
+            <Ionicons name="play-circle" size={64} color="white" style={styles.playIcon} />
+          </View>
         </TouchableOpacity>
       );
     } else {
@@ -108,7 +108,6 @@ const PostSection = ({
             source={{ uri: item.full_size_url }}
             style={styles.mediaStyle}
             resizeMode="contain"
-            onLoad={onMediaLoad}
             onError={(e) => console.log("Image loading error:", e.nativeEvent.error)}
           />
         </View>
@@ -254,6 +253,23 @@ const styles = StyleSheet.create({
     color: "#0645AD",
     paddingLeft: 10,
   },
+
+
+  playIconOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+
+  playIcon: {
+    opacity: 0.8,
+  },
+
 });
 
 export default PostSection;
