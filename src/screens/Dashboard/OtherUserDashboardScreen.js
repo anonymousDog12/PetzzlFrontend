@@ -2,6 +2,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Alert, FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import SecureStorage from "react-native-secure-storage";
+import Ionicon from "react-native-vector-icons/Ionicons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../../config";
@@ -143,7 +144,13 @@ const OtherUserDashboardScreen = ({ route }) => {
         {item.has_multiple_images && (
           <Ionicons
             name="copy-outline"
-            style={styles.stackIcon}
+            style={styles.coverIcon}
+          />
+        )}
+        {item.post_type === 'video' && (
+          <Ionicon
+            name="film-outline"
+            style={[styles.iconStyle, styles.coverIcon]}
           />
         )}
       </>

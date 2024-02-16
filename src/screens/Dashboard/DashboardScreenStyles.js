@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 
-  stackIcon: {
+  coverIcon: {
     position: "absolute",
     top: 10,
     right: 10,

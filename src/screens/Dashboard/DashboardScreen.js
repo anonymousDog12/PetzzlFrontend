@@ -232,7 +232,13 @@ const DashboardScreen = () => {
         {item.has_multiple_images && (
           <Ionicon
             name="copy-outline"
-            style={styles.stackIcon}
+            style={[styles.iconStyle, styles.coverIcon]}
+          />
+        )}
+        {item.post_type === 'video' && (
+          <Ionicon
+            name="film-outline"
+            style={[styles.iconStyle, styles.coverIcon]}
           />
         )}
       </TouchableOpacity>
