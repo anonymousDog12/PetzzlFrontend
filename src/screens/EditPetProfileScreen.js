@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import SecureStorage from "react-native-secure-storage";
 import Ionicon from "react-native-vector-icons/Ionicons";
@@ -20,6 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../config";
 import SliderModal from "../components/SliderModal";
 import SuccessMessage from "../components/SuccessMessage";
+import { PET_TYPE_DISPLAY } from "../data/AppContants";
 import TemporaryImageCropper from "../imageHandling/TemporaryImageCropper";
 import { setCurrentPetId } from "../redux/actions/petProfile";
 import { CURRENT_PET_ID, SET_NEW_PET_PROFILE, USER_HAS_PETS } from "../redux/types";
@@ -50,6 +52,14 @@ const EditPetProfileScreen = () => {
   const [gender, setGender] = useState(null);
   const [bio, setBio] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
+  const [petType, setPetType] = useState(null);
+
+
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState(Object.entries(PET_TYPE_DISPLAY).map(([key, value]) => ({
+    label: value,
+    value: key,
+  })));
 
   const [tempProfilePic, setTempProfilePic] = useState(null);
 
@@ -71,6 +81,7 @@ const EditPetProfileScreen = () => {
             setGender(data.gender);
             setBio(data.bio);
             setProfilePic(data.profile_pic_regular);
+            setPetType((data.pet_type));
 
             setIsDataLoaded(true);
           }
@@ -117,6 +128,7 @@ const EditPetProfileScreen = () => {
       birthday: birthday,
       gender: gender,
       bio: bio ? bio.trim() : null,
+      pet_type: petType,
     };
 
     const accessToken = await SecureStorage.getItem("access");
@@ -411,6 +423,41 @@ const EditPetProfileScreen = () => {
             </View>
 
             <View style={styles.formRow}>
+              <Text style={styles.fieldLabel}>Pet Type:</Text>
+              <DropDownPicker
+                listMode="MODAL"
+                modalProps={{
+                  animationType: "slide",
+                }}
+                open={open}
+                value={petType}
+                items={items}
+                setOpen={setOpen}
+                setValue={setPetType}
+                setItems={setItems}
+                onChangeValue={(value) => {
+                  setPetType(value);
+                }}
+                containerStyle={styles.petTypeDropdownContainer}
+                style={{
+                  backgroundColor: "#f2f2f2",
+                }}
+                labelStyle={styles.dropDownLabel}
+                modalContentContainerStyle={styles.modalContentContainer}
+                listItemLabelStyle={{
+                  fontSize: 20,
+                }}
+                selectedItemLabelStyle={{
+                  fontWeight: "bold",
+                }}
+                selectedItemContainerStyle={{
+                  backgroundColor: "lightgrey",
+                }}
+              />
+            </View>
+
+
+            <View style={styles.formRow}>
               <Text style={styles.fieldLabel}>Bio:</Text>
               <View style={styles.bioInputContainer}>
                 <TextInput
@@ -612,6 +659,18 @@ const styles = StyleSheet.create({
     color: "red",
   },
 
+  petTypeDropdownContainer: {
+    flex: 1,
+    marginRight: 10,
+  },
+
+  dropDownLabel: {
+    fontSize: 16,
+  },
+
+  modalContentContainer: {
+    backgroundColor: "#f2f2f2",
+  },
 
 });
 

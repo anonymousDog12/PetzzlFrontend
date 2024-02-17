@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
   },
   petName: {
     fontSize: 16,
+    paddingTop: 5,
   },
   petType: {
     fontSize: 15,
