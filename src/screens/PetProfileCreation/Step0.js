@@ -5,9 +5,9 @@ import PetProfileCreationStyles from "./PetProfileCreationStyles";
 const Step0 = ({ navigation }) => {
   return (
     <View style={PetProfileCreationStyles.container}>
-      <Text style={PetProfileCreationStyles.mainTitle}>Welcome to DogDomain! </Text>
+      <Text style={PetProfileCreationStyles.mainTitle}>Welcome to the Petzzl Family! </Text>
       <Text style={PetProfileCreationStyles.subTitle}>
-        Create your dog's profile and connect with fellow dog parents
+        Create your pet's profile and connect with fellow animal lovers
       </Text>
       <TouchableOpacity
         style={PetProfileCreationStyles.button}

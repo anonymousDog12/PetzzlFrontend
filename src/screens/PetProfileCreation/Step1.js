@@ -50,7 +50,7 @@ const Step1 = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      <Text style={PetProfileCreationStyles.mainTitleReverse}>What's your dog's name?</Text>
+      <Text style={PetProfileCreationStyles.mainTitleReverse}>What's your pet's name?</Text>
       <TextInput
         style={PetProfileCreationStyles.input}
         onChangeText={text => {

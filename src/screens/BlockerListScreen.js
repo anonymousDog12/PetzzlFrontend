@@ -14,8 +14,8 @@ import SecureStorage from "react-native-secure-storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch } from "react-redux";
 import { CONFIG } from "../../config";
-import { DEFAULT_DOG_PROFILE_PIC } from "../data/AppContants";
 import { fetchFeed } from "../redux/actions/feed";
+import { getProfilePic } from "../utils/common";
 
 
 const BlockerListScreen = ({ navigation }) => {
@@ -135,7 +135,8 @@ const BlockerListScreen = ({ navigation }) => {
 
   const renderBlockedProfile = ({ item }) => (
     <View style={styles.blockedItem}>
-      <Image source={{ uri: item.profile_pic_thumbnail_small || DEFAULT_DOG_PROFILE_PIC }}
+      <Image source={{ uri: getProfilePic(item.profile_pic_thumbnail_small, item.pet_type) }}
+
              style={styles.profilePic} />
       <View style={styles.profileInfo}>
         <Text style={styles.petIdBold}>{item.pet_id}</Text>
