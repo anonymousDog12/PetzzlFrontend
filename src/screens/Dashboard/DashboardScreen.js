@@ -13,7 +13,7 @@ import ImageCropper from "../../imageHandling/ImageCropper";
 import { fetchPosts } from "../../redux/actions/dashboard";
 import { setCurrentPetId, setNewPetProfile } from "../../redux/actions/petProfile";
 import { RESET_DASHBOARD_POSTS } from "../../redux/types";
-import { getGenderText } from "../../utils/common";
+import { capitalizeFirstLetter, getGenderText } from "../../utils/common";
 import styles from "./DashboardScreenStyles";
 
 
@@ -329,7 +329,10 @@ const DashboardScreen = () => {
               <View style={styles.petInfo}>
                 <Text style={styles.petId}>@{currentPetProfile.pet_id}</Text>
                 <Text style={styles.petName}>{currentPetProfile.pet_name}</Text>
-                <Text style={styles.petName}>{getGenderText(currentPetProfile.gender)}</Text>
+                <Text style={styles.petName}>
+                  {currentPetProfile.gender ? `${getGenderText(currentPetProfile.gender)}, ` : ""}
+                  {capitalizeFirstLetter(currentPetProfile.pet_type)}
+                </Text>
               </View>
             </View>
           )}

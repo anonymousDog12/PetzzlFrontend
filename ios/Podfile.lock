@@ -391,7 +391,7 @@ PODS:
   - react-native-video (5.2.1):
     - React-Core
     - react-native-video/Video (= 5.2.1)
-  - react-native-video-trim (1.0.13):
+  - react-native-video-trim (1.0.14):
     - ffmpeg-kit-ios-min (~> 6.0)
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -822,7 +822,7 @@ SPEC CHECKSUMS:
   react-native-image-resizer: d9fb629a867335bdc13230ac2a58702bb8c8828f
   react-native-safe-area-context: 238cd8b619e05cb904ccad97ef42e84d1b5ae6ec
   react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
-  react-native-video-trim: 42d3a1f04ff8a0bd4c5c64ac56866651f601f9fd
+  react-native-video-trim: fb7e3ff499f053a14776ffa454785db4dcdcc366
   React-NativeModulesApple: 02e35e9a51e10c6422f04f5e4076a7c02243fff2
   React-perflogger: e3596db7e753f51766bceadc061936ef1472edc3
   React-RCTActionSheet: 17ab132c748b4471012abbcdcf5befe860660485

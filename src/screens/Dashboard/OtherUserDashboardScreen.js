@@ -9,7 +9,7 @@ import { CONFIG } from "../../../config";
 import EmptyDashboardPostList from "../../components/EmptyDashboardPostList";
 import SliderModal from "../../components/SliderModal";
 import { fetchFeed } from "../../redux/actions/feed";
-import { getGenderText, getProfilePic } from "../../utils/common";
+import { capitalizeFirstLetter, getGenderText, getProfilePic } from "../../utils/common";
 import styles from "./DashboardScreenStyles";
 
 
@@ -195,8 +195,10 @@ const OtherUserDashboardScreen = ({ route }) => {
           <View style={styles.petInfo}>
             <Text style={styles.petId}>@{otherPetProfile.pet_id}</Text>
             <Text style={styles.petName}>{otherPetProfile.pet_name}</Text>
-            <Text style={styles.petName}>{getGenderText(otherPetProfile.gender)}</Text>
-
+            <Text style={styles.petName}>
+              {otherPetProfile.gender ? `${getGenderText(currentPetProfile.gender)}, ` : ''}
+              {capitalizeFirstLetter(otherPetProfile.pet_type)}
+            </Text>
           </View>
         </View>
       )}
