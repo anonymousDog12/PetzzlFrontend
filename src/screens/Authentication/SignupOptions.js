@@ -43,7 +43,7 @@ export default function SignUpOptionsScreen({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
-        <Text style={authStyles.welcomeMessage}>Welcome to DogDomain! 🐾</Text>
+        <Text style={authStyles.welcomeMessage}>Welcome to Petzzl! 🐾</Text>
 
         <TouchableOpacity
           onPress={() => navigation.navigate("SignUp")}

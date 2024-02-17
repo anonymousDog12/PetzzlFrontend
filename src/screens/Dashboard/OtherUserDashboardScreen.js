@@ -196,7 +196,7 @@ const OtherUserDashboardScreen = ({ route }) => {
             <Text style={styles.petId}>@{otherPetProfile.pet_id}</Text>
             <Text style={styles.petName}>{otherPetProfile.pet_name}</Text>
             <Text style={styles.petName}>
-              {otherPetProfile.gender ? `${getGenderText(currentPetProfile.gender)}, ` : ''}
+              {otherPetProfile.gender ? `${getGenderText(otherPetProfile.gender)}, ` : ''}
               {capitalizeFirstLetter(otherPetProfile.pet_type)}
             </Text>
           </View>
