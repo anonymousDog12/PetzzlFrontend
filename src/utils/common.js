@@ -1,3 +1,6 @@
+import { DEFAULT_PROFILE_PICS, PET_TYPES } from "../data/AppContants";
+
+
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
@@ -15,10 +18,16 @@ export const validatePetName = (name) => {
   return { validName: trimmedName };
 };
 
+
 export const getGenderText = (gender) => {
   switch(gender) {
     case 'f': return 'Girl';
     case 'm': return 'Boy';
     default: return '';
   }
+};
+
+
+export const getProfilePic = (profilePic, petType) => {
+  return profilePic || DEFAULT_PROFILE_PICS[petType] || DEFAULT_PROFILE_PICS[PET_TYPES.OTHER];
 };

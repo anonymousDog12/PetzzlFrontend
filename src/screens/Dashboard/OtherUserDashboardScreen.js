@@ -8,9 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../../config";
 import EmptyDashboardPostList from "../../components/EmptyDashboardPostList";
 import SliderModal from "../../components/SliderModal";
-import { DEFAULT_DOG_PROFILE_PIC } from "../../data/AppContants";
 import { fetchFeed } from "../../redux/actions/feed";
-import { getGenderText } from "../../utils/common";
+import { getGenderText, getProfilePic } from "../../utils/common";
 import styles from "./DashboardScreenStyles";
 
 
@@ -147,7 +146,7 @@ const OtherUserDashboardScreen = ({ route }) => {
             style={styles.coverIcon}
           />
         )}
-        {item.post_type === 'video' && (
+        {item.post_type === "video" && (
           <Ionicon
             name="film-outline"
             style={[styles.iconStyle, styles.coverIcon]}
@@ -176,7 +175,7 @@ const OtherUserDashboardScreen = ({ route }) => {
             postId: item.post_id,
             petId: otherPetProfile.pet_id,
             petName: otherPetProfile.pet_name,
-            petProfilePic: otherPetProfile.profile_pic_thumbnail_small || DEFAULT_DOG_PROFILE_PIC,
+            petProfilePic: getProfilePic(otherPetProfile.profile_pic_thumbnail_small, otherPetProfile.pet_type),
           })}
         >
           {postContent}
@@ -190,7 +189,7 @@ const OtherUserDashboardScreen = ({ route }) => {
       {otherPetProfile && (
         <View style={styles.petProfile}>
           <Image
-            source={{ uri: otherPetProfile.profile_pic_regular || DEFAULT_DOG_PROFILE_PIC }}
+            source={{ uri: getProfilePic(otherPetProfile.profile_pic_regular, otherPetProfile.pet_type) }}
             style={styles.profilePic}
           />
           <View style={styles.petInfo}>

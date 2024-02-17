@@ -6,9 +6,9 @@ import { useSelector } from "react-redux";
 import { CONFIG } from "../../config";
 import PostSection from "../components/PostSection";
 import SliderModal from "../components/SliderModal";
-import { DEFAULT_DOG_PROFILE_PIC } from "../data/AppContants";
 import { useDeletePost } from "../hooks/useDeletePost";
 import { usePostLike } from "../hooks/usePostLike";
+import { getProfilePic } from "../utils/common";
 
 
 const PostDetailScreen = ({ route }) => {
@@ -75,7 +75,7 @@ const PostDetailScreen = ({ route }) => {
         <PostSection
           petProfile={{
             ...petProfile,
-            profile_pic_thumbnail_small: petProfile.profile_pic_thumbnail_small || DEFAULT_DOG_PROFILE_PIC,
+            profile_pic_thumbnail_small: getProfilePic(petProfile.profile_pic_thumbnail_small, petProfile.pet_type),
           }}
           postDetails={postDetails}
           onEllipsisPress={() => setModalVisible(!modalVisible)}

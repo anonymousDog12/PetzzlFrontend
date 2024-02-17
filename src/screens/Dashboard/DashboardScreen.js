@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CONFIG } from "../../../config";
 import EmptyDashboardPostList from "../../components/EmptyDashboardPostList";
 import SliderModal from "../../components/SliderModal";
-import { DEFAULT_DOG_PROFILE_PIC } from "../../data/AppContants";
+import { DEFAULT_PROFILE_PICS } from "../../data/AppContants";
 import ImageCropper from "../../imageHandling/ImageCropper";
 import { fetchPosts } from "../../redux/actions/dashboard";
 import { setCurrentPetId, setNewPetProfile } from "../../redux/actions/petProfile";
@@ -235,7 +235,7 @@ const DashboardScreen = () => {
             style={[styles.iconStyle, styles.coverIcon]}
           />
         )}
-        {item.post_type === 'video' && (
+        {item.post_type === "video" && (
           <Ionicon
             name="film-outline"
             style={[styles.iconStyle, styles.coverIcon]}
@@ -295,7 +295,7 @@ const DashboardScreen = () => {
                 onPress={() => handleSelectPetProfile(pet.pet_id, pet.pet_name)}
               >
                 <Image
-                  source={{ uri: pet.profile_pic_regular || DEFAULT_DOG_PROFILE_PIC }}
+                  source={{ uri: pet.profile_pic_regular || DEFAULT_PROFILE_PICS[pet.pet_type] }}
                   style={styles.dropdownProfilePic}
                 />
                 <Text style={currentPetId === pet.pet_id ? styles.selectedPetName : styles.unSelectedPetName}>

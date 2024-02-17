@@ -4,7 +4,7 @@ import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react
 import SecureStorage from "react-native-secure-storage";
 import { useSelector } from "react-redux";
 import { CONFIG } from "../../config";
-import { DEFAULT_DOG_PROFILE_PIC } from "../data/AppContants";
+import { getProfilePic } from "../utils/common";
 
 
 const LikerListScreen = ({ route }) => {
@@ -47,7 +47,7 @@ const LikerListScreen = ({ route }) => {
 
 
   const renderLiker = ({ item }) => {
-    const profilePic = item.pet_profile__profile_pic_thumbnail_small || DEFAULT_DOG_PROFILE_PIC;
+    const profilePic = getProfilePic(item.pet_profile__profile_pic_thumbnail_small, item.pet_profile__pet_type);
 
     return (
       <TouchableOpacity

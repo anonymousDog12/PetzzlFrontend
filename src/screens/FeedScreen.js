@@ -10,9 +10,10 @@ import PostSection from "../components/PostSection";
 import SliderModal from "../components/SliderModal";
 import SliderModalStyles from "../components/SliderModalStyles";
 import SuccessMessage from "../components/SuccessMessage";
-import { DEFAULT_DOG_PROFILE_PIC, REPORT_REASONS } from "../data/AppContants";
+import { REPORT_REASONS } from "../data/AppContants";
 import { deletePostSuccess } from "../redux/actions/dashboard";
 import { addPost, fetchFeed } from "../redux/actions/feed";
+import { getProfilePic } from "../utils/common";
 
 
 const FeedScreen = ({ route }) => {
@@ -203,7 +204,7 @@ const FeedScreen = ({ route }) => {
       Alert.alert(
         "Oops, Something Went Wrong",
         "We're terribly sorry, but something went wrong during your post upload. Please try again. If the problem persists, reach out to us for support.",
-        [{ text: "OK", onPress: () => console.log('OK Pressed') }]
+        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
       );
     } finally {
       setIsUploading(false);
@@ -434,7 +435,7 @@ const FeedScreen = ({ route }) => {
   const renderPost = (post) => {
     const postProps = {
       petProfile: {
-        profile_pic_thumbnail_small: post.pet_profile_pic || DEFAULT_DOG_PROFILE_PIC,
+        profile_pic_thumbnail_small: getProfilePic(post.pet_profile_pic, post.pet_type),
         pet_name: post.pet_id,
       },
       postDetails: {
