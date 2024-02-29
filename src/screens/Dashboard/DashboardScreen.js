@@ -13,7 +13,7 @@ import ImageCropper from "../../imageHandling/ImageCropper";
 import { fetchPosts } from "../../redux/actions/dashboard";
 import { setCurrentPetId, setNewPetProfile } from "../../redux/actions/petProfile";
 import { RESET_DASHBOARD_POSTS } from "../../redux/types";
-import { capitalizeFirstLetter, getGenderText } from "../../utils/common";
+import { capitalizeFirstLetter, getGenderText, getProfilePic } from "../../utils/common";
 import styles from "./DashboardScreenStyles";
 
 
@@ -57,11 +57,11 @@ const DashboardScreen = () => {
   }, [currentPetId, dispatch]);
 
   // Function to handle pet profile selection
-  const handleSelectPetProfile = async (petId, petName) => {
+  const handleSelectPetProfile = async (petId, petName, petProfilePic) => {
     try {
       await AsyncStorage.setItem("selectedPetId", petId);
       dispatch({ type: RESET_DASHBOARD_POSTS });
-      dispatch(setCurrentPetId(petId));
+      dispatch(setCurrentPetId(petId, petProfilePic));
       setSelectedPetName(petName);
       fetchPetProfile(petId);
       setDropdownVisible(false);
@@ -77,7 +77,6 @@ const DashboardScreen = () => {
       try {
         const storedPetId = await AsyncStorage.getItem("selectedPetId");
         if (storedPetId) {
-          dispatch(setCurrentPetId(storedPetId));
           fetchPetProfile(storedPetId);
         }
       } catch (error) {
@@ -173,11 +172,15 @@ const DashboardScreen = () => {
       const cacheBustedImageUrl = data.profile_pic_thumbnail_small
         ? `${data.profile_pic_thumbnail_small}?cb=${new Date().getTime()}`
         : null;
+
+      // Set current pet profile in local state
       setCurrentPetProfile({
         ...data,
         profile_pic_thumbnail_small: cacheBustedImageUrl,
       });
       setSelectedPetName(data.pet_name);
+
+      dispatch(setCurrentPetId(petId, getProfilePic(cacheBustedImageUrl, data.pet_type)));
     } catch (error) {
       console.error("Failed to fetch individual pet profile", error);
     } finally {
@@ -187,7 +190,9 @@ const DashboardScreen = () => {
 
 
   useEffect(() => {
-    fetchPetProfile();
+    if (currentPetId) {
+      fetchPetProfile(currentPetId);
+    }
   }, [currentPetId]);
 
 
@@ -202,7 +207,6 @@ const DashboardScreen = () => {
           if (data.length > 0) {
             const storedPetId = await AsyncStorage.getItem("selectedPetId");
             const initialPetId = storedPetId || data[0].pet_id;
-            dispatch(setCurrentPetId(initialPetId));
             fetchPetProfile(initialPetId);
           }
         } catch (error) {
@@ -292,7 +296,7 @@ const DashboardScreen = () => {
               <TouchableOpacity
                 key={index}
                 style={styles.dropdownItem}
-                onPress={() => handleSelectPetProfile(pet.pet_id, pet.pet_name)}
+                onPress={() => handleSelectPetProfile(pet.pet_id, pet.pet_name, getProfilePic(pet.profile_pic_thumbnail_small, pet.pet_type))}
               >
                 <Image
                   source={{ uri: pet.profile_pic_regular || DEFAULT_PROFILE_PICS[pet.pet_type] }}

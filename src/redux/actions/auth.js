@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import SecureStorage from "react-native-secure-storage";
 import { CONFIG } from "../../../config";
+import { getProfilePic } from "../../utils/common";
 
 import {
   AUTHENTICATED_FAIL,
@@ -114,19 +115,21 @@ export const load_user = () => async dispatch => {
 
       try {
         const petRes = await axios.get(`${CONFIG.BACKEND_URL}/api/petprofiles/pet_profiles/user/${res.data.id}/`, config);
-        // Converting to map for easier lookups
-        const petIdMap = petRes.data.reduce((map, petProfile) => {
-          map[petProfile.pet_id] = true;
-          return map;
-        }, {});
-        dispatch(setUserPetIds(petIdMap));
+        const petProfiles = petRes.data.map(petProfile => ({
+          pet_id: petProfile.pet_id,
+          profile_pic_thumbnail_small: getProfilePic(petProfile.profile_pic_thumbnail_small, petProfile.pet_type),
+        }));
 
-        const petIds = Object.keys(petIdMap); // Get pet IDs from the map
-        if (petIds.length > 0) {
-          dispatch(setCurrentPetId(petIds[0]));
+        const petIds = petProfiles.map(profile => profile.pet_id);
+        dispatch(setUserPetIds(petIds));
+
+        if (petProfiles.length > 0) {
+          const currentPet = petProfiles[0];
+          dispatch(setCurrentPetId(currentPet.pet_id, currentPet.profile_pic_thumbnail_small));
         }
-        dispatch(setHasPets(petIds.length > 0));
-        dispatch(setNewPetProfile(petIds.length === 0));
+
+        dispatch(setHasPets(petProfiles.length > 0));
+        dispatch(setNewPetProfile(petProfiles.length === 0));
       } catch (error) {
         console.error("Error fetching user's pet profiles", error);
       }

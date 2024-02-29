@@ -1,9 +1,36 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, Modal, PanResponder, TouchableOpacity, View } from 'react-native';
-import styles from './SliderModalStyles';
+import { Animated, Keyboard, Modal, PanResponder, TouchableOpacity, View } from "react-native";
+import styles from "./SliderModalStyles";
+
+
+// TODO: consider making the animation smoother when involving keyboard
 
 const SliderModal = ({ dropdownVisible, setDropdownVisible, children }) => {
   const modalY = useRef(new Animated.Value(0)).current;
+
+  // Adjust modal position based on keyboard visibility
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", (e) => {
+      Animated.timing(modalY, {
+        toValue: -e.endCoordinates.height, // Move modal up by the height of the keyboard
+        duration: 0,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+      Animated.timing(modalY, {
+        toValue: 0,
+        duration: 0,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (!dropdownVisible) {

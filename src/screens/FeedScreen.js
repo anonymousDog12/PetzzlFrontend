@@ -204,7 +204,7 @@ const FeedScreen = ({ route }) => {
       Alert.alert(
         "Oops, Something Went Wrong",
         "We're terribly sorry, but something went wrong during your post upload. Please try again. If the problem persists, reach out to us for support.",
-        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+        [{ text: "OK" }],
       );
     } finally {
       setIsUploading(false);
@@ -436,7 +436,7 @@ const FeedScreen = ({ route }) => {
     const postProps = {
       petProfile: {
         profile_pic_thumbnail_small: getProfilePic(post.pet_profile_pic, post.pet_type),
-        pet_name: post.pet_id,
+        pet_id: post.pet_id,
       },
       postDetails: {
         posted_date: post.posted_date,

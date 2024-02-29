@@ -39,7 +39,7 @@ const ImageCropper = {
             },
           });
 
-          console.log("Upload response:", uploadResponse.data);
+          // console.log("Upload response:", uploadResponse.data);
 
           if (uploadResponse.status === 200) {
             onSuccess();

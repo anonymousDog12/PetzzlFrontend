@@ -25,10 +25,10 @@ export const setHasPetsAndNavigate = (hasPets, navigation, isNewPetProfile = fal
 };
 
 
-export const setCurrentPetId = (petId) => {
+export const setCurrentPetId = (petId, profilePicThumbnailSmall = null) => {
   return {
     type: CURRENT_PET_ID,
-    payload: petId,
+    payload: { petId, profilePicThumbnailSmall },
   };
 };
 
