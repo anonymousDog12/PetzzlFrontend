@@ -1,15 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import {
-  Dimensions,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Video from "react-native-video";
@@ -164,55 +155,50 @@ const PostSection = ({
 
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
-    >
-      <View style={styles.postSectionContainer}>
-        <View style={styles.profileHeader}>
-          <TouchableOpacity onPress={handlePetProfileClick} disabled={!handlePetProfileClick}>
-            <Image
-              source={{ uri: petProfile.profile_pic_thumbnail_small }}
-              style={styles.profilePic}
-            />
-          </TouchableOpacity>
-          <View style={styles.petInfo}>
-            <Text style={styles.username}>{petProfile.pet_id}</Text>
-            <Text style={styles.postDateText}>{postDetails.posted_date}</Text>
-          </View>
-          {showEllipsis && (
-            <TouchableOpacity style={styles.menuButton} onPress={onEllipsisPress}>
-              <Ionicons name="ellipsis-horizontal" size={20} color="black" />
-            </TouchableOpacity>
-          )}
-        </View>
-        <View style={styles.swiperContainer}>
-          <SwiperFlatList
-            index={0}
-            showPagination={postDetails.media && postDetails.media.length > 1}
-            paginationStyle={styles.paginationStyle}
-            paginationStyleItem={styles.paginationStyleItem}
-            data={postDetails.media}
-            renderItem={renderMediaItem}
+    <View style={styles.postSectionContainer}>
+      <View style={styles.profileHeader}>
+        <TouchableOpacity onPress={handlePetProfileClick} disabled={!handlePetProfileClick}>
+          <Image
+            source={{ uri: petProfile.profile_pic_thumbnail_small }}
+            style={styles.profilePic}
           />
+        </TouchableOpacity>
+        <View style={styles.petInfo}>
+          <Text style={styles.username}>{petProfile.pet_id}</Text>
+          <Text style={styles.postDateText}>{postDetails.posted_date}</Text>
         </View>
-        {renderLikeIcon()}
-        <View style={styles.captionTextContainer}>
-          {isCaptionNotEmptyOrSpaces(postDetails.caption) && (
-            <>
-              <Text style={styles.captionText}>
-                {/* Bold pet id and concatenate with the processed caption */}
-                <Text style={styles.boldText}>{petProfile.pet_id}</Text>
-                {` ${trimmedCaption}`}
-                {!isCaptionExpanded && shouldShowMore && (
-                  <Text style={styles.moreText} onPress={toggleCaptionExpand}>...more</Text>
-                )}
-              </Text>
-            </>
-          )}
-        </View>
+        {showEllipsis && (
+          <TouchableOpacity style={styles.menuButton} onPress={onEllipsisPress}>
+            <Ionicons name="ellipsis-horizontal" size={20} color="black" />
+          </TouchableOpacity>
+        )}
       </View>
-    </KeyboardAvoidingView>
+      <View style={styles.swiperContainer}>
+        <SwiperFlatList
+          index={0}
+          showPagination={postDetails.media && postDetails.media.length > 1}
+          paginationStyle={styles.paginationStyle}
+          paginationStyleItem={styles.paginationStyleItem}
+          data={postDetails.media}
+          renderItem={renderMediaItem}
+        />
+      </View>
+      {renderLikeIcon()}
+      <View style={styles.captionTextContainer}>
+        {isCaptionNotEmptyOrSpaces(postDetails.caption) && (
+          <>
+            <Text style={styles.captionText}>
+              {/* Bold pet id and concatenate with the processed caption */}
+              <Text style={styles.boldText}>{petProfile.pet_id}</Text>
+              {` ${trimmedCaption}`}
+              {!isCaptionExpanded && shouldShowMore && (
+                <Text style={styles.moreText} onPress={toggleCaptionExpand}>...more</Text>
+              )}
+            </Text>
+          </>
+        )}
+      </View>
+    </View>
   );
 };
 
