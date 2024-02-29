@@ -188,7 +188,7 @@ const OtherUserPostDetailScreen = ({ route }) => {
     <SafeAreaView style={styles.fullScreenContainer}>
       <ScrollView style={styles.scrollViewStyle}>
         <PostSection
-          petProfile={{ profile_pic_thumbnail_small: petProfilePic, pet_name: petId }}
+          petProfile={{ profile_pic_thumbnail_small: petProfilePic, pet_id: petId }}
           postDetails={postDetails}
           showEllipsis={true}
           onEllipsisPress={() => setModalVisible(!modalVisible)}

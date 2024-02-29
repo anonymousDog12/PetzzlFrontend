@@ -1,12 +1,24 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Video from "react-native-video";
 
 
 const screenWidth = Dimensions.get("window").width;
+
+
+// TODO: Further Cleanup
 
 const PostSection = ({
                        petProfile,
@@ -21,19 +33,30 @@ const PostSection = ({
 
   const navigation = useNavigation();
   const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
-  const [captionHeight, setCaptionHeight] = useState(0);
   const [firstImageAspectRatio, setFirstImageAspectRatio] = useState(null);
   const [videoPlayStates, setVideoPlayStates] = useState(postDetails.media ? postDetails.media.map(() => false) : []);
-
-
-  const lineHeight = 18;
-  const maxLines = 3;
-  const maxHeight = lineHeight * maxLines;
-
 
   const toggleCaptionExpand = () => {
     setIsCaptionExpanded(!isCaptionExpanded);
   };
+
+  const processCaption = (caption = "", charLimit = 100) => {  // Default caption to an empty string if undefined
+    const shouldShowMore = caption.length > charLimit || caption.includes("\n");
+    let trimmedCaption = caption;
+
+    if (!isCaptionExpanded) {
+      trimmedCaption = caption.slice(0, charLimit);
+      const newlineIndex = trimmedCaption.indexOf("\n");
+      if (newlineIndex !== -1) {
+        trimmedCaption = trimmedCaption.slice(0, newlineIndex);
+      }
+    }
+
+    return { trimmedCaption, shouldShowMore };
+  };
+
+
+  const { trimmedCaption, shouldShowMore } = processCaption(postDetails.caption);
 
   const toggleVideoPlay = (index) => {
     setVideoPlayStates(videoPlayStates.map((state, idx) => (idx === index ? !state : state)));
@@ -44,35 +67,47 @@ const PostSection = ({
   };
 
   const renderLikeIcon = () => {
-    const iconName = isLiked ? "heart" : "heart-outline";
-    const iconColor = isLiked ? "red" : "black";
+    const heartIconName = isLiked ? "heart" : "heart-outline";
+    const heartIconColor = isLiked ? "red" : "black";
+    const commentIconName = "chatbox-ellipses-outline";
+
+    const onCommentIconPress = () => {
+      navigation.navigate("CommentScreen", { postId: postDetails.post_id });
+    };
+
 
     let likeTextComponent;
     if (likeCount > 0) {
       likeTextComponent = (
         <TouchableOpacity onPress={navigateToLikerList}>
-          <Text style={[styles.likeCountText, styles.boldText]}>
+          <Text style={styles.boldText}>
             {likeCount === 1 ? "1 like" : `${likeCount} likes`}
           </Text>
         </TouchableOpacity>
       );
     } else {
-      likeTextComponent = <Text style={styles.likeCountText}>Be the first to like this post</Text>;
+      likeTextComponent = <Text>Be the first to like this post</Text>;
     }
 
     return (
       <View style={styles.likeIconContainer}>
-        <Ionicons name={iconName} size={24} color={iconColor} onPress={handleLikePress} />
-        {likeTextComponent}
+        <View style={styles.reactionsContainer}>
+          <Ionicons name={heartIconName} size={24} color={heartIconColor} onPress={handleLikePress} />
+          <Ionicons name={commentIconName} size={24} color="black" style={styles.commentIcon}
+                    onPress={onCommentIconPress} />
+        </View>
+        <View style={{ alignItems: "flex-start", marginTop: 4 }}>
+          {likeTextComponent}
+        </View>
       </View>
     );
   };
+
 
   useEffect(() => {
     // Update videoPlayStates to match the current number of media items
     setVideoPlayStates(postDetails.media ? postDetails.media.map(() => false) : []);
   }, [postDetails.media]);
-
 
   const renderMediaItem = ({ item, index }) => {
     const onMediaLoad = (e) => {
@@ -125,55 +160,59 @@ const PostSection = ({
     }
   };
 
+  const isCaptionNotEmptyOrSpaces = (caption) => /[^\s]/.test(caption);
+
 
   return (
-    <View style={styles.postSectionContainer}>
-      <View style={styles.profileHeader}>
-        <TouchableOpacity onPress={handlePetProfileClick} disabled={!handlePetProfileClick}>
-          <Image
-            source={{ uri: petProfile.profile_pic_thumbnail_small }}
-            style={styles.profilePic}
-          />
-        </TouchableOpacity>
-        <View style={styles.petInfo}>
-          <Text style={styles.username}>{petProfile.pet_name}</Text>
-          <Text style={styles.postDateText}>{postDetails.posted_date}</Text>
-        </View>
-        {showEllipsis && (
-          <TouchableOpacity style={styles.menuButton} onPress={onEllipsisPress}>
-            <Ionicons name="ellipsis-horizontal" size={20} color="black" />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <View style={styles.postSectionContainer}>
+        <View style={styles.profileHeader}>
+          <TouchableOpacity onPress={handlePetProfileClick} disabled={!handlePetProfileClick}>
+            <Image
+              source={{ uri: petProfile.profile_pic_thumbnail_small }}
+              style={styles.profilePic}
+            />
           </TouchableOpacity>
-        )}
+          <View style={styles.petInfo}>
+            <Text style={styles.username}>{petProfile.pet_id}</Text>
+            <Text style={styles.postDateText}>{postDetails.posted_date}</Text>
+          </View>
+          {showEllipsis && (
+            <TouchableOpacity style={styles.menuButton} onPress={onEllipsisPress}>
+              <Ionicons name="ellipsis-horizontal" size={20} color="black" />
+            </TouchableOpacity>
+          )}
+        </View>
+        <View style={styles.swiperContainer}>
+          <SwiperFlatList
+            index={0}
+            showPagination={postDetails.media && postDetails.media.length > 1}
+            paginationStyle={styles.paginationStyle}
+            paginationStyleItem={styles.paginationStyleItem}
+            data={postDetails.media}
+            renderItem={renderMediaItem}
+          />
+        </View>
+        {renderLikeIcon()}
+        <View style={styles.captionTextContainer}>
+          {isCaptionNotEmptyOrSpaces(postDetails.caption) && (
+            <>
+              <Text style={styles.captionText}>
+                {/* Bold pet id and concatenate with the processed caption */}
+                <Text style={styles.boldText}>{petProfile.pet_id}</Text>
+                {` ${trimmedCaption}`}
+                {!isCaptionExpanded && shouldShowMore && (
+                  <Text style={styles.moreText} onPress={toggleCaptionExpand}>...more</Text>
+                )}
+              </Text>
+            </>
+          )}
+        </View>
       </View>
-      <View style={styles.swiperContainer}>
-        <SwiperFlatList
-          index={0}
-          showPagination={postDetails.media && postDetails.media.length > 1}
-          paginationStyle={styles.paginationStyle}
-          paginationStyleItem={styles.paginationStyleItem}
-          data={postDetails.media}
-          renderItem={renderMediaItem}
-        />
-      </View>
-      {renderLikeIcon()}
-      <Text
-        numberOfLines={isCaptionExpanded ? undefined : maxLines}
-        style={styles.captionText}
-        onLayout={(event) => {
-          const { height } = event.nativeEvent.layout;
-          setCaptionHeight(height);
-        }}
-      >
-        {postDetails.caption}
-      </Text>
-      {!isCaptionExpanded && captionHeight > maxHeight && (
-        <TouchableOpacity onPress={toggleCaptionExpand}>
-          <Text style={styles.moreText}>
-            ...more
-          </Text>
-        </TouchableOpacity>
-      )}
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -243,18 +282,29 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 10,
   },
+  captionTextContainer: {
+    minHeight: 20,
+  },
 
   // Post Reactions
-  likeCountText: {
-    marginLeft: 5,
-  },
   likeIconContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "column",
+    alignItems: "flex-start",
     justifyContent: "flex-start",
     marginTop: 5,
     marginLeft: 10,
   },
+
+  reactionsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 5,
+  },
+
+  commentIcon: {
+    marginLeft: 10,
+  },
+
   boldText: {
     fontWeight: "bold",
   },
@@ -280,6 +330,27 @@ const styles = StyleSheet.create({
   playIcon: {
     opacity: 0.8,
   },
+
+
+  modalContentContainer: {
+    flexDirection: "row", // Ensures the Image and TextInput are side-by-side
+    alignItems: "center", // Aligns items vertically center
+    paddingVertical: 10,
+  },
+  commentInput: {
+    flex: 1,
+    marginLeft: 5,
+    padding: 8,
+    borderWidth: 0.2,
+    borderRadius: 25,
+  },
+
+
+  commentProfilePicStyle: {
+    width: 40,
+    height: 40,
+  },
+
 
 });
 

@@ -6,6 +6,7 @@ import EmailResetPasswordScreen from "../screens/Authentication/EmailResetPasswo
 import EmailSignUpScreen from "../screens/Authentication/EmailSignUpScreen";
 import SignUpOptionsScreen from "../screens/Authentication/SignupOptions";
 import BlockerListScreen from "../screens/BlockerListScreen";
+import CommentScreen from "../screens/CommentScreen";
 import OtherUserDashboardScreen from "../screens/Dashboard/OtherUserDashboardScreen";
 import EditPetProfileScreen from "../screens/EditPetProfileScreen";
 import LikerListScreen from "../screens/LikerListScreen";
@@ -195,6 +196,14 @@ const RootNavigator = () => {
                                   headerBackTitle: "Back",
                                   title: "Likes",
                                   cardStyleInterpolator: rightToLeftInterpolator,
+                                }} />
+              <RootStack.Screen name="CommentScreen"
+                                component={CommentScreen}
+                                options={{
+                                  headerShown: true,
+                                  headerBackTitle: "Back",
+                                  title: "Comments",
+                                  cardStyleInterpolator: rightToLeftInterpolator, // TODO: try making it slide from bottom
                                 }} />
             </>
           )}
