@@ -15,6 +15,7 @@ import { deletePostSuccess } from "../redux/actions/dashboard";
 import { addPost, fetchFeed } from "../redux/actions/feed";
 import { getProfilePic } from "../utils/common";
 
+// TODO: consider integrating like counts in fetch feed to make it more efficient
 
 const FeedScreen = ({ route }) => {
   const [isUploading, setIsUploading] = useState(false);
@@ -443,6 +444,8 @@ const FeedScreen = ({ route }) => {
         media: post.media,
         caption: post.caption,
         post_id: post.post_id,
+        latest_comment: post.latest_comment, // Include the latest comment data
+        comment_count: post.comment_count, // Include the comment count
       },
       onEllipsisPress: () => handleEllipsisOptionClick(post.pet_id, post.post_id),
       handlePetProfileClick: () => handlePetProfileClick(post.pet_id),
@@ -451,6 +454,7 @@ const FeedScreen = ({ route }) => {
       likeCount: likeCounts[post.post_id],
       handleLikePress: () => handleToggleLike(post.post_id, currentPetId),
     };
+
 
     return <PostSection key={post.post_id} {...postProps} />;
   };

@@ -49,7 +49,7 @@ const AddCaptionScreen = ({ route }) => {
       updatedSelectedMedias[0] = { ...updatedSelectedMedias[0], uri: trimmedVideoPath };
     }
 
-    const processedCaption = caption.replace(/\n\s*\n/g, '\n\n');
+    const processedCaption = caption.replace(/\n\s*\n/g, "\n\n");
 
     // Dispatch the RESET_POST_STATE action
     dispatch({ type: RESET_POST_STATE });
@@ -100,8 +100,9 @@ const AddCaptionScreen = ({ route }) => {
               multiline={true}
               textAlignVertical="top"
               scrollEnabled={true}
+              blurOnSubmit={true}
+              returnKeyType={"done"}
             />
-
           </View>
         </View>
         <Modal

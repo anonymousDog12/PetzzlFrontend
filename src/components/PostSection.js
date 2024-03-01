@@ -57,15 +57,14 @@ const PostSection = ({
     navigation.navigate("LikerListScreen", { postId: postDetails.post_id });
   };
 
-  const renderLikeIcon = () => {
+  const onCommentIconPress = () => {
+    navigation.navigate("CommentScreen", { postId: postDetails.post_id, petId: petProfile.pet_id});
+  };
+
+  const renderPostIcons = () => {
     const heartIconName = isLiked ? "heart" : "heart-outline";
     const heartIconColor = isLiked ? "red" : "black";
     const commentIconName = "chatbox-ellipses-outline";
-
-    const onCommentIconPress = () => {
-      navigation.navigate("CommentScreen", { postId: postDetails.post_id });
-    };
-
 
     let likeTextComponent;
     if (likeCount > 0) {
@@ -84,8 +83,12 @@ const PostSection = ({
       <View style={styles.likeIconContainer}>
         <View style={styles.reactionsContainer}>
           <Ionicons name={heartIconName} size={24} color={heartIconColor} onPress={handleLikePress} />
-          <Ionicons name={commentIconName} size={24} color="black" style={styles.commentIcon}
-                    onPress={onCommentIconPress} />
+          <TouchableOpacity style={styles.commentCountContainer} onPress={onCommentIconPress}>
+            <Ionicons name={commentIconName} size={24} color="black" />
+            {postDetails.comment_count > 0 && (
+              <Text style={styles.commentCountText}>{postDetails.comment_count}</Text>
+            )}
+          </TouchableOpacity>
         </View>
         <View style={{ alignItems: "flex-start", marginTop: 4 }}>
           {likeTextComponent}
@@ -93,6 +96,34 @@ const PostSection = ({
       </View>
     );
   };
+
+  const renderLatestComment = () => {
+    if (postDetails.latest_comment) {
+      return (
+        <View style={styles.latestCommentContainer}>
+          <Text style={styles.latestCommentText}>
+            <Text style={styles.boldText}>{postDetails.latest_comment.pet_id}</Text> {postDetails.latest_comment.content}
+          </Text>
+        </View>
+      );
+    }
+    return null;
+  };
+
+  const renderViewAllCommentsText = () => {
+    if (postDetails.comment_count > 1) {
+      return (
+        <TouchableOpacity
+          onPress={onCommentIconPress}
+          style={styles.viewAllCommentsContainer}
+        >
+          <Text style={styles.viewAllCommentsText}>View More Comments</Text>
+        </TouchableOpacity>
+      );
+    }
+    return null;
+  };
+
 
 
   useEffect(() => {
@@ -183,7 +214,7 @@ const PostSection = ({
           renderItem={renderMediaItem}
         />
       </View>
-      {renderLikeIcon()}
+      {renderPostIcons()}
       <View style={styles.captionTextContainer}>
         {isCaptionNotEmptyOrSpaces(postDetails.caption) && (
           <>
@@ -198,6 +229,8 @@ const PostSection = ({
           </>
         )}
       </View>
+      {renderViewAllCommentsText()}
+      {renderLatestComment()}
     </View>
   );
 };
@@ -265,11 +298,10 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "300",
     color: "#333",
-    marginBottom: 10,
-    padding: 10,
+    paddingHorizontal: 10,
   },
   captionTextContainer: {
-    minHeight: 20,
+    marginTop: 3,
   },
 
   // Post Reactions
@@ -337,6 +369,34 @@ const styles = StyleSheet.create({
     height: 40,
   },
 
+  commentCountContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 10, // Adjust spacing as needed
+  },
+  commentCountText: {
+    marginLeft: 4, // Adjust spacing as needed
+    fontSize: 14,
+    color: "#666", // Adjust color as needed
+  },
+
+  latestCommentContainer: {
+    paddingHorizontal: 10, // Match the padding of the caption for consistency
+  },
+  latestCommentText: {
+    fontSize: 15, // Adjust based on your design
+    color: "#333", // Adjust based on your design
+    fontWeight: "300",
+  },
+
+  viewAllCommentsContainer: {
+    paddingHorizontal: 10, // Match the padding for consistency
+  },
+  viewAllCommentsText: {
+    color: "#9d9d9d",
+    fontSize: 15,
+    fontWeight: "300",
+  },
 
 });
 
