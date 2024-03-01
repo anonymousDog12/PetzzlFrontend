@@ -52,7 +52,7 @@ const FeedScreen = ({ route }) => {
   const [isReportSending, setIsReportSending] = useState(false);
 
   const handleEllipsisOptionClick = (petId, postId) => {
-    setIsPostOwnedByCurrentUser(!!ownedPetIds[petId]);
+    setIsPostOwnedByCurrentUser(ownedPetIds.includes(petId));
     setSelectedPetIdForBlock(petId);
     setSelectedPostId(postId);
     setModalVisible(true);
