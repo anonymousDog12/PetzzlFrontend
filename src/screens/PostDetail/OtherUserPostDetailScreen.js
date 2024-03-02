@@ -12,13 +12,13 @@ import {
 import SecureStorage from "react-native-secure-storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
-import { CONFIG } from "../../config";
-import PostSection from "../components/PostSection";
-import SliderModal from "../components/SliderModal";
-import SliderModalStyles from "../components/SliderModalStyles";
-import { REPORT_REASONS } from "../data/AppContants";
-import { usePostLike } from "../hooks/usePostLike";
-import { fetchFeed } from "../redux/actions/feed";
+import { CONFIG } from "../../../config";
+import PostSection from "../../components/PostSection";
+import SliderModal from "../../components/SliderModal";
+import SliderModalStyles from "../../components/SliderModalStyles";
+import { REPORT_REASONS } from "../../data/AppContants";
+import { usePostLike } from "../../hooks/usePostLike";
+import { fetchFeed } from "../../redux/actions/feed";
 
 
 // TODO: The report content logic has overlaps with feed screen
