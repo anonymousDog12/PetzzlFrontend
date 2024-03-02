@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import SecureStorage from "react-native-secure-storage";
 import { useSelector } from "react-redux";
-import { CONFIG } from "../../config";
-import PostSection from "../components/PostSection";
-import SliderModal from "../components/SliderModal";
-import { useDeletePost } from "../hooks/useDeletePost";
-import { usePostLike } from "../hooks/usePostLike";
-import { getProfilePic } from "../utils/common";
+import { CONFIG } from "../../../config";
+import PostSection from "../../components/PostSection";
+import SliderModal from "../../components/SliderModal";
+import { useDeletePost } from "../../hooks/useDeletePost";
+import { usePostLike } from "../../hooks/usePostLike";
+import { getProfilePic } from "../../utils/common";
 
 
 const PostDetailScreen = ({ route }) => {
@@ -67,9 +67,6 @@ const PostDetailScreen = ({ route }) => {
   }
 
   return (
-    // TODO - Refactor slider modal
-    // https://soulecho.atlassian.net/browse/PA-242
-
     <SafeAreaView style={styles.fullScreenContainer}>
       <ScrollView style={styles.scrollViewStyle}>
         <PostSection

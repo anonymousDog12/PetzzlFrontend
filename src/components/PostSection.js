@@ -31,7 +31,7 @@ const PostSection = ({
     setIsCaptionExpanded(!isCaptionExpanded);
   };
 
-  const processCaption = (caption = "", charLimit = 100) => {  // Default caption to an empty string if undefined
+  const processCaption = (caption = "", charLimit = 100) => {
     const shouldShowMore = caption.length > charLimit || caption.includes("\n");
     let trimmedCaption = caption;
 
@@ -58,7 +58,7 @@ const PostSection = ({
   };
 
   const onCommentIconPress = () => {
-    navigation.navigate("CommentScreen", { postId: postDetails.post_id, petId: petProfile.pet_id});
+    navigation.navigate("CommentScreen", { postId: postDetails.post_id, petId: petProfile.pet_id });
   };
 
   const renderPostIcons = () => {
@@ -80,7 +80,7 @@ const PostSection = ({
     }
 
     return (
-      <View style={styles.likeIconContainer}>
+      <>
         <View style={styles.reactionsContainer}>
           <Ionicons name={heartIconName} size={24} color={heartIconColor} onPress={handleLikePress} />
           <TouchableOpacity style={styles.commentCountContainer} onPress={onCommentIconPress}>
@@ -90,10 +90,10 @@ const PostSection = ({
             )}
           </TouchableOpacity>
         </View>
-        <View style={{ alignItems: "flex-start", marginTop: 4 }}>
+        <View style={styles.likeTextStyle}>
           {likeTextComponent}
         </View>
-      </View>
+      </>
     );
   };
 
@@ -102,7 +102,8 @@ const PostSection = ({
       return (
         <View style={styles.latestCommentContainer}>
           <Text style={styles.latestCommentText}>
-            <Text style={styles.boldText}>{postDetails.latest_comment.pet_id}</Text> {postDetails.latest_comment.content}
+            <Text
+              style={styles.boldText}>{postDetails.latest_comment.pet_id}</Text> {postDetails.latest_comment.content}
           </Text>
         </View>
       );
@@ -123,8 +124,6 @@ const PostSection = ({
     }
     return null;
   };
-
-
 
   useEffect(() => {
     // Update videoPlayStates to match the current number of media items
@@ -239,6 +238,8 @@ const styles = StyleSheet.create({
   postSectionContainer: {
     backgroundColor: "white",
   },
+
+  // ***************************** Profile Header ******************************
   profileHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -270,6 +271,11 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     paddingRight: 10,
   },
+
+  // ******************************* Swiper *******************************
+  swiperContainer: {
+    width: screenWidth,
+  },
   paginationStyleItem: {
     width: 5,
     height: 5,
@@ -282,57 +288,12 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 
-  swiperContainer: {
-    width: screenWidth,
-  },
 
-  // Image
+  // ******************************* Media *******************************
   mediaStyle: {
     width: "100%",
     height: "100%",
   },
-
-  // Caption
-  captionText: {
-    textAlign: "left",
-    fontSize: 15,
-    fontWeight: "300",
-    color: "#333",
-    paddingHorizontal: 10,
-  },
-  captionTextContainer: {
-    marginTop: 3,
-  },
-
-  // Post Reactions
-  likeIconContainer: {
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    marginTop: 5,
-    marginLeft: 10,
-  },
-
-  reactionsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 5,
-  },
-
-  commentIcon: {
-    marginLeft: 10,
-  },
-
-  boldText: {
-    fontWeight: "bold",
-  },
-
-
-  moreText: {
-    color: "#0645AD",
-    paddingLeft: 10,
-  },
-
 
   playIconOverlay: {
     position: "absolute",
@@ -342,56 +303,79 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
   },
 
   playIcon: {
     opacity: 0.8,
   },
 
-
-  modalContentContainer: {
-    flexDirection: "row", // Ensures the Image and TextInput are side-by-side
-    alignItems: "center", // Aligns items vertically center
-    paddingVertical: 10,
-  },
-  commentInput: {
-    flex: 1,
-    marginLeft: 5,
-    padding: 8,
-    borderWidth: 0.2,
-    borderRadius: 25,
+  // ******************************* Caption *******************************
+  captionText: {
+    textAlign: "left",
+    fontSize: 15,
+    fontWeight: "300",
+    color: "#333",
+    paddingHorizontal: 10,
   },
 
-
-  commentProfilePicStyle: {
-    width: 40,
-    height: 40,
+  captionTextContainer: {
+    marginTop: 3,
   },
 
+  // ***************************** Post Reactions *****************************
+  reactionsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 5,
+    marginLeft: 10,
+  },
+
+  likeTextStyle: {
+    marginTop: 4,
+    marginLeft: 10,
+  },
+
+
+  // ***************************** Text *****************************
+
+  boldText: {
+    fontWeight: "bold",
+    fontSize: 15,
+  },
+
+  moreText: {
+    color: "#0645AD",
+    paddingLeft: 10,
+    fontSize: 15,
+  },
+
+  // ***************************** Comment *****************************
   commentCountContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: 10, // Adjust spacing as needed
+    marginLeft: 10,
   },
+
   commentCountText: {
-    marginLeft: 4, // Adjust spacing as needed
-    fontSize: 14,
-    color: "#666", // Adjust color as needed
+    marginLeft: 4,
+    fontSize: 15,
+    color: "#666",
   },
 
   latestCommentContainer: {
-    paddingHorizontal: 10, // Match the padding of the caption for consistency
+    paddingHorizontal: 10,
   },
+
   latestCommentText: {
-    fontSize: 15, // Adjust based on your design
-    color: "#333", // Adjust based on your design
+    fontSize: 15,
+    color: "#333",
     fontWeight: "300",
   },
 
   viewAllCommentsContainer: {
-    paddingHorizontal: 10, // Match the padding for consistency
+    paddingHorizontal: 10,
   },
+
   viewAllCommentsText: {
     color: "#9d9d9d",
     fontSize: 15,
