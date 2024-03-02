@@ -288,6 +288,7 @@ const styles = StyleSheet.create({
   inputWithCounter: {
     flex: 1,
     position: "relative",
+    marginLeft: 5,
   },
   commentInput: {
     padding: 8,
