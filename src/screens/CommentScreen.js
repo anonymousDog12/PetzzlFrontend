@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
+  Image, SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -22,7 +22,7 @@ import { getProfilePic } from "../utils/common";
 
 const CommentScreen = ({ route }) => {
   const { postId, petId } = route.params;
-
+  const { onReturn } = route.params;
 
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
@@ -38,6 +38,14 @@ const CommentScreen = ({ route }) => {
   // Fetch the current pet profile picture from the redux state
   const currentPetProfilePic = useSelector(state => state.petProfile.currentPetProfilePic);
   const currentPetId = useSelector(state => state.petProfile.currentPetId); // Assuming you have access to currentPetId
+
+  const handleGoBack = () => {
+    const latestCommentContent = comments.length > 0 ? comments[0].content : null; // Assuming the latest comment is at index 0
+    if (onReturn) {
+      onReturn({ commentCount: comments.length, latestCommentContent });
+    }
+    navigation.goBack();
+  };
 
   useEffect(() => {
     fetchComments();
@@ -188,8 +196,17 @@ const CommentScreen = ({ route }) => {
     }
   };
 
+  // TODO: figure out how to cneter comments title
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backButtonContainer} onPress={handleGoBack}>
+          <Ionicons name="chevron-back" size={30} color="#ffc02c" />
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Comments</Text>
+        <Text style={styles.backButtonTextInvisible}> BACK &nbsp; </Text>
+      </View>
       <View style={styles.inputContainer}>
         <Image
           source={{ uri: currentPetProfilePic }}
@@ -266,7 +283,7 @@ const CommentScreen = ({ route }) => {
           <Text style={modalContent.textStyle}>{modalContent.text}</Text>
         </TouchableOpacity>
       </SliderModal>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -274,6 +291,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBottom: 25,
+    backgroundColor: 'white',
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 8,
+  },
+  headerTitle: {
+    fontSize: 17.5,
+    color: "#333",
+    fontWeight: "500",
+  },
+  backButtonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  backButtonText: {
+    color: "#ffc02c",
+    fontSize: 17.5,
+  },
+  backButtonTextInvisible: {
+    color: "transparent",
+    fontSize: 17.5,
   },
   inputContainer: {
     flexDirection: "row",

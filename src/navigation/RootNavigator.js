@@ -10,12 +10,12 @@ import CommentScreen from "../screens/CommentScreen";
 import OtherUserDashboardScreen from "../screens/Dashboard/OtherUserDashboardScreen";
 import EditPetProfileScreen from "../screens/EditPetProfileScreen";
 import LikerListScreen from "../screens/LikerListScreen";
-import OtherUserPostDetailScreen from "../screens/PostDetail/OtherUserPostDetailScreen";
 import Step0 from "../screens/PetProfileCreation/Step0";
 import Step1 from "../screens/PetProfileCreation/Step1";
 import Step2 from "../screens/PetProfileCreation/Step2";
 import Step3 from "../screens/PetProfileCreation/Step3";
 import Step4 from "../screens/PetProfileCreation/Step4";
+import OtherUserPostDetailScreen from "../screens/PostDetail/OtherUserPostDetailScreen";
 import PostDetailScreen from "../screens/PostDetail/PostDetailScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import BottomNavBar from "./BottomNavBar";
@@ -200,11 +200,12 @@ const RootNavigator = () => {
               <RootStack.Screen name="CommentScreen"
                                 component={CommentScreen}
                                 options={{
-                                  headerShown: true,
-                                  headerBackTitle: "Back",
-                                  title: "Comments",
-                                  cardStyleInterpolator: rightToLeftInterpolator, // TODO: try making it slide from bottom
-                                }} />
+                                  headerShown: false,
+                                  gestureEnabled: false, // disable the swipe-to-go-back gesture
+                                  cardStyleInterpolator: rightToLeftInterpolator,
+                                }}
+              />
+
             </>
           )}
         </>
