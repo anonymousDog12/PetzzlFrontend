@@ -40,12 +40,19 @@ const CommentScreen = ({ route }) => {
   const currentPetId = useSelector(state => state.petProfile.currentPetId); // Assuming you have access to currentPetId
 
   const handleGoBack = () => {
-    const latestCommentContent = comments.length > 0 ? comments[0].content : null; // Assuming the latest comment is at index 0
+    const latestCommentContent = comments.length > 0 ? comments[0].content : null;
+    const latestCommentAuthorPetId = comments.length > 0 ? comments[0].pet_id : null;
+
     if (onReturn) {
-      onReturn({ commentCount: comments.length, latestCommentContent });
+      onReturn({
+        commentCount: comments.length,
+        latestCommentContent,
+        latestCommentAuthorPetId,
+      });
     }
     navigation.goBack();
   };
+
 
   useEffect(() => {
     fetchComments();
@@ -337,6 +344,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     height: 40,
     paddingRight: 50,
+    fontSize: 16,
   },
   charCount: {
     position: "absolute",

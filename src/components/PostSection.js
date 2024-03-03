@@ -30,6 +30,7 @@ const PostSection = ({
   const [videoPlayStates, setVideoPlayStates] = useState(postDetails.media ? postDetails.media.map(() => false) : []);
   const [commentCount, setCommentCount] = useState(postDetails.comment_count);
   const [latestCommentContent, setLatestCommentContent] = useState(postDetails.latest_comment ? postDetails.latest_comment.content : null);
+  const [latestCommentAuthor, setLatestCommentAuthor] = useState(postDetails.latest_comment ? postDetails.latest_comment.pet_id : null);
 
   const toggleCaptionExpand = () => {
     setIsCaptionExpanded(!isCaptionExpanded);
@@ -61,9 +62,10 @@ const PostSection = ({
     navigation.navigate("LikerListScreen", { postId: postDetails.post_id });
   };
 
-  const handleNewCommentCountReceived = ({ commentCount, latestCommentContent }) => {
+  const handleNewCommentCountReceived = ({ commentCount, latestCommentContent, latestCommentAuthorPetId }) => {
     setCommentCount(commentCount);
     setLatestCommentContent(latestCommentContent);
+    setLatestCommentAuthor(latestCommentAuthorPetId);
   };
 
 
@@ -117,8 +119,7 @@ const PostSection = ({
       return (
         <View style={styles.latestCommentContainer}>
           <Text style={styles.latestCommentText}>
-            <Text
-              style={styles.boldText}>{postDetails.latest_comment.pet_id}</Text> {latestCommentContent}
+            <Text style={styles.boldText}>{latestCommentAuthor} </Text>{latestCommentContent}
           </Text>
         </View>
       );
