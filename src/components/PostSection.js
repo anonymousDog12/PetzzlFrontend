@@ -1,10 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Image, LogBox, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Video from "react-native-video";
 
+
+LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -26,6 +28,8 @@ const PostSection = ({
   const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
   const [firstImageAspectRatio, setFirstImageAspectRatio] = useState(null);
   const [videoPlayStates, setVideoPlayStates] = useState(postDetails.media ? postDetails.media.map(() => false) : []);
+  const [commentCount, setCommentCount] = useState(postDetails.comment_count);
+  const [latestCommentContent, setLatestCommentContent] = useState(postDetails.latest_comment ? postDetails.latest_comment.content : null);
 
   const toggleCaptionExpand = () => {
     setIsCaptionExpanded(!isCaptionExpanded);
@@ -57,8 +61,19 @@ const PostSection = ({
     navigation.navigate("LikerListScreen", { postId: postDetails.post_id });
   };
 
+  const handleNewCommentCountReceived = ({ commentCount, latestCommentContent }) => {
+    setCommentCount(commentCount);
+    setLatestCommentContent(latestCommentContent);
+  };
+
+
   const onCommentIconPress = () => {
-    navigation.navigate("CommentScreen", { postId: postDetails.post_id, petId: petProfile.pet_id });
+    navigation.navigate("CommentScreen",
+      {
+        postId: postDetails.post_id, petId: petProfile.pet_id,
+        onReturn: handleNewCommentCountReceived,
+      },
+    );
   };
 
   const renderPostIcons = () => {
@@ -85,8 +100,8 @@ const PostSection = ({
           <Ionicons name={heartIconName} size={24} color={heartIconColor} onPress={handleLikePress} />
           <TouchableOpacity style={styles.commentCountContainer} onPress={onCommentIconPress}>
             <Ionicons name={commentIconName} size={24} color="black" />
-            {postDetails.comment_count > 0 && (
-              <Text style={styles.commentCountText}>{postDetails.comment_count}</Text>
+            {commentCount > 0 && (
+              <Text style={styles.commentCountText}>{commentCount}</Text>
             )}
           </TouchableOpacity>
         </View>
@@ -98,12 +113,12 @@ const PostSection = ({
   };
 
   const renderLatestComment = () => {
-    if (postDetails.latest_comment) {
+    if (latestCommentContent) {
       return (
         <View style={styles.latestCommentContainer}>
           <Text style={styles.latestCommentText}>
             <Text
-              style={styles.boldText}>{postDetails.latest_comment.pet_id}</Text> {postDetails.latest_comment.content}
+              style={styles.boldText}>{postDetails.latest_comment.pet_id}</Text> {latestCommentContent}
           </Text>
         </View>
       );
@@ -112,7 +127,7 @@ const PostSection = ({
   };
 
   const renderViewAllCommentsText = () => {
-    if (postDetails.comment_count > 1) {
+    if (commentCount > 1) {
       return (
         <TouchableOpacity
           onPress={onCommentIconPress}
@@ -358,7 +373,7 @@ const styles = StyleSheet.create({
 
   commentCountText: {
     marginLeft: 4,
-    fontSize: 15,
+    fontSize: 14,
     color: "#666",
   },
 
