@@ -64,7 +64,7 @@ const FeedScreen = ({ route }) => {
 
   useEffect(() => {
     // Fetch the first page when the component mounts
-    dispatch(fetchFeed(1));
+    dispatch(fetchFeed(currentPetId, 1));
   }, [dispatch]);
 
   useEffect(() => {
@@ -134,7 +134,7 @@ const FeedScreen = ({ route }) => {
       setIsLoadingPage(true);
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
-      dispatch(fetchFeed(nextPage));
+      dispatch(fetchFeed(currentPetId, nextPage));
     }
   };
 
@@ -184,7 +184,7 @@ const FeedScreen = ({ route }) => {
         // console.log("Post created successfully:", result);
         dispatch(addPost(result));
         setPostSuccess(true);
-        dispatch(fetchFeed());
+        dispatch(fetchFeed(currentPetId));
       } else {
         const errorResponse = await response.json();
         if (errorResponse.error_type === "inappropriate_content") {
@@ -366,7 +366,7 @@ const FeedScreen = ({ route }) => {
 
       if (response.ok) {
         setReportMessage("Thank you for letting us know!");
-        dispatch(fetchFeed(currentPage));
+        dispatch(fetchFeed(currentPetId, currentPage));
       } else {
         setReportMessage("Failed to report the post. Please try again.");
       }
@@ -423,7 +423,7 @@ const FeedScreen = ({ route }) => {
 
       if (response.ok) {
         Alert.alert("Success", data.message, [{ text: "OK" }]);
-        dispatch(fetchFeed(currentPage));
+        dispatch(fetchFeed(currentPetId, currentPage));
       } else {
         Alert.alert("Error", data.error || "Failed to block user", [{ text: "OK" }]);
       }

@@ -1,4 +1,5 @@
 import SecureStorage from "react-native-secure-storage";
+import { useSelector } from "react-redux";
 import { CONFIG } from "../../../config";
 import {
   ADD_POST,
@@ -8,7 +9,7 @@ import {
 } from "../types";
 
 
-export const fetchFeed = (page = 1) => async dispatch => {
+export const fetchFeed = (currentPetId, page = 1) => async dispatch => {
   dispatch({ type: SET_FEED_LOADING, payload: true });
 
   const accessToken = await SecureStorage.getItem("access");
@@ -18,7 +19,7 @@ export const fetchFeed = (page = 1) => async dispatch => {
   }
 
   try {
-    const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/feed/?page=${page}`, {
+    const response = await fetch(`${CONFIG.BACKEND_URL}/api/mediaposts/feed/?current_pet_id=${currentPetId}&page=${page}`, {
       method: "GET",
       headers: { "Authorization": `JWT ${accessToken}` },
     });
@@ -29,6 +30,7 @@ export const fetchFeed = (page = 1) => async dispatch => {
     }
 
     const data = await response.json();
+
     dispatch({
       type: FETCH_FEED,
       payload: data.results,
