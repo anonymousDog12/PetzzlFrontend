@@ -64,7 +64,7 @@ const FeedScreen = ({ route }) => {
 
   useEffect(() => {
     // Fetch the first page when the component mounts
-    dispatch(fetchFeed(1));
+    dispatch(fetchFeed(currentPetId, 1));
   }, [dispatch]);
 
   useEffect(() => {
@@ -76,35 +76,35 @@ const FeedScreen = ({ route }) => {
   }, [feedData, currentPage]);
 
 
-  useEffect(() => {
-    let active = true;
-
-    const fetchData = async () => {
-      if (isFocused && Array.isArray(feedData)) {
-        setIsGlobalLoading(true);
-        const fetchPromises = feedData.flatMap(post => [
-          fetchLikeCount(post.post_id),
-          fetchLikeStatus(post.post_id, currentPetId),
-        ]);
-
-        try {
-          await Promise.all(fetchPromises);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        } finally {
-          if (active) {
-            setIsGlobalLoading(false);
-          }
-        }
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      active = false; // Prevents setting state on unmounted component
-    };
-  }, [feedData, currentPetId, isFocused]);
+  // useEffect(() => {
+  //   let active = true;
+  //
+  //   const fetchData = async () => {
+  //     if (isFocused && Array.isArray(feedData)) {
+  //       setIsGlobalLoading(true);
+  //       const fetchPromises = feedData.flatMap(post => [
+  //         fetchLikeCount(post.post_id),
+  //         fetchLikeStatus(post.post_id, currentPetId),
+  //       ]);
+  //
+  //       try {
+  //         await Promise.all(fetchPromises);
+  //       } catch (error) {
+  //         console.error("Error fetching data:", error);
+  //       } finally {
+  //         if (active) {
+  //           setIsGlobalLoading(false);
+  //         }
+  //       }
+  //     }
+  //   };
+  //
+  //   fetchData();
+  //
+  //   return () => {
+  //     active = false; // Prevents setting state on unmounted component
+  //   };
+  // }, [feedData, currentPetId, isFocused]);
 
 
   // If there are post details, upload the post
@@ -134,7 +134,7 @@ const FeedScreen = ({ route }) => {
       setIsLoadingPage(true);
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
-      dispatch(fetchFeed(nextPage));
+      dispatch(fetchFeed(currentPetId, nextPage));
     }
   };
 
@@ -184,7 +184,7 @@ const FeedScreen = ({ route }) => {
         // console.log("Post created successfully:", result);
         dispatch(addPost(result));
         setPostSuccess(true);
-        dispatch(fetchFeed());
+        dispatch(fetchFeed(currentPetId));
       } else {
         const errorResponse = await response.json();
         if (errorResponse.error_type === "inappropriate_content") {
@@ -212,36 +212,36 @@ const FeedScreen = ({ route }) => {
     }
   };
 
-  const fetchLikeCount = async (postId) => {
-    try {
-      const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/likecount/`, {
-        method: "GET",
-        // Add headers if necessary, such as for authentication
-      });
-      const data = await response.json();
-      setLikeCounts(prevCounts => ({ ...prevCounts, [postId]: data.like_count }));
-    } catch (error) {
-      console.error("Error fetching like count:", error);
-    }
-  };
+  // const fetchLikeCount = async (postId) => {
+  //   try {
+  //     const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/likecount/`, {
+  //       method: "GET",
+  //       // Add headers if necessary, such as for authentication
+  //     });
+  //     const data = await response.json();
+  //     setLikeCounts(prevCounts => ({ ...prevCounts, [postId]: data.like_count }));
+  //   } catch (error) {
+  //     console.error("Error fetching like count:", error);
+  //   }
+  // };
 
-  const fetchLikeStatus = async (postId, petId) => {
-    const accessToken = await SecureStorage.getItem("access");
-
-    try {
-      const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/likestatus/${petId}/`, {
-        method: "GET",
-        headers: {
-          "Authorization": `JWT ${accessToken}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      const data = await response.json();
-      setLikeStatuses(prevStatuses => ({ ...prevStatuses, [postId]: data.liked }));
-    } catch (error) {
-      console.error("Error fetching like status:", error);
-    }
-  };
+  // const fetchLikeStatus = async (postId, petId) => {
+  //   const accessToken = await SecureStorage.getItem("access");
+  //
+  //   try {
+  //     const response = await fetch(`${CONFIG.BACKEND_URL}/api/postreactions/posts/${postId}/likestatus/${petId}/`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Authorization": `JWT ${accessToken}`,
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+  //     const data = await response.json();
+  //     setLikeStatuses(prevStatuses => ({ ...prevStatuses, [postId]: data.liked }));
+  //   } catch (error) {
+  //     console.error("Error fetching like status:", error);
+  //   }
+  // };
 
   // TODO: try to use usePostLike hook and get rid of the repeated logic
   // One challenge is, if I use it like it is, the hook will be inside a loop
@@ -366,7 +366,7 @@ const FeedScreen = ({ route }) => {
 
       if (response.ok) {
         setReportMessage("Thank you for letting us know!");
-        dispatch(fetchFeed(currentPage));
+        dispatch(fetchFeed(currentPetId, currentPage));
       } else {
         setReportMessage("Failed to report the post. Please try again.");
       }
@@ -423,7 +423,7 @@ const FeedScreen = ({ route }) => {
 
       if (response.ok) {
         Alert.alert("Success", data.message, [{ text: "OK" }]);
-        dispatch(fetchFeed(currentPage));
+        dispatch(fetchFeed(currentPetId, currentPage));
       } else {
         Alert.alert("Error", data.error || "Failed to block user", [{ text: "OK" }]);
       }
